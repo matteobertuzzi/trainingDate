@@ -16,6 +16,11 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+# Definir el directorio de carga de archivos, establece un directorio específico ('uploads') donde se guardarán los certificados cargados por el usuario
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 # Database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
@@ -25,9 +30,11 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
 # Other configuration
 setup_admin(app)  # Add the admin
 setup_commands(app)  # Add the admin
+
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
 
