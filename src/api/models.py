@@ -60,7 +60,7 @@ class Trainers(db.Model):
                     }
 
 
-class Administrator(db.Model):
+class Administrators(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String(100), unique=False, nullable=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
@@ -112,7 +112,7 @@ class TrainersClasses(db.Model):
         # trainer = db.relationship('Trainers', foreign_keys=[trainer_id]) 
 
         def __repr__(self):
-           return f'<Trainer Class: {self.id} - Trainer: {self.trainer_id} - Capacity: {self.capacity} - Date: {self.date}>'
+           return f'<Trainer Class: {self.id} - Trainer: {self.trainer_id}>'
 
         def serialize(self):
             return {'id': self.id,
@@ -140,7 +140,7 @@ class UsersClasses(db.Model):
         training_class = db.relationship("TrainersClasses", foreign_keys=[class_id])
 
         def __repr__(self):
-           return f'<User Class: {self.id} - User: {self.user_id} - Class: {self.class_id} - Amount: {self.amount} - Stripe Status: {self.stripe_status} - Trainer Status: {self.trainer_status}'
+           return f'<User Class: {self.id} - User: {self.user_id} - Class: {self.class_id}>'
 
         def serialize(self):
             return {'id': self.id,
@@ -156,14 +156,14 @@ class TrainersSpecializations(db.Model):
         __tablename__= "trainers_specializations"
         id = db.Column(db.Integer, primary_key=True)
         certification = db.Column(db.String(255), unique=True, nullable=False)
-        status = db.Column(db.Enum("Requested", "Approved", "Rejected", name="status"))
+        status = db.Column(db.Enum("Requested", "Approved", "Rejected", name="status"), nullable=False)
         specialization_id = db.Column(db.Integer, db.ForeignKey("specializations.id"))  
         specialization = db.relationship("Specializations", foreign_keys=[specialization_id])  
         trainer_id = db.Column(db.Integer, db.ForeignKey("trainers.id"))
         trainer = db.relationship("Trainers", foreign_keys=[trainer_id])
         
         def __repr__(self):
-           return f'<Trainer Specialization: {self.id} - Specialization: {self.specialization_id} - Trainer: {self.trainer_id} - Certification: {self.certification}'
+           return f'<Trainer Specialization: {self.id} - Specialization: {self.specialization_id} - Trainer: {self.trainer_id}>'
 
         def serialize(self):
             return {'id': self.id,
