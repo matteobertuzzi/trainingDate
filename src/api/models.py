@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 db = SQLAlchemy()
@@ -142,7 +141,7 @@ class UsersClasses(db.Model):
         amount = db.Column(db.Integer, unique=False, nullable=False)
         stripe_status = db.Column(db.Enum("Cart", "Paid", "Reject", name="stripe_status"), nullable=False)
         trainer_status = db.Column(db.Enum("Paid", "Pending", name=" trainer_status"), nullable=False)
-        value = db.Column(db.Boolean, nullable=True)
+        value = db.Column(db.Boolean(), nullable=True)
 
         def __repr__(self):
            return f'<User Class: {self.id} - User: {self.user_id} - Class: {self.class_id} - Amount: {self.amount} - Stripe Status: {self.stripe_status} - Trainer Status: {self.trainer_status}'
