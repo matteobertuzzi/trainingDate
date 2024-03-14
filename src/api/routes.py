@@ -84,3 +84,21 @@ def handle_admin_signup():
         response_body['message'] = 'Admin successfully created!'
         response_body['results'] = new_admin.serialize()
         return response_body, 200
+
+@api.route('/users/login', methods=['POST'])
+def handle_user_login():
+    response_body = {}
+    data = request.json
+    user = db.session.query(Users).filter_by(email=data['email'], password=['password']).first()
+    if not user:
+        response_body['message'] = 'User not found'
+        return response_body, 401
+    elif user.password != data['password']:
+        response_body['message'] = 'Wrong password for email ' + user.email
+        return response_body, 401
+    else:
+        access_token = create_access_token(identity=user.email)
+        response_body['message'] = 'Successfully logged in!'
+        response_body['results'] = {'email': user.email,'password': user.password }
+        response_body['access_token'] = access_token
+        return response_body, 200
