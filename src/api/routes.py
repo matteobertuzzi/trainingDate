@@ -13,7 +13,7 @@ from flask_bcrypt import Bcrypt
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
-bcrypt = Bcrypt(app)
+bcrypt = Bcrypt()
 
 # Endpoint modified to get all users (besides creating new)
 # Endpoint modified to encript password on signup
@@ -44,7 +44,7 @@ def handle_signup_user():
             return response_body, 200
     if request.method == 'GET':
         users = db.session.query(Users).all()
-        if not user:
+        if not users:
             response_body['message'] = 'No users currently registered'
             return response_body,404
         response_body['message'] = 'Users currently registered'
@@ -169,7 +169,7 @@ def handle_user_login():
     else:
         access_token = create_access_token(identity=user.email)
         response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {'email': user.email,'password': user.password }
+        response_body['results'] = {'email': user.email}
         response_body['access_token'] = access_token
         return response_body, 200
 
@@ -190,7 +190,7 @@ def handle_trainer_login():
     else:
         access_token = create_access_token(identity=trainer.email)
         response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {'email': trainer.email,'password': trainer.password }
+        response_body['results'] = {'email': trainer.email }
         response_body['access_token'] = access_token
         return response_body, 200
     
@@ -211,7 +211,7 @@ def handle_admin_login():
     else:
         access_token = create_access_token(identity=administrator.email)
         response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {'email': administrator.email,'password': administrator.password }
+        response_body['results'] = {'email': administrator.email }
         response_body['access_token'] = access_token
         return response_body, 200
 
