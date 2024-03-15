@@ -102,3 +102,39 @@ def handle_user_login():
         response_body['results'] = {'email': user.email,'password': user.password }
         response_body['access_token'] = access_token
         return response_body, 200
+
+@api.route('/trainers/login', methods=['POST'])
+def handle_trainer_login():
+    response_body = {}
+    data = request.json
+    trainer = db.session.query(Trainers).filter_by(email=data['email'], password=['password']).first()
+    if not trainer:
+        response_body['message'] = 'Trainer not found'
+        return response_body, 401
+    elif trainer.password != data['password']:
+        response_body['message'] = 'Wrong password for email ' + trainer.email
+        return response_body, 401
+    else:
+        access_token = create_access_token(identity=trainer.email)
+        response_body['message'] = 'Successfully logged in!'
+        response_body['results'] = {'email': trainer.email,'password': trainer.password }
+        response_body['access_token'] = access_token
+        return response_body, 200
+    
+@api.route('/administrators/login', methods=['POST'])
+def handle_admin_login():
+    response_body = {}
+    data = request.json
+    administrator = db.session.query(Administrators).filter_by(email=data['email'], password=['password']).first()
+    if not administrator:
+        response_body['message'] = 'Administrator not found'
+        return response_body, 401
+    elif administrator.password != data['password']:
+        response_body['message'] = 'Wrong password for email ' + administrator.email
+        return response_body, 401
+    else:
+        access_token = create_access_token(identity=administrator.email)
+        response_body['message'] = 'Successfully logged in!'
+        response_body['results'] = {'email': administrator.email,'password': administrator.password }
+        response_body['access_token'] = access_token
+        return response_body, 200
