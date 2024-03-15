@@ -85,6 +85,7 @@ def handle_admin_signup():
         response_body['results'] = new_admin.serialize()
         return response_body, 200
 
+
 @api.route('/users/login', methods=['POST'])
 def handle_user_login():
     response_body = {}
@@ -102,6 +103,7 @@ def handle_user_login():
         response_body['results'] = {'email': user.email,'password': user.password }
         response_body['access_token'] = access_token
         return response_body, 200
+
 
 @api.route('/trainers/login', methods=['POST'])
 def handle_trainer_login():
@@ -121,6 +123,7 @@ def handle_trainer_login():
         response_body['access_token'] = access_token
         return response_body, 200
     
+
 @api.route('/administrators/login', methods=['POST'])
 def handle_admin_login():
     response_body = {}
@@ -138,3 +141,44 @@ def handle_admin_login():
         response_body['results'] = {'email': administrator.email,'password': administrator.password }
         response_body['access_token'] = access_token
         return response_body, 200
+
+
+@api.route("/users/protected", methods=["GET"])
+@jwt_required()
+def protected_user():
+    response_body = {}
+    current_user = get_jwt_identity()
+    print(current_user)
+    if not current_user:
+        response_body['message'] = 'Acccess denied!'
+        return response_body, 401
+    response_body['message'] = jsonify(logged_in_as=current_user)
+    return response_body, 200
+    # return jsonify(logged_in_as=current_user), 200
+
+
+@api.route("/trainers/protected", methods=["GET"])
+@jwt_required()
+def protected_trainer():
+    response_body = {}
+    current_trainers= get_jwt_identity()
+    print(current_trainers)
+    if not current_trainers:
+        response_body['message'] = 'Acccess denied!'
+        return response_body, 401
+    response_body['message'] = jsonify(logged_in_as=current_trainers)
+    return response_body, 200
+    # return jsonify(logged_in_as=current_user), 200
+
+@api.route("/administrators/protected", methods=["GET"])
+@jwt_required()
+def protected_admin():
+    response_body = {}
+    current_administrator= get_jwt_identity()
+    print(current_administrator)
+    if not current_administrator:
+        response_body['message'] = 'Acccess denied!'
+        return response_body, 401
+    response_body['message'] = jsonify(logged_in_as=current_administrator)
+    return response_body, 200
+    # return jsonify(logged_in_as=current_user), 200
