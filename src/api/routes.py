@@ -92,6 +92,34 @@ def handle_signup_admin():
         return response_body, 200
 
 
+@api.route('/specializations', methods=["GET", "POST"])
+def handle_specializations():
+    response_body = {}
+    specializations = db.session.query(Specializations).all()
+    if request.method == "GET":
+        if not specializations:
+            response_body["message"] = "No specializations available"
+            return response_body, 404
+        response_body["message"] = "Specializations available"
+        response_body["specializations"] = [specialization.serialize() for specialization in specializations]
+        return response_body, 200
+    if request.method == "POST":
+        data = request.json
+        new_specialization = Specializations( 
+            name=data["name"], 
+            description=data["description"], 
+            logo_url=data["logo_url"]
+        )
+        if any(specialization.name == data["name"] for specialization in specializations):
+            response_body["message"] = "Specialization already exists"
+            return response_body, 400
+        db.session.add(new_specialization)
+        db.session.commit()
+        response_body["message"] = "Specialization created"
+        response_body["specialization"] = new_specialization.serialize()
+        return response_body, 201
+
+
 @api.route('/trainers/<int:id>', methods=["GET", "DELETE", "PATCH"])
 def handle_trainer(id):
     response_body= {}
@@ -137,17 +165,59 @@ def handle_trainer(id):
             return response_body, 200
             
 
+@api.route('/trainers/<int:id>/classes', methods=["GET", "POST"])
+def handle_trainer_classes(id):
+    response_body = {}
+    trainer = Trainers.query.get(id)
+    classes_trainer = TrainersClasses.query.filter_by(trainer_id=id).all()
+    if not trainer:
+        response_body["message"] = "Trainer not found"
+        return response_body, 404
+    else:
+        if request.method == "GET":
+            if not classes_trainer:
+                response_body["message"] = "Trainer has no classes available"
+                return response_body, 400
+            response_body["message"] = "Trainer classes"
+            response_body["Trainer classes"] = [class_trainer.serialize() for class_trainer in classes_trainer]
+            return response_body, 200
+        if request.method == "POST":
+            data = request.json
+            existing_class = db.session.query(TrainersClasses).filter_by(date = data['date']).first()
+            if existing_class:
+                response_body["message"] = "Trainer class already exists for this datetime"
+                return response_body, 400
+            new_trainer_class = TrainersClasses(
+                trainer_id=id, 
+                address=data["address"], 
+                capacity=data["capacity"], 
+                duration=data["duration"],
+                date=data["date"],
+                price=data["price"],
+                training_type=data["training_type"],
+                training_level=data["training_level"]
+            )
+            db.session.add(new_trainer_class)
+            db.session.commit()
+            response_body["message"] = "New class create"
+            response_body["new class"] = new_trainer_class.serialize()
+            return response_body, 201
+
+
 @api.route('/users/<int:id>/classes', methods=["GET", "POST"]) 
 def handle_user_classes(id):  
     response_body = {}
     user = Users.query.get(id)
     classes_user = UsersClasses.query.filter_by(user_id=id).all()
-    train_classes = db.session.query(TrainersClasses).join(UsersClasses, UsersClasses.class_id == TrainersClasses.id).all()
+    classes_trainer = TrainersClasses.query.get(id)
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
     else:
         if request.method == "GET":
+            if not classes_trainer:
+                response_body["message"] = "No trainer classes available"
+                return response_body, 400
             if not classes_user:
                 response_body["message"] = "No classes available"
                 return response_body, 400
@@ -156,25 +226,26 @@ def handle_user_classes(id):
             return response_body, 200
         if request.method == "POST":
             # Verificar si hay clases de entrenadores disponibles
-            if not train_classes:
-                response_body["message"] = "No trainer classes available"
-                return response_body, 400
             data = request.json
             if not data:
                 response_body["message"] = "No data provided for class creation"
                 return response_body, 400
             # Aquí verifica si la clase proporcionada por el usuario es una clase de entrenador disponible
-            class_id = data.get("class_id") 
-            if class_id not in [train_class.id for train_class in train_classes]:
-                response_body["message"] = "Invalid trainer class ID"
+            existing_class = db.session.query(UsersClasses).filter_by(class_id = data['class_id']).first()
+            if existing_class:
+                response_body["message"] = "User class already exist"
                 return response_body, 400
+            trainer_class = TrainersClasses.query.filter_by(id = data["class_id"]).first()
+            if not trainer_class:
+                response_body["message"] = "No Trainer class available"
+                return response_body, 404
             new_class = UsersClasses(
                 amount=data["amount"], 
                 stripe_status=data["stripe_status"], 
                 trainer_status=data["trainer_status"], 
                 value=0,
                 user_id=id,
-                class_id=class_id
+                class_id=data["class_id"]
             )
             db.session.add(new_class)
             db.session.commit()
