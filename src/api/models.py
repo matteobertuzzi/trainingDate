@@ -101,7 +101,7 @@ class TrainersClasses(db.Model):
         address = db.Column(db.String(100), unique=False, nullable=False)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
         duration = db.Column(db.Integer, unique=False)
-        date = db.Column(db.DateTime, unique=True, nullable=False)
+        date = db.Column(db.DateTime, unique=False, nullable=False)
         price = db.Column(db.Integer, unique=False, nullable=False)
         training_level = db.Column(db.Enum("Beginner", "Intermediate", "Advanced", name="training_level"), unique=False)
         training_type = db.Column(db.Integer, db.ForeignKey("specializations.id"))
@@ -109,7 +109,6 @@ class TrainersClasses(db.Model):
         # Establece una relación bidireccional entre Trainers y TrainersClasses, donde puedo acceder a las clases asociadas a un entrenador utilizando trainer.classes
         trainer_id = db.Column(db.Integer, db.ForeignKey("trainers.id"))
         trainer = db.relationship('Trainers', backref=db.backref('classes', lazy=True)) 
-        # trainer = db.relationship('Trainers', foreign_keys=[trainer_id]) 
 
         def __repr__(self):
            return f'<Trainer Class: {self.id} - Trainer: {self.trainer_id}>'
