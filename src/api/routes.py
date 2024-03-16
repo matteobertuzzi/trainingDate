@@ -393,15 +393,10 @@ def handle_user_classes(id):
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
 def handle_trainers_specializations(id):
     response_body = {}
-    data = request.json
     trainer = db.session.query(Trainers).filter_by(id = id).first()
     if not trainer:
         response_body['message'] = f'No trainer with trainer id {id} found!'
         return response_body,404
-    specialization = db.session.query(Specializations).filter_by(id = data['specialization_id']).first()
-    if not specialization:
-        response_body['message'] = 'No specialization with id ' + data['specialization_id'] + ' !'
-        return response_body, 404
     if request.method == 'GET':
         trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
         if not trainers_specializations:
@@ -411,6 +406,11 @@ def handle_trainers_specializations(id):
         response_body['results'] = [spec.serialize() for spec in trainers_specializations]
         return response_body,200
     if request.method == 'POST':
+        data = request.json
+        specialization = db.session.query(Specializations).filter_by(id = data['specialization_id']).first()
+        if not specialization:
+            response_body['message'] = 'No specialization with id ' + data['specialization_id'] + ' !'
+            return response_body, 404
         new_trainer_specialization = TrainersSpecializations(
             certification = data['certification'],
             status = "Requested",
