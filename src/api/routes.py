@@ -160,63 +160,33 @@ def handle_specializations():
         return response_body, 201
 
 
-# TODO: Unificar login en uno solo
-# New endpoint to handle user login
-@api.route('/users/login', methods=['POST'])
-def handle_user_login():
+# Endpoints unico para los login
+@api.route('/login/<user_type>', methods=['POST'])
+def handle_login(user_type):
     response_body = {}
     data = request.json
-    user = db.session.query(Users).filter_by(email=data['email']).first()
-    password = data['password']
+    if not user_type:
+        response_body["message"] = "Insert user type"
+        return response_body, 400
+    if user_type == 'users':
+        user = db.session.query(Users).filter_by(email=data['email']).first()
+    if user_type == 'trainers':
+        user = db.session.query(Trainers).filter_by(email=data['email']).first()
+    if user_type == 'administrators':
+        user = db.session.query(Administrators).filter_by(email=data['email']).first()
+    else:
+        response_body['message'] = 'Invalid user type'
+        return response_body, 400
+    password = data['password'] 
     if not user:
-        response_body['message'] = 'User not found'
+        response_body['message'] = f'{user_type.capitalize()} not found'
         return response_body, 401
-    elif not bcrypt.check_password_hash(user.password, password):
-        response_body['message'] = 'Wrong password for email ' + user.email
+    if not bcrypt.check_password_hash(user.password, password):
+        response_body['message'] = f'Wrong password for email {user.email}'
         return response_body, 401
     access_token = create_access_token(identity=user.email)
     response_body['message'] = 'Successfully logged in!'
     response_body['results'] = {'email': user.email}
-    response_body['access_token'] = access_token
-    return response_body, 200
-
-
-# New endpoint to handle trainer login
-@api.route('/trainers/login', methods=['POST'])
-def handle_trainer_login():
-    response_body = {}
-    data = request.json
-    trainer = db.session.query(Trainers).filter_by(email=data['email']).first()
-    password = data['password']
-    if not trainer:
-        response_body['message'] = 'Trainer not found'
-        return response_body, 401
-    elif not bcrypt.check_password_hash(trainer.password, password):
-        response_body['message'] = 'Wrong password for email ' + trainer.email
-        return response_body, 401
-    access_token = create_access_token(identity=trainer.email)
-    response_body['message'] = 'Successfully logged in!'
-    response_body['results'] = {'email': trainer.email }
-    response_body['access_token'] = access_token
-    return response_body, 200
-    
-
-# New endpoint to handle administrator login
-@api.route('/administrators/login', methods=['POST'])
-def handle_admin_login():
-    response_body = {}
-    data = request.json
-    administrator = db.session.query(Administrators).filter_by(email=data['email'], password=['password']).first()
-    password = data['password']
-    if not administrator:
-        response_body['message'] = 'Administrator not found'
-        return response_body, 401
-    elif not bcrypt.check_password_hash(administrator.password, administrator):
-        response_body['message'] = 'Wrong password for email ' + administrator.email
-        return response_body, 401
-    access_token = create_access_token(identity=administrator.email)
-    response_body['message'] = 'Successfully logged in!'
-    response_body['results'] = {'email': administrator.email }
     response_body['access_token'] = access_token
     return response_body, 200
 
