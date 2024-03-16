@@ -22,7 +22,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-# TODO: El get tiene que tener autenticacion
+# TODO: El get tiene que tener autenticacion, lo quitamos?
 @api.route('/users', methods=['POST', 'GET'])
 def handle_signup_user():
     response_body = {}
@@ -58,7 +58,7 @@ def handle_signup_user():
         response_body['results'] = [single_user.serialize() for single_user in users]
         return response_body, 200
 
-# TODO: El get tiene que tener autenticacion
+# TODO: El get tiene que tener autenticacion, lo quitamos?
 @api.route('/trainers', methods=['POST', 'GET'])
 def handle_signup_trainer():
     response_body = {}
@@ -102,7 +102,7 @@ def handle_signup_trainer():
         return response_body, 200
 
 
-# TODO: El get tiene que tener autenticacion
+# TODO: El get tiene que tener autenticacion, lo quitamos?
 @api.route('/administrators', methods=['POST', 'GET'])
 def handle_admin_signup():
     response_body = {}
@@ -426,11 +426,11 @@ def handle_trainer_classes(id):
         return response_body, 201
         
 
-@api.route('/trainers/<int:id>/classes/<int:classid>', methods=["GET", "DELETE", "PATCH"])
-def handle_trainer_class(id, classid):
+@api.route('/trainers/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE", "PATCH"])
+def handle_trainer_class(id, class_id):
     response_body = {}
     trainer = Trainers.query.get(id)
-    trainer_class = TrainersClasses.query.filter(TrainersClasses.trainer_id == id, TrainersClasses.id == classid).first()
+    trainer_class = TrainersClasses.query.filter(TrainersClasses.trainer_id == id, TrainersClasses.id == class_id).first()
     if not trainer: 
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -443,7 +443,7 @@ def handle_trainer_class(id, classid):
         return response_body, 200
     if request.method == "DELETE":
         # No hace cancelar las classes si hay usuarios apuntados a ella
-        classes_user = UsersClasses.query.filter_by(class_id=classid).all()
+        classes_user = UsersClasses.query.filter_by(class_id=class_id).all()
         if classes_user:
             response_body["message"] = "Unable to delete class, it has associated users"
             return response_body, 400
@@ -472,8 +472,34 @@ def handle_trainer_class(id, classid):
         return response_body, 200
             
 
-@api.route('users/<int:id>/classes/<int:classid>', methods=["GET", "DELETE", "PATCH"])
-def handle_user_class(id, classid):
+@api.route('/users/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE"])
+def handle_user_class(id, class_id):
+    response_body = {}
+    # Buscar al usuario por ID
+    user = Users.query.get(id)
+    # Buscar la inscripción del usuario en la clase por ID de clase
+    user_class = UsersClasses.query.filter_by(user_id=id, class_id=class_id).first()
+    # Buscar la clase del entrenador por ID de clase
+    trainer_class = TrainersClasses.query.get(class_id)
+    if not user:
+        response_body["message"] = "User not found"
+        return response_body, 404
+    if not user_class:
+        response_body["message"] = "User class not found"
+        return response_body, 404
+    if not trainer_class:
+        response_body["message"] = "Class doesn't exist"
+        return response_body, 404
+    if request.method == "GET":
+        response_body["message"] = "User class"
+        response_body["class"] = trainer_class.serialize()
+        return response_body, 200
+    if request.method == "DELETE":
+        db.session.delete(user_class)
+        db.session.commit()
+        response_body["message"] = "User unenrolled successfully"
+        response_body["class"] = trainer_class.serialize()
+        return response_body, 200
 
 
 # New endpoint to GET and CREATE TrainersSpecializations
