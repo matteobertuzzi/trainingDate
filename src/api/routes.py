@@ -378,7 +378,7 @@ def handle_user_classes(id):
             new_class = UsersClasses(
                 amount=data["amount"], 
                 stripe_status=data["stripe_status"], 
-                trainer_status=data["trainer_status"], 
+                trainer_status="Pending", 
                 value=0,
                 user_id=id,
                 class_id=data["class_id"]
