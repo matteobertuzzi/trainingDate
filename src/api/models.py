@@ -56,8 +56,7 @@ class Trainers(db.Model):
                     'phone_number': self.phone_number,
                     'iban' : self.bank_iban,
                     'value': self.sum_value,
-                    'is_active': self.is_active,
-                    }
+                    'is_active': self.is_active}
 
 
 class Administrators(db.Model):
@@ -74,8 +73,7 @@ class Administrators(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'email': self.email,
-                    'isactive': self.is_active
-                    }
+                    'isactive': self.is_active}
 
 
 class Specializations(db.Model):
@@ -91,8 +89,7 @@ class Specializations(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'description': self.description,
-                    'logo': self.logo_url
-                    }
+                    'logo': self.logo_url}
 
 
 class TrainersClasses(db.Model):
@@ -122,8 +119,7 @@ class TrainersClasses(db.Model):
                     'date': self.date,
                     'price': self.price,
                     'training_type': self.training_type,
-                    'training_level': self.training_level
-                    }
+                    'training_level': self.training_level}
     
 
 class UsersClasses(db.Model):
@@ -147,8 +143,7 @@ class UsersClasses(db.Model):
                     'class': self.class_id,
                     'amount': self.amount,
                     'stripe_status': self.stripe_status,
-                    'trainer_status': self.trainer_status
-                    }
+                    'trainer_status': self.trainer_status}
 
 
 class TrainersSpecializations(db.Model):
@@ -169,6 +164,6 @@ class TrainersSpecializations(db.Model):
                     'specialization': self.specialization_id,
                     'trainer': self.trainer_id,
                     'certification': self.certification,
-                    'status': self.status,
-                    }
+                    'status': self.status,}
+
 
