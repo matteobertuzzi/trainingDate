@@ -390,8 +390,8 @@ def handle_user_classes(id):
             return response_body, 201
         
 # New endpoint to GET and CREATE TrainersSpecializations
-@api.route('/trainers/<int:id>specializations', methods=['GET,POST'])
-def handle_trainers_specializations():
+@api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
+def handle_trainers_specializations(id):
     response_body = {}
     data = request.json
     trainer = db.session.query(Trainers).filter_by(id = id).first()
@@ -405,20 +405,20 @@ def handle_trainers_specializations():
     if request.method == 'GET':
         trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
         if not trainers_specializations:
-            response_body['message'] = 'No trainer specializations for trainer id ' + id
+            response_body['message'] = 'No trainer specializations for trainer id ' + str(id)
             return response_body,404
-        response_body['message'] = 'Trainer specializations for trainer ' + id
+        response_body['message'] = 'Trainer specializations for trainer ' + str(id)
         response_body['results'] = [spec.serialize() for spec in trainers_specializations]
         return response_body,200
     if request.method == 'POST':
         new_trainer_specialization = TrainersSpecializations(
             certification = data['certification'],
-            status = data['status'],
+            status = "Requested",
             specialization_id = data['specialization_id'],  
             trainer_id = id
         )
         db.session.add(new_trainer_specialization)
         db.session.commit()
-        response_body['message'] = 'New specialization connected with trainer ' + id
+        response_body['message'] = 'New specialization connected with trainer ' + str(id)
         response_body['results'] = new_trainer_specialization.serialize()
         return response_body,201
