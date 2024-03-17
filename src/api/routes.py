@@ -15,117 +15,125 @@ api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
 
-# Endpoint modified to get all users (besides creating new)
+
 # Endpoint modified to encript password on signup
-@api.route('/users', methods=['POST', 'GET'])
+@api.route('/users/signup', methods=['POST'])
 def handle_signup_user():
     response_body = {}
-    if request.method == 'POST':
-        data = request.json
-        user = db.session.query(Users).filter_by(email=data["email"],password=data["password"]).first()
-        if user:
-            response_body["message"] = "User already exist!"
-            return response_body, 401
-        else:
-            password = data["password"]
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            new_user = Users(
-                email=data["email"], 
-                password=hashed_password, 
-                name=data["name"], 
-                last_name=data["last_name"],
-                address=data["address"],
-                phone_number=data["phone_number"],
-                is_active=True)
-            db.session.add(new_user)
-            db.session.commit()
-            response_body["message"] = "User create successfully"
-            response_body["user"] = new_user.serialize()
-            return response_body, 200
-    if request.method == 'GET':
-        users = db.session.query(Users).all()
-        if not users:
-            response_body['message'] = 'No users currently registered'
-            return response_body,404
-        response_body['message'] = 'Users currently registered'
-        response_body['results'] = [single_user.serialize() for single_user in users]
+    data = request.json
+    user = db.session.query(Users).filter_by(email=data["email"],password=data["password"]).first()
+    if user:
+        response_body["message"] = "User already exist!"
+        return response_body, 401
+    else:
+        password = data["password"]
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_user = Users(
+            email=data["email"], 
+            password=hashed_password, 
+            name=data["name"], 
+            last_name=data["last_name"],
+            address=data["address"],
+            phone_number=data["phone_number"],
+            is_active=True)
+        db.session.add(new_user)
+        db.session.commit()
+        response_body["message"] = "User create successfully"
+        response_body["user"] = new_user.serialize()
         return response_body, 200
 
+# Get users
+@api.route('/users', methods=['GET'])
+def handle_users():
+    response_body = {}
+    users = db.session.query(Users).all()
+    if not users:
+        response_body['message'] = 'No users currently registered'
+        return response_body,404
+    response_body['message'] = 'Users currently registered'
+    response_body['results'] = [single_user.serialize() for single_user in users]
+    return response_body, 200
 
-# Endpoint modified to get all trainers (besides creating new)
+# Get trainers
+@api.route('/trainers', methods=['GET'])
+def handle_trainers():
+    response_body = {}
+    trainers = db.session.query(Trainers).all()
+    if not trainers:
+        response_body['message'] = 'No trainers currently registered'
+        return response_body,404
+    response_body['message'] = 'Trainers currently registered'
+    response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
+    return response_body, 200
+
+# Get admins
+@api.route('/admins', methods=['GET'])
+def handle_admins():
+    response_body = {}
+    admins = db.session.query(Administrators).all()
+    if not admins:
+        response_body['message'] = 'No administrators currently registered'
+        return response_body,404
+    response_body['message'] = 'Administrators currently registered'
+    response_body['results'] = [single_admin.serialize() for single_admin in admins]
+    return response_body, 200
+
+
 # Endpoint modified to encript password on signup
-@api.route('/trainers', methods=['POST', 'GET'])
+@api.route('/trainers/signup', methods=['POST'])
 def handle_signup_trainer():
     response_body = {}
     data = request.json
-    if request.method == 'POST':
-        trainer = db.session.query(Trainers).filter_by(email=data["email"], password=data["password"]).first()
-        if trainer:
-            response_body["message"] = "Trainer already exist!"
-            return response_body, 401
-        else:
-            password = data["password"]
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            new_trainer = Trainers(
-                email=data["email"],
-                password=hashed_password,
-                name=data["name"],
-                last_name=data["last_name"],
-                address=data["address"],
-                phone_number=data["phone_number"],
-                website_url=data["website_url"],
-                instagram_url=data["instagram_url"],
-                facebook_url=data["facebook_url"],
-                x_url=data["x_url"],
-                bank_iban=data["bank_iban"],
-                vote_user=0,
-                sum_value=0,
-                is_active=True)
-            db.session.add(new_trainer)
-            db.session.commit()
-            response_body["message"] = "Trainer create successfully"
-            response_body["trainer"] = new_trainer.serialize()
-            return response_body, 200
-    if request.method == 'GET':
-        trainers = db.session.query(Trainers).all()
-        if not trainers:
-            response_body['message'] = 'No trainers currently registered'
-            return response_body,404
-        response_body['message'] = 'Trainers currently registered'
-        response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
+    trainer = db.session.query(Trainers).filter_by(email=data["email"], password=data["password"]).first()
+    if trainer:
+        response_body["message"] = "Trainer already exist!"
+        return response_body, 401
+    else:
+        password = data["password"]
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_trainer = Trainers(
+            email=data["email"],
+            password=hashed_password,
+            name=data["name"],
+            last_name=data["last_name"],
+            address=data["address"],
+            phone_number=data["phone_number"],
+            website_url=data["website_url"],
+            instagram_url=data["instagram_url"],
+            facebook_url=data["facebook_url"],
+            x_url=data["x_url"],
+            bank_iban=data["bank_iban"],
+            vote_user=0,
+            sum_value=0,
+            is_active=True)
+        db.session.add(new_trainer)
+        db.session.commit()
+        response_body["message"] = "Trainer create successfully"
+        response_body["trainer"] = new_trainer.serialize()
         return response_body, 200
 
 
-# Endpoint modified to get all admins (besides creating new)
 # Endpoint modified to encript password on signup
 @api.route('/administrators', methods=['POST', 'GET'])
 def handle_admin_signup():
     response_body = {}
-    if request.method == 'POST':
-        data = request.json
-        admin = db.session.query(Administrators).filter_by(email=data['email'], password=data["password"]).first()
-        if admin:
-            response_body['message'] = 'Admin already exists'
-            return response_body, 401
-        else:
-            password = data["password"]
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            new_admin = Administrators(name=data['name'], email=data['email'], password=hashed_password, is_active=True)
-            db.session.add(new_admin)
-            db.session.commit()
-            response_body['message'] = 'Admin successfully created!'
-            response_body['results'] = new_admin.serialize()
-            return response_body, 200
-    if request.method == 'GET':
-        admins = db.session.query(Administrators).all()
-        if not admins:
-            response_body['message'] = 'No administrators currently registered'
-            return response_body,404
-        response_body['message'] = 'Administrators currently registered'
-        response_body['results'] = [single_admin.serialize() for single_admin in admins]
+    data = request.json
+    admin = db.session.query(Administrators).filter_by(email=data['email'], password=data["password"]).first()
+    if admin:
+        response_body['message'] = 'Admin already exists'
+        return response_body, 401
+    else:
+        password = data["password"]
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_admin = Administrators(name=data['name'], email=data['email'], password=hashed_password, is_active=True)
+        db.session.add(new_admin)
+        db.session.commit()
+        response_body['message'] = 'Admin successfully created!'
+        response_body['results'] = new_admin.serialize()
         return response_body, 200
 
 @api.route('/specializations', methods=["GET", "POST"])
+@jwt_required()
 def handle_specializations():
     response_body = {}
     specializations = db.session.query(Specializations).all()
@@ -153,67 +161,35 @@ def handle_specializations():
         return response_body, 201
 
 
-# New endpoint to handle user login
-@api.route('/users/login', methods=['POST'])
-def handle_user_login():
+# New endpoint to handle all logins
+@api.route('/login/<user_type>', methods=['POST'])
+def handle_login(user_type):
     response_body = {}
     data = request.json
-    user = db.session.query(Users).filter_by(email=data['email']).first()
-    password = data['password']
+    if not user_type:
+        response_body["message"] = "Insert user type"
+        return response_body, 400
+    if user_type == 'users':
+        user = db.session.query(Users).filter_by(email=data['email']).first()
+    if user_type == 'trainers':
+        user = db.session.query(Trainers).filter_by(email=data['email']).first()
+    if user_type == 'administrators':
+        user = db.session.query(Administrators).filter_by(email=data['email']).first()
+    else:
+        response_body['message'] = 'Invalid user type'
+        return response_body, 400
+    password = data['password'] 
     if not user:
-        response_body['message'] = 'User not found'
+        response_body['message'] = f'{user_type.capitalize()} not found'
         return response_body, 401
-    elif not bcrypt.check_password_hash(user.password, password):
-        response_body['message'] = 'Wrong password for email ' + user.email
+    if not bcrypt.check_password_hash(user.password, password):
+        response_body['message'] = f'Wrong password for email {user.email}'
         return response_body, 401
-    else:
-        access_token = create_access_token(identity=user.email)
-        response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {'email': user.email}
-        response_body['access_token'] = access_token
-        return response_body, 200
-
-
-# New endpoint to handle trainer login
-@api.route('/trainers/login', methods=['POST'])
-def handle_trainer_login():
-    response_body = {}
-    data = request.json
-    trainer = db.session.query(Trainers).filter_by(email=data['email']).first()
-    password = data['password']
-    if not trainer:
-        response_body['message'] = 'Trainer not found'
-        return response_body, 401
-    elif not bcrypt.check_password_hash(trainer.password, password):
-        response_body['message'] = 'Wrong password for email ' + trainer.email
-        return response_body, 401
-    else:
-        access_token = create_access_token(identity=trainer.email)
-        response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {'email': trainer.email }
-        response_body['access_token'] = access_token
-        return response_body, 200
-    
-
-# New endpoint to handle administrator login
-@api.route('/administrators/login', methods=['POST'])
-def handle_admin_login():
-    response_body = {}
-    data = request.json
-    administrator = db.session.query(Administrators).filter_by(email=data['email'], password=['password']).first()
-    password = data['password']
-    if not administrator:
-        response_body['message'] = 'Administrator not found'
-        return response_body, 401
-    elif not bcrypt.check_password_hash(administrator.password, administrator):
-        response_body['message'] = 'Wrong password for email ' + administrator.email
-        return response_body, 401
-    else:
-        access_token = create_access_token(identity=administrator.email)
-        response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {'email': administrator.email }
-        response_body['access_token'] = access_token
-        return response_body, 200
+    access_token = create_access_token(identity=user.email)
+    response_body['message'] = 'Successfully logged in!'
+    response_body['results'] = {'email': user.email}
+    response_body['access_token'] = access_token
+    return response_body, 200
 
 
 # New endpoint to handle protected route for users
@@ -259,6 +235,7 @@ def protected_admin():
 
 
 @api.route('/trainers/<int:id>', methods=["GET", "DELETE", "PATCH"])
+@jwt_required()
 def handle_trainer(id):
     response_body= {}
     trainer = Trainers.query.get(id)
@@ -304,6 +281,7 @@ def handle_trainer(id):
 
 
 @api.route('/trainers/<int:id>/classes', methods=["GET", "POST"])
+@jwt_required()
 def handle_trainer_classes(id):
     response_body = {}
     trainer = Trainers.query.get(id)
@@ -342,7 +320,8 @@ def handle_trainer_classes(id):
             return response_body, 201
 
 
-@api.route('/users/<int:id>/classes', methods=["GET", "POST"]) 
+@api.route('/users/<int:id>/classes', methods=["GET", "POST"])
+@jwt_required()
 def handle_user_classes(id):  
     response_body = {}
     user = Users.query.get(id)
@@ -391,6 +370,7 @@ def handle_user_classes(id):
         
 # New endpoint to GET and CREATE TrainersSpecializations
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
+@jwt_required()
 def handle_trainers_specializations(id):
     response_body = {}
     trainer = db.session.query(Trainers).filter_by(id = id).first()
