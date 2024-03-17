@@ -12,6 +12,7 @@ from api.commands import setup_commands
 from api.models import db
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail
 
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -25,6 +26,15 @@ if db_url is not None:
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Flask_mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
+
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 # Other configuration

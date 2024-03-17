@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import os
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -9,12 +10,21 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail, Message
 
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
+mail = Mail()
 
+
+@api.route('/mail')
+def send_mail():
+    msg = Message('Test mail', sender=os.getenv('MAIL_USERNAME'), recipients='matteo.bertuzzi@icloud.com')
+    msg.body ="This is a test email"
+    mail.send(msg)
+    return 'Message successfully sent!'
 
 # Endpoint modified to encript password on signup
 @api.route('/users/signup', methods=['POST'])
