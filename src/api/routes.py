@@ -21,7 +21,7 @@ mail = Mail()
 
 @api.route('/mail')
 def send_mail():
-    msg = Message('Test mail', sender=os.getenv('MAIL_USERNAME'), recipients='matteo.bertuzzi@icloud.com')
+    msg = Message('Test mail', sender='ac714f6759c8ed', recipients=['matteo.bertuzzi@icloud.com'])
     msg.body ="This is a test email"
     mail.send(msg)
     return 'Message successfully sent!'
