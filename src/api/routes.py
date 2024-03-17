@@ -8,10 +8,9 @@ from api.models import db, Users, Trainers, Administrators, Specializations, Tra
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-# Extension para encriptar las password
 from flask_bcrypt import Bcrypt
 # Extension para enviar un correo al querer cambiar la password en el caso de haberla olvidado
-from flask_mail import Mail
+from flask_mail import Mail, Message
 
 
 # TODO: Pasar token cada vez que un user o trainer quiera ver algo 
@@ -27,12 +26,25 @@ mail = Mail()
 def handle_signup_user():
     response_body = {}
     if request.method == 'POST':
+        required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
         data = request.json
-        user = db.session.query(Users).filter_by(email=data["email"], password=data["password"]).first()
+        user = db.session.query(Users).filter( 
+            (Users.email == data["email"]) | 
+            (Users.address == data["address"]) | 
+            (Users.phone_number == data["phone_number"])).first()
         if user:
-            response_body["message"] = "User already exist!"
-            return response_body, 401
-        # TODO: Verificar si tiene todo
+            if user.email == data["email"]:
+                response_body["message"] = "User email already exists!"
+                return response_body, 409
+            if user.address == data["address"]:
+                response_body["message"] = "User address already exists!"
+                return response_body, 409
+            if user.phone_number == data["phone_number"]:
+                response_body["message"] = "User phone_number already exists!"
+                return response_body, 409
         password = data["password"]
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_user = Users(
@@ -62,13 +74,30 @@ def handle_signup_user():
 @api.route('/trainers', methods=['POST', 'GET'])
 def handle_signup_trainer():
     response_body = {}
-    data = request.json
     if request.method == 'POST':
-        trainer = db.session.query(Trainers).filter_by(email=data["email"], password=data["password"]).first()
+        required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'bank_iban']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
+        data = request.json
+        trainer = db.session.query(Trainers).filter(
+            (Trainers.phone_number == data["phone_number"]) | 
+            (Trainers.email == data["email"]) | 
+            (Trainers.address == data["address"]) | 
+            (Trainers.bank_iban == data["bank_iban"])).first()
         if trainer:
-            response_body["message"] = "Trainer already exist!"
-            return response_body, 401
-        # TODO: Verificar si tiene todo
+            if trainer.email == data["email"]:
+                response_body["message"] = "Trainer already exists with this email!"
+                return response_body, 409
+            if trainer.phone_number == data["phone_number"]:
+                response_body["message"] = "Trainer already exists with this phone number!"
+                return response_body, 409
+            if trainer.address == data["address"]:
+                response_body["message"] = "Trainer already exists with this address!"
+                return response_body, 409
+            if trainer.bank_iban == data["bank_iban"]:
+                response_body["message"] = "Trainer already exists with this bank IBAN!"
+                return response_body, 409
         password = data["password"]
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_trainer = Trainers(
@@ -78,10 +107,10 @@ def handle_signup_trainer():
             last_name=data["last_name"],
             address=data["address"],
             phone_number=data["phone_number"],
-            website_url=data["website_url"],
-            instagram_url=data["instagram_url"],
-            facebook_url=data["facebook_url"],
-            x_url=data["x_url"],
+            website_url=data.get("website_url"), # El data.get: si no insertamos nada se queda con valor null
+            instagram_url=data.get("instagram_url"),
+            facebook_url=data.get("facebook_url"),
+            x_url=data.get("x_url"),
             bank_iban=data["bank_iban"],
             vote_user=0,
             sum_value=0,
@@ -107,11 +136,15 @@ def handle_signup_trainer():
 def handle_admin_signup():
     response_body = {}
     if request.method == 'POST':
+        required_fields = ['email', 'password', 'name']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
         data = request.json
         admin = db.session.query(Administrators).filter_by(email=data['email'], password=data["password"]).first()
         if admin:
             response_body['message'] = 'Admin already exists'
-            return response_body, 401
+            return response_body, 409
         password = data["password"]
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_admin = Administrators(name=data['name'], email=data['email'], password=hashed_password, is_active=True)
