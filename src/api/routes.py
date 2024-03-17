@@ -42,42 +42,6 @@ def handle_signup_user():
         response_body["user"] = new_user.serialize()
         return response_body, 200
 
-# Get users
-@api.route('/users', methods=['GET'])
-def handle_users():
-    response_body = {}
-    users = db.session.query(Users).all()
-    if not users:
-        response_body['message'] = 'No users currently registered'
-        return response_body,404
-    response_body['message'] = 'Users currently registered'
-    response_body['results'] = [single_user.serialize() for single_user in users]
-    return response_body, 200
-
-# Get trainers
-@api.route('/trainers', methods=['GET'])
-def handle_trainers():
-    response_body = {}
-    trainers = db.session.query(Trainers).all()
-    if not trainers:
-        response_body['message'] = 'No trainers currently registered'
-        return response_body,404
-    response_body['message'] = 'Trainers currently registered'
-    response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
-    return response_body, 200
-
-# Get admins
-@api.route('/admins', methods=['GET'])
-def handle_admins():
-    response_body = {}
-    admins = db.session.query(Administrators).all()
-    if not admins:
-        response_body['message'] = 'No administrators currently registered'
-        return response_body,404
-    response_body['message'] = 'Administrators currently registered'
-    response_body['results'] = [single_admin.serialize() for single_admin in admins]
-    return response_body, 200
-
 
 # Endpoint modified to encript password on signup
 @api.route('/trainers/signup', methods=['POST'])
@@ -114,7 +78,7 @@ def handle_signup_trainer():
 
 
 # Endpoint modified to encript password on signup
-@api.route('/administrators', methods=['POST', 'GET'])
+@api.route('/administrators/signup', methods=['POST'])
 def handle_admin_signup():
     response_body = {}
     data = request.json
@@ -132,10 +96,57 @@ def handle_admin_signup():
         response_body['results'] = new_admin.serialize()
         return response_body, 200
 
+
+# Get users
+@api.route('/users', methods=['GET'])
+def handle_users():
+    response_body = {}
+    users = db.session.query(Users).all()
+    if not users:
+        response_body['message'] = 'No users currently registered'
+        return response_body,404
+    response_body['message'] = 'Users currently registered'
+    response_body['results'] = [single_user.serialize() for single_user in users]
+    return response_body, 200
+
+
+# Get trainers
+@api.route('/trainers', methods=['GET'])
+def handle_trainers():
+    response_body = {}
+    trainers = db.session.query(Trainers).all()
+    if not trainers:
+        response_body['message'] = 'No trainers currently registered'
+        return response_body,404
+    response_body['message'] = 'Trainers currently registered'
+    response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
+    return response_body, 200
+
+
+# Get admins
+@api.route('/administrators', methods=['GET'])
+def handle_admins():
+    response_body = {}
+    admins = db.session.query(Administrators).all()
+    if not admins:
+        response_body['message'] = 'No administrators currently registered'
+        return response_body,404
+    response_body['message'] = 'Administrators currently registered'
+    response_body['results'] = [single_admin.serialize() for single_admin in admins]
+    return response_body, 200
+
+
+# Endpoint modified to allow only admins to add specializations
 @api.route('/specializations', methods=["GET", "POST"])
 @jwt_required()
 def handle_specializations():
     response_body = {}
+    current_user = get_jwt_identity()
+    is_admin = db.session.query(Administrators).filter_by(email=current_user).first()
+    print(is_admin)
+    if not is_admin:
+        response_body['message'] = 'Not allowed. Only administrators can add new specializations.'
+        return response_body, 405
     specializations = db.session.query(Specializations).all()
     if request.method == "GET":
         if not specializations:
@@ -171,9 +182,9 @@ def handle_login(user_type):
         return response_body, 400
     if user_type == 'users':
         user = db.session.query(Users).filter_by(email=data['email']).first()
-    if user_type == 'trainers':
+    elif user_type == 'trainers':
         user = db.session.query(Trainers).filter_by(email=data['email']).first()
-    if user_type == 'administrators':
+    elif user_type == 'administrators':
         user = db.session.query(Administrators).filter_by(email=data['email']).first()
     else:
         response_body['message'] = 'Invalid user type'
