@@ -204,6 +204,8 @@ def add_specializations():
     new_specialization = Specializations(name=data["name"].lower(), 
                                          description=data.get("description"), 
                                          logo_url=data.get("logo_url"))
+                                         description=data.get("description"), 
+                                         logo_url=data.get("logo_url"))
     db.session.add(new_specialization)
     db.session.commit()
     response_body["message"] = "Specialization created"
@@ -212,6 +214,7 @@ def add_specializations():
     
 
 @api.route('/specializations', methods=['GET'])
+@jwt_required()
 def get_specializations():
     response_body = {}
     specializations = db.session.query(Specializations).all()
