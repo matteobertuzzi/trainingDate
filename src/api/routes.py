@@ -21,8 +21,19 @@ mail = Mail()
 
 @api.route('/users', methods=['GET'])
 @jwt_required()
-def handle_user_get():
-    pass
+def handle_users():
+    response_body = {}
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    users = db.session.query(Users).all()
+    if not users:
+        response_body['message'] = 'No users currently registered'
+        return response_body,404
+    response_body['message'] = 'Users currently registered'
+    response_body['results'] = [single_user.serialize() for single_user in users]
+    return response_body, 200
 
 
 @api.route('/users', methods=['POST'])
@@ -59,8 +70,19 @@ def handle_signup_user():
 
 @api.route('/trainers', methods=['GET'])
 @jwt_required()
-def handle_trainers_get():
-    pass
+def handle_trainers():
+    response_body = {}
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    trainers = db.session.query(Trainers).all()
+    if not trainers:
+        response_body['message'] = 'No trainers currently registered'
+        return response_body,404
+    response_body['message'] = 'Trainers currently registered'
+    response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
+    return response_body, 200
 
 
 @api.route('/trainers', methods=['POST'])
@@ -106,8 +128,21 @@ def handle_signup_trainer():
 
 @api.route('/administrators', methods=['GET'])
 @jwt_required()
-def handle_admin_get():
-    pass
+def handle_admins():
+    response_body = {}
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    admins = db.session.query(Administrators).all()
+    if not admins:
+        response_body['message'] = 'No administrators currently registered'
+        return response_body,404
+    response_body['message'] = 'Administrators currently registered'
+    response_body['results'] = [single_admin.serialize() for single_admin in admins]
+    return response_body, 200
 
 
 @api.route('/administrators', methods=['POST'])
@@ -115,6 +150,12 @@ def handle_admin_get():
 def handle_admin_signup():
     response_body = {}
     # TODO: Validar que en el token tenga un admin, si no es admin se retorna un 405
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     if request.method == 'POST':
         data = request.json
         if not data:
@@ -141,36 +182,45 @@ def handle_admin_signup():
         return response_body, 200
 
 
-@api.route('/specializations', methods=["GET", "POST"])
-def handle_specializations():
+@api.route('/specializations', methods=["POST"])
+@jwt_required()
+def add_specializations():
     response_body = {}
     specializations = db.session.query(Specializations).all()
-    if request.method == "GET":
-        if not specializations:
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    data = request.json
+    if not data:
+        response_body["message"] = "No data provided"
+        return response_body, 400
+    if 'name' not in data:
+        response_body["message"] = "The 'name' field is required."
+        return response_body, 400
+    if any(specialization.name == data["name"].lower() for specialization in specializations):
+        response_body["message"] = "Specialization already exists"
+        return response_body, 400
+    new_specialization = Specializations(name=data["name"].lower(), 
+                                            description=data.get("description"), 
+                                            logo_url=data.get("logo_url"))
+    db.session.add(new_specialization)
+    db.session.commit()
+    response_body["message"] = "Specialization created"
+    response_body["specialization"] = new_specialization.serialize()
+    return response_body, 201
+    
+
+@api.route('/specializations', methods=['GET'])
+def get_specializations():
+    response_body = {}
+    specializations = db.session.query(Specializations).all()
+    if not specializations:
             response_body["message"] = "No specializations available"
             return response_body, 404
-        response_body["message"] = "Specializations available"
-        response_body["specializations"] = [specialization.serialize() for specialization in specializations]
-        return response_body, 200
-    if request.method == "POST":
-        data = request.json
-        if not data:
-            response_body["message"] = "No data provided"
-            return response_body, 400
-        if 'name' not in data:
-            response_body["message"] = "The 'name' field is required."
-            return response_body, 400
-        if any(specialization.name == data["name"].lower() for specialization in specializations):
-            response_body["message"] = "Specialization already exists"
-            return response_body, 400
-        new_specialization = Specializations(name=data["name"].lower(), 
-                                             description=data.get("description"), 
-                                             logo_url=data.get("logo_url"))
-        db.session.add(new_specialization)
-        db.session.commit()
-        response_body["message"] = "Specialization created"
-        response_body["specialization"] = new_specialization.serialize()
-        return response_body, 201
+    response_body["message"] = "Specializations available"
+    response_body["specializations"] = [specialization.serialize() for specialization in specializations]
+    return response_body, 200
 
 
 # Endpoints unico para los login
@@ -537,7 +587,7 @@ def handle_trainers_specializations(id):
     response_body = {}
     trainer = db.session.query(Trainers).filter_by(id = id).first()
     if not trainer:
-        response_body['message'] = f'No trainer with trainer id {id} found!'
+        response_body['message'] = f'No trainer with trainer id {str(id)} found!'
         return response_body,404
     if request.method == 'GET':
         trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
