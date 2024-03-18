@@ -109,8 +109,21 @@ def handle_signup_trainer():
 
 @api.route('/administrators', methods=['GET'])
 @jwt_required()
-def handle_admin_get():
-    pass
+def handle_admins():
+    response_body = {}
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    admins = db.session.query(Administrators).all()
+    if not admins:
+        response_body['message'] = 'No administrators currently registered'
+        return response_body,404
+    response_body['message'] = 'Administrators currently registered'
+    response_body['results'] = [single_admin.serialize() for single_admin in admins]
+    return response_body, 200
 
 
 @api.route('/administrators', methods=['POST'])
@@ -118,6 +131,12 @@ def handle_admin_get():
 def handle_admin_signup():
     response_body = {}
     # TODO: Validar que en el token tenga un admin, si no es admin se retorna un 405
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     if request.method == 'POST':
         data = request.json
         if not data:
@@ -148,6 +167,12 @@ def handle_admin_signup():
 @api.route('/specializations', methods=["GET", "POST"])
 def handle_specializations():
     response_body = {}
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     specializations = db.session.query(Specializations).all()
     if request.method == "GET":
         if not specializations:
