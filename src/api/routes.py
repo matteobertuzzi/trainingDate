@@ -13,8 +13,6 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 
 
-# TODO: Pasar token cada vez que un user o trainer quiera ver algo 
-
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
@@ -106,7 +104,6 @@ def handle_signup_trainer():
         return response_body, 200
 
 
-
 @api.route('/administrators', methods=['GET'])
 @jwt_required()
 def handle_admin_get():
@@ -144,7 +141,6 @@ def handle_admin_signup():
         return response_body, 200
 
 
-# TODO: Hacer que el admin pueda crear specializaciones, aplicar token, para que las puedan ver entrenadores y admin
 @api.route('/specializations', methods=["GET", "POST"])
 def handle_specializations():
     response_body = {}
@@ -404,14 +400,12 @@ def handle_user_classes(id):
         if not trainer_class:
             response_body["message"] = "No Trainer class available"
             return response_body, 404
-        new_class = UsersClasses(
-            amount=data["amount"], 
-            stripe_status=data["stripe_status"], 
-            trainer_status="Pending", 
-            value=0,
-            user_id=id,
-            class_id=data["class_id"]
-        )
+        new_class = UsersClasses(amount=data["amount"], 
+                                 stripe_status= "Cart", 
+                                 trainer_status= "Pending", 
+                                 value=0,
+                                 user_id=id,
+                                 class_id=data["class_id"])
         db.session.add(new_class)
         db.session.commit()
         response_body["message"] = "Class added"
@@ -444,16 +438,14 @@ def handle_trainer_classes(id):
         if existing_class:
             response_body["message"] = "Trainer class already exists for this datetime"
             return response_body, 400
-        new_trainer_class = TrainersClasses(
-            trainer_id=id, 
-            address=data["address"], 
-            capacity=data["capacity"], 
-            duration=data["duration"],
-            date=data["date"],
-            price=data["price"],
-            training_type=data["training_type"],
-            training_level=data["training_level"]
-        )
+        new_trainer_class = TrainersClasses(trainer_id=id, 
+                                            address=data["address"], 
+                                            capacity=data["capacity"], 
+                                            duration=data["duration"],
+                                            date=data["date"],
+                                            price=data["price"],
+                                            training_type=data["training_type"],
+                                            training_level=data["training_level"])
         db.session.add(new_trainer_class)
         db.session.commit()
         response_body["message"] = "New class create"
@@ -539,7 +531,6 @@ def handle_user_class(id, class_id):
         return response_body, 200
 
 
-# New endpoint to GET and CREATE TrainersSpecializations
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
 @jwt_required()
 def handle_trainers_specializations(id):
@@ -552,7 +543,7 @@ def handle_trainers_specializations(id):
         trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
         if not trainers_specializations:
             response_body['message'] = 'No trainer specializations for trainer id ' + str(id)
-            return response_body,404
+            return response_body, 404
         response_body['message'] = 'Trainer specializations for trainer ' + str(id)
         response_body['results'] = [spec.serialize() for spec in trainers_specializations]
         return response_body,200
@@ -565,12 +556,10 @@ def handle_trainers_specializations(id):
         if not specialization:
             response_body['message'] = 'No specialization with id ' + data['specialization_id'] + ' !'
             return response_body, 404
-        new_trainer_specialization = TrainersSpecializations(
-            certification = data['certification'],
-            status = "Requested",
-            specialization_id = data['specialization_id'],  
-            trainer_id = id
-        )
+        new_trainer_specialization = TrainersSpecializations(certification = data['certification'],
+                                                             status = "Requested",
+                                                             specialization_id = data['specialization_id'],  
+                                                             trainer_id = id)
         db.session.add(new_trainer_specialization)
         db.session.commit()
         response_body['message'] = 'New specialization connected with trainer ' + str(id)
