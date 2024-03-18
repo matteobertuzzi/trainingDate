@@ -58,8 +58,14 @@ def handle_signup_user():
         response_body["user"] = new_user.serialize()
         return response_body, 200
 
-# TODO: El get tiene que tener autenticacion, lo quitamos?
-@api.route('/trainers', methods=['POST', 'GET'])
+
+@api.route('/trainers', methods=['GET'])
+@jwt_required()
+def handle_trainers_get():
+    pass
+
+
+@api.route('/trainers', methods=['POST'])
 def handle_signup_trainer():
     response_body = {}
     if request.method == 'POST':
@@ -100,8 +106,14 @@ def handle_signup_trainer():
         return response_body, 200
 
 
-# TODO: El get tiene que tener autenticacion, lo quitamos?
-@api.route('/administrators', methods=['POST', 'GET'])
+
+@api.route('/administrators', methods=['GET'])
+@jwt_required()
+def handle_admin_get():
+    pass
+
+
+@api.route('/administrators', methods=['POST'])
 @jwt_required()
 def handle_admin_signup():
     response_body = {}
@@ -183,7 +195,7 @@ def handle_login(user_type):
         response_body['message'] = 'Invalid user type'
         return response_body, 400
     if user_type == 'users':
-        user = db.session.query(Users).filter_by(email=data['email']).first()
+        user = db.session.query(Users).filter_by(email=data['email'].lower()).first()
         if not user:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
@@ -199,7 +211,7 @@ def handle_login(user_type):
         response_body['access_token'] = access_token
         return response_body, 200
     elif user_type == 'trainers':
-        trainer = db.session.query(Trainers).filter_by(email=data['email']).first()
+        trainer = db.session.query(Trainers).filter_by(email=data['email'].lower()).first()
         if not trainer:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
@@ -215,7 +227,7 @@ def handle_login(user_type):
         response_body['access_token'] = access_token
         return response_body, 200
     elif user_type == 'administrators':
-        administrator = db.session.query(Administrators).filter_by(email=data['email']).first()
+        administrator = db.session.query(Administrators).filter_by(email=data['email'].lower()).first()
         if not administrator:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
@@ -226,7 +238,7 @@ def handle_login(user_type):
         access_token = create_access_token(identity={"administrator": administrator.email,
                                                      "role": user_type})
         response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {"administrator": traadministratoriner.serialize(), 
+        response_body['results'] = {"administrator": administrator.serialize(), 
                                     "role": user_type}
         response_body['access_token'] = access_token
         return response_body, 200
