@@ -202,8 +202,8 @@ def add_specializations():
         response_body["message"] = "Specialization already exists"
         return response_body, 400
     new_specialization = Specializations(name=data["name"].lower(), 
-                                            description=data.get("description"), 
-                                            logo_url=data.get("logo_url"))
+                                         description=data.get("description"), 
+                                         logo_url=data.get("logo_url"))
     db.session.add(new_specialization)
     db.session.commit()
     response_body["message"] = "Specialization created"
