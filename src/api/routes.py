@@ -216,6 +216,7 @@ def add_specializations():
     
 
 @api.route('/specializations', methods=['GET'])
+@jwt_required()
 def get_specializations():
     response_body = {}
     specializations = db.session.query(Specializations).all()
