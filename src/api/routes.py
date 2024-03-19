@@ -716,7 +716,7 @@ def handle_trainer_specialization(id, specialization_id):
 
 
 # Modificar y cancelar una specialization
-@api.route('/specializations/<int:id>', methods=['PATCH', 'DELETE'])
+@api.route('/specializations/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @jwt_required()
 def handle_specialization(id):
     response_body = {}
@@ -725,6 +725,10 @@ def handle_specialization(id):
         response_body['message'] = f'No specialization found with id of {str(id)}!'
         return response_body, 404
     current_user = get_jwt_identity()
+    if request.method == 'GET':
+        response_body['message'] = 'Specialization details.'
+        response_body['results'] = specialization.serialize()
+        return response_body, 200
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -760,6 +764,7 @@ def handle_specialization(id):
 @jwt_required()
 def handle_specialization_request(id):
     response_body = {}
+
     specialization = db.session.query(Specializations).filter_by(id=id).first()
     if not specialization:
         response_body['message'] = f'No specialization found with id of {str(id)}!'
