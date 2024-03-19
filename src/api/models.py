@@ -105,13 +105,13 @@ class TrainersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         address = db.Column(db.String(100), unique=False, nullable=False)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
+        # TODO: Hacemos start time y end time?
         duration = db.Column(db.Integer, unique=False)
         date = db.Column(db.DateTime, unique=False, nullable=False)
         price = db.Column(db.Integer, unique=False, nullable=False)
         training_level = db.Column(db.Enum("Beginner", "Intermediate", "Advanced", name="training_level"), unique=False)
         training_type = db.Column(db.Integer, db.ForeignKey("specializations.id"))
         specialization = db.relationship("Specializations", foreign_keys=[training_type])
-        # Establece una relación bidireccional entre Trainers y TrainersClasses, donde puedo acceder a las clases asociadas a un entrenador utilizando trainer.classes
         trainer_id = db.Column(db.Integer, db.ForeignKey("trainers.id"))
         trainer = db.relationship('Trainers', backref=db.backref('classes', lazy=True)) 
 

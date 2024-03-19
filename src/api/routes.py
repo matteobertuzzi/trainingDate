@@ -19,7 +19,6 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-
 @api.route('/mail')
 def send_mail():
     msg = Message('Test mail', sender='ac714f6759c8ed', recipients=['matteo.bertuzzi@icloud.com'])
@@ -28,6 +27,7 @@ def send_mail():
     return 'Message successfully sent!'
 
 
+# Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
 @jwt_required()
 def handle_users():
@@ -45,6 +45,7 @@ def handle_users():
     return response_body, 200
 
 
+# Crear un usuario
 @api.route('/users', methods=['POST'])
 def handle_signup_user():
     response_body = {}
@@ -82,6 +83,7 @@ def handle_signup_user():
     return response_body, 200
 
 
+# Mostrar los entrenadores disponibles
 @api.route('/trainers', methods=['GET'])
 @jwt_required()
 def handle_trainers():
@@ -99,6 +101,7 @@ def handle_trainers():
     return response_body, 200
 
 
+# Crear un entrenador
 @api.route('/trainers', methods=['POST'])
 def handle_signup_trainer():
     response_body = {}
@@ -144,6 +147,7 @@ def handle_signup_trainer():
     return response_body, 200
 
 
+# Mostrar los admin disponibles
 @api.route('/administrators', methods=['GET'])
 @jwt_required()
 def handle_admins():
@@ -161,10 +165,16 @@ def handle_admins():
     return response_body, 200
 
 
+# Crear un admin
 @api.route('/administrators', methods=['POST'])
+@jwt_required()
 def handle_signup_admin():
     response_body = {}
+    current_user = get_jwt_identity()
     data = request.json
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
@@ -194,9 +204,10 @@ def handle_signup_admin():
     return response_body, 200
 
 
+# Crear espacializaciones
 @api.route('/specializations', methods=["POST"])
 @jwt_required()
-def add_specializations():
+def handle_add_specializations():
     response_body = {}
     current_user = get_jwt_identity()
     if not current_user['role'] == 'administrators':
@@ -223,8 +234,9 @@ def add_specializations():
     return response_body, 201
     
 
+# Mostrar especializaciones
 @api.route('/specializations', methods=['GET'])
-def get_specializations():
+def handle_specializations():
     response_body = {}
     specializations = db.session.query(Specializations).all()
     if not specializations:
@@ -235,6 +247,7 @@ def get_specializations():
     return response_body, 200
 
 
+# Login (user, trainer, admin)
 @api.route('/login/<user_type>', methods=['POST'])
 def handle_login(user_type):
     response_body = {}
@@ -304,21 +317,7 @@ def handle_login(user_type):
         return response_body, 200
 
 
-@api.route("/protected/<user_type>", methods=["GET"])
-@jwt_required()
-def protected_route(user_type):
-    response_body = {}
-    current_user = get_jwt_identity()
-    if not current_user:
-        response_body['message'] = 'Access denied!'
-        return response_body, 401
-    if user_type not in ['users', 'trainers', 'administrators']:
-        response_body['message'] = 'Invalid user type!'
-        return response_body, 400
-    response_body['message'] = f'Logged in as {current_user}'
-    return response_body, 200
-    
-
+# Mostrar, borrar o modificar user
 @api.route('/users/<int:id>', methods=["GET", "DELETE", "PATCH"])
 @jwt_required()
 def handle_user(id):
@@ -359,6 +358,7 @@ def handle_user(id):
     return response_body, 405
 
 
+# Mostrar, borrar o modificar trainer
 @api.route('/trainers/<int:id>', methods=["GET", "DELETE", "PATCH"])
 @jwt_required()
 def handle_trainer(id):
@@ -408,6 +408,7 @@ def handle_trainer(id):
     return response_body, 405
 
 
+# Mostrar, borrar o modificar admin
 @api.route('/administrators/<int:id>', methods=["GET", "DELETE", "PATCH"])
 @jwt_required()
 def handle_administrator(id):
@@ -443,6 +444,7 @@ def handle_administrator(id):
     return response_body, 405 
 
 
+# Mostrar y crear classes user
 @api.route('/users/<int:id>/classes', methods=["GET", "POST"]) 
 @jwt_required()
 def handle_user_classes(id):  
@@ -465,6 +467,10 @@ def handle_user_classes(id):
             data = request.json
             if not data:
                 response_body["message"] = "No data provided for class creation"
+                return response_body, 400
+            required_fields = ['amount', 'class_id']
+            if not request.json or not all(field in request.json for field in required_fields):
+                response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
             existing_class = db.session.query(UsersClasses).filter_by(class_id = data['class_id']).first()
             if existing_class:
@@ -489,6 +495,7 @@ def handle_user_classes(id):
     return response_body, 405
 
 
+# Mostrar y crear classes trainer
 @api.route('/trainers/<int:id>/classes', methods=["GET", "POST"])
 @jwt_required()
 def handle_trainer_classes(id):
@@ -512,6 +519,17 @@ def handle_trainer_classes(id):
             if not data:
                 response_body["message"] = "No data provided"
                 return response_body, 400
+            required_fields = ['address', 'capacity', 'date', 'price', 'training_type', 'training_level']
+            if not request.json or not all(field in request.json for field in required_fields):
+                response_body["message"] = "Missing required fields in the request."
+                return response_body, 400
+            if data['training_level'] not in ['Beginner', 'Intermediate', 'Advanced']:
+                response_body["message"] = "Invalid training level"
+                return response_body, 400
+            trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id, specialization_id = data["training_type"]).all()
+            if not trainers_specializations:
+                response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
+                return response_body, 400
             # TODO: Hacer comprobacion horaria? y poner en los modelos inicio y fin?
             existing_class = db.session.query(TrainersClasses).filter_by(date = data['date']).first()
             if existing_class:
@@ -534,6 +552,7 @@ def handle_trainer_classes(id):
         return response_body, 405
         
 
+# Mostrar, crear, borrar clase trainer
 @api.route('/trainers/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE", "PATCH"])
 @jwt_required()
 def handle_trainer_class(id, class_id):
@@ -585,6 +604,7 @@ def handle_trainer_class(id, class_id):
     return response_body, 405
 
 
+# Mostrar, crear, borrar clase user
 @api.route('/users/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE"])
 @jwt_required()
 def handle_user_class(id, class_id):
@@ -594,7 +614,6 @@ def handle_user_class(id, class_id):
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
-    # Buscar la clase del entrenador por ID de clase
     if (current_user['role'] == 'users' and current_user['id'] == user.id) or (current_user["role"] == "administrators"):
         user_class = UsersClasses.query.filter_by(user_id=id, class_id=class_id).first()
         if not user_class:
@@ -618,9 +637,10 @@ def handle_user_class(id, class_id):
     return response_body, 405
 
 
+# Mostrar y crear especializaciones para trainer
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
 @jwt_required()
-def handle_trainers_specializations(id):
+def handle_trainer_specializations(id):
     response_body = {}
     current_user = get_jwt_identity()
     trainer = db.session.query(Trainers).filter_by(id = id).first()
@@ -631,9 +651,9 @@ def handle_trainers_specializations(id):
         if request.method == 'GET':
             trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
             if not trainers_specializations:
-                response_body['message'] = 'No trainer specializations for trainer id ' + str(id)
+                response_body['message'] = 'No specializations for trainer id: ' + str(id)
                 return response_body, 404
-            response_body['message'] = 'Trainer specializations for trainer ' + str(id)
+            response_body['message'] = 'Specializations for trainer ' + str(id)
             response_body['results'] = [spec.serialize() for spec in trainers_specializations]
             return response_body,200
         if request.method == 'POST':
@@ -641,9 +661,13 @@ def handle_trainers_specializations(id):
             if not data:
                 response_body["message"] = "No data provided"
                 return response_body, 400
-            specialization = db.session.query(Specializations).filter_by(id = data['specialization_id']).first()
-            if not specialization:
-                response_body['message'] = 'No specialization with id ' + data['specialization_id'] + ' !'
+            required_fields = ['certification', 'specialization_id']
+            if not request.json or not all(field in request.json for field in required_fields):
+                response_body["message"] = "Missing required fields in the request."
+                return response_body, 400
+            trainer_specialization = db.session.query(TrainersSpecializations).filter_by(specialization_id = data['specialization_id']).first()
+            if trainer_specialization:
+                response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' already exist!'
                 return response_body, 404
             new_trainer_specialization = TrainersSpecializations(certification = data['certification'],
                                                                  status = "Requested",
@@ -656,3 +680,37 @@ def handle_trainers_specializations(id):
             return response_body,201
     response_body['message'] = 'Not allowed!'
     return response_body, 405
+
+
+# Borrar una especializacion de un entrenador
+@api.route('/trainers/<int:id>/specializations/<int:specialization_id>', methods=["GET", 'DELETE'])
+@jwt_required()
+def handle_trainer_specialization(id, specialization_id):
+    response_body = {}
+    current_user = get_jwt_identity()
+    trainer = db.session.query(Trainers).filter_by(id = id).first()
+    if not trainer:
+        response_body['message'] = f'No trainer with id {str(id)} found!'
+        return response_body, 404
+    if (current_user['role'] == 'trainers' and current_user['id'] == id) or (current_user['role'] == 'administrators'):
+        trainer_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
+        if not trainer_specializations:
+            response_body['message'] = f'No specializations for trainer id: {str(id)}'
+            return response_body, 404
+        trainer_specialization = db.session.query(TrainersSpecializations).filter_by(trainer_id = id, specialization_id = specialization_id).first()
+        if not trainer_specialization:
+            response_body["message"] = f"No specialization with id: {str(specialization_id)} for the trainer with id: {str(id)}"
+            return response_body, 404
+        if request.method == 'GET':
+            response_body["message"] = "Trainer Specialization"
+            response_body["result"] = trainer_specialization.serialize()
+            return response_body, 200
+        if request.method == "DELETE":
+            db.session.delete(trainer_specialization)
+            db.session.commit()
+            response_body["message"] = "Specialization deleted"
+            response_body["result"] = trainer_specialization.serialize()
+            return response_body, 200
+    response_body["message"] = 'Not allowed!'
+    return response_body, 405
+
