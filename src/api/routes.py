@@ -523,6 +523,13 @@ def handle_trainer_classes(id):
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
+            if data['training_level'] not in ['Beginner', 'Intermediate', 'Advanced']:
+                response_body["message"] = "Invalid training level"
+                return response_body, 400
+            trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id, specialization_id = data["training_type"]).all()
+            if not trainers_specializations:
+                response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
+                return response_body, 400
             # TODO: Hacer comprobacion horaria? y poner en los modelos inicio y fin?
             existing_class = db.session.query(TrainersClasses).filter_by(date = data['date']).first()
             if existing_class:
