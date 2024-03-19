@@ -519,7 +519,7 @@ def handle_trainer_classes(id):
             if not data:
                 response_body["message"] = "No data provided"
                 return response_body, 400
-            required_fields = ['address', 'capacity', 'date', 'price', 'training_type', 'training_level']
+            required_fields = ['address', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
@@ -531,7 +531,7 @@ def handle_trainer_classes(id):
                 response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
                 return response_body, 400
             # TODO: Hacer comprobacion horaria? y poner en los modelos inicio y fin?
-            existing_class = db.session.query(TrainersClasses).filter_by(date = data['date']).first()
+            existing_class = db.session.query(TrainersClasses).filter_by(start_date = data['start_date'], end_date = data['end_date']).first()
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
@@ -539,7 +539,8 @@ def handle_trainer_classes(id):
                                                 address=data["address"], 
                                                 capacity=data["capacity"], 
                                                 duration=data["duration"],
-                                                date=data["date"],
+                                                start_date=data["start_date"],
+                                                end_date=data["end_date"],
                                                 price=data["price"],
                                                 training_type=data["training_type"],
                                                 training_level=data["training_level"])
@@ -589,15 +590,15 @@ def handle_trainer_class(id, class_id):
                 return response_body, 400
             if 'address' in data:
                 trainer_class.address = data["address"]
-            if 'duration' in data:
-                trainer_class.duration = data["duration"]
-            if 'date' in data:
-                trainer_class.date = data["date"]
+            if 'start_date' in data:
+                trainer_class.start_date = data["start_date"]
+            if 'end_date' in data:
+                trainer_class.end_date = data["end_date"]
             if 'price' in data:
                 trainer_class.price = data["price"]
             db.session.add(trainer_class)
             db.session.commit()
-            response_body["message"] = "Class update"
+            response_body["message"] = "Class updated"
             response_body["result"] = trainer_class.serialize()
             return response_body, 200
     response_body["message"] = 'Not allowed!'
