@@ -714,3 +714,56 @@ def handle_trainer_specialization(id, specialization_id):
     response_body["message"] = 'Not allowed!'
     return response_body, 405
 
+
+# Modificar y cancelar una specialization
+@api.route('/specializations/<int:id>', methods=['PATCH', 'DELETE'])
+@jwt_required()
+def handle_specialization(id):
+    response_body = {}
+    specialization = db.session.query(Specializations).filter_by(id=id).first()
+    if not specialization:
+        response_body['message'] = f'No specialization found with id of {str(id)}!'
+        return response_body, 404
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    if request.method == 'PATCH':
+        data = request.json
+        if not data:
+            response_body['message'] = 'Please provide the information to update'
+            return response_body, 400
+        if data['name']:
+            specialization.name = data['name']
+        if data['description']:
+            specialization.description = data['description']
+        if data['logo_url']:
+            specialization.logo_url = data['logo_url']
+        db.session.add(specialization)
+        db.session.commit()
+        response_body['message'] = 'Specialization updated successfully!'
+        response_body['results'] = {'Updated specialization data': specialization.serialize()}
+        return response_body,200
+    if request.method == 'DELETE':
+        trainer_specialization = db.session.query(TrainersSpecializations). filter_by(specialization_id=id).first()
+        if trainer_specialization:
+            response_body['message'] = 'Specialization connected with trainer cannot be deleted!'
+            return response_body,400
+        db.session.delete(specialization)
+        db.session.commit()
+        response_body['message'] = f'Specialization {str(id)} successfully deleted'
+        return response_body, 200
+
+
+# Obtener una specialization
+@api.route('/specializations/<int:id>', methods=['GET'])
+@jwt_required()
+def handle_specialization_request(id):
+    response_body = {}
+    specialization = db.session.query(Specializations).filter_by(id=id).first()
+    if not specialization:
+        response_body['message'] = f'No specialization found with id of {str(id)}!'
+        return response_body, 404
+    response_body['message'] = 'Specialization details: '
+    response_body['results'] = specialization.serialize()
+    return response_body, 200
