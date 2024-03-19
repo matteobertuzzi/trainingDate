@@ -12,6 +12,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
+    gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
@@ -24,6 +25,7 @@ class Users(db.Model):
                 'email': self.email,
                 'address': self.address,
                 'phone_number': self.phone_number,
+                'gender': self.gender,
                 'is_active': self.is_active}
 
 
@@ -35,6 +37,7 @@ class Trainers(db.Model):
         address = db.Column(db.String(120), unique=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
         phone_number = db.Column(db.String(20), unique=False)
+        gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
         website_url = db.Column(db.String(100), unique=False)
         instagram_url = db.Column(db.String(100), unique=False)
         facebook_url = db.Column(db.String(100), unique=False)
@@ -54,6 +57,7 @@ class Trainers(db.Model):
                     'email': self.email,
                     'address': self.address,
                     'phone_number': self.phone_number,
+                    'gender': self.gender,
                     'website_url': self.website_url,
                     'instagram_url': self.instagram_url,
                     'facebook_url': self.facebook_url,
@@ -101,13 +105,13 @@ class TrainersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         address = db.Column(db.String(100), unique=False, nullable=False)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
+        # TODO: Hacemos start time y end time?
         duration = db.Column(db.Integer, unique=False)
         date = db.Column(db.DateTime, unique=False, nullable=False)
         price = db.Column(db.Integer, unique=False, nullable=False)
         training_level = db.Column(db.Enum("Beginner", "Intermediate", "Advanced", name="training_level"), unique=False)
         training_type = db.Column(db.Integer, db.ForeignKey("specializations.id"))
         specialization = db.relationship("Specializations", foreign_keys=[training_type])
-        # Establece una relación bidireccional entre Trainers y TrainersClasses, donde puedo acceder a las clases asociadas a un entrenador utilizando trainer.classes
         trainer_id = db.Column(db.Integer, db.ForeignKey("trainers.id"))
         trainer = db.relationship('Trainers', backref=db.backref('classes', lazy=True)) 
 
@@ -168,6 +172,6 @@ class TrainersSpecializations(db.Model):
                     'specialization': self.specialization_id,
                     'trainer': self.trainer_id,
                     'certification': self.certification,
-                    'status': self.status,}
+                    'status': self.status}
 
 
