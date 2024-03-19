@@ -665,6 +665,10 @@ def handle_trainer_specializations(id):
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
+            specialization = db.session.query(Specializations).filter_by(id = data['specialization_id']).first()
+            if not specialization:
+                response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' does not exist!'
+                return response_body, 404
             trainer_specialization = db.session.query(TrainersSpecializations).filter_by(specialization_id = data['specialization_id']).first()
             if trainer_specialization:
                 response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' already exist!'
