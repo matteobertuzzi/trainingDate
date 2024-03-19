@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: fe45a7e0b661
+Revision ID: a27bc4df1db2
 Revises: 
-Create Date: 2024-03-14 19:56:47.918563
+Create Date: 2024-03-19 16:20:31.940367
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fe45a7e0b661'
+revision = 'a27bc4df1db2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -42,7 +42,8 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('address', sa.String(length=120), nullable=True),
     sa.Column('password', sa.String(length=80), nullable=False),
-    sa.Column('phone_number', sa.Integer(), nullable=True),
+    sa.Column('phone_number', sa.String(length=20), nullable=True),
+    sa.Column('gender', sa.Enum('Male', 'Female', 'Not Specified', name='gender'), nullable=False),
     sa.Column('website_url', sa.String(length=100), nullable=True),
     sa.Column('instagram_url', sa.String(length=100), nullable=True),
     sa.Column('facebook_url', sa.String(length=100), nullable=True),
@@ -52,10 +53,7 @@ def upgrade():
     sa.Column('sum_value', sa.Integer(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('address'),
-    sa.UniqueConstraint('bank_iban'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone_number')
+    sa.UniqueConstraint('email')
     )
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -64,12 +62,11 @@ def upgrade():
     sa.Column('address', sa.String(length=120), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password', sa.String(length=128), nullable=False),
-    sa.Column('phone_number', sa.Integer(), nullable=True),
+    sa.Column('phone_number', sa.String(length=20), nullable=True),
+    sa.Column('gender', sa.Enum('Male', 'Female', 'Not Specified', name='gender'), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('address'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone_number')
+    sa.UniqueConstraint('email')
     )
     op.create_table('trainers_classes',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -83,8 +80,7 @@ def upgrade():
     sa.Column('trainer_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['trainer_id'], ['trainers.id'], ),
     sa.ForeignKeyConstraint(['training_type'], ['specializations.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('date')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('trainers_specializations',
     sa.Column('id', sa.Integer(), nullable=False),

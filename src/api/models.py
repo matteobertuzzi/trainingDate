@@ -12,6 +12,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
+    gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
@@ -24,6 +25,7 @@ class Users(db.Model):
                 'email': self.email,
                 'address': self.address,
                 'phone_number': self.phone_number,
+                'gender': self.gender,
                 'is_active': self.is_active}
 
 
@@ -35,6 +37,7 @@ class Trainers(db.Model):
         address = db.Column(db.String(120), unique=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
         phone_number = db.Column(db.String(20), unique=False)
+        gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
         website_url = db.Column(db.String(100), unique=False)
         instagram_url = db.Column(db.String(100), unique=False)
         facebook_url = db.Column(db.String(100), unique=False)
@@ -54,6 +57,7 @@ class Trainers(db.Model):
                     'email': self.email,
                     'address': self.address,
                     'phone_number': self.phone_number,
+                    'gender': self.gender,
                     'website_url': self.website_url,
                     'instagram_url': self.instagram_url,
                     'facebook_url': self.facebook_url,
