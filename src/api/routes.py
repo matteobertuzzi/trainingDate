@@ -19,6 +19,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
+
 @api.route('/mail')
 def send_mail():
     msg = Message('Test mail', sender='ac714f6759c8ed', recipients=['matteo.bertuzzi@icloud.com'])
@@ -322,6 +323,302 @@ def handle_user(id):
     if current_user['role'] == 'users' and current_user['id'] != id or current_user['role'] != 'administrators' and current_user['id'] != id:
         response_body['message'] = 'Not allowed!'
         return response_body, 405
+=======
+@api.route('/users', methods=['GET'])
+@jwt_required()
+def handle_users():
+    response_body = {}
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    users = db.session.query(Users).all()
+    if not users:
+        response_body['message'] = 'No users currently registered'
+        return response_body,404
+    response_body['message'] = 'Users currently registered'
+    response_body['results'] = [single_user.serialize() for single_user in users]
+    return response_body, 200
+
+
+@api.route('/users', methods=['POST'])
+def handle_signup_user():
+    response_body = {}
+    if request.method == 'POST':
+        data = request.json
+        if not data:
+            response_body["message"] = "No data provided"
+            return response_body, 400
+        required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
+        user = db.session.query(Users).filter(Users.email == data["email"].lower()).first()
+        if user:
+            response_body["message"] = "User email already exists!"
+            return response_body, 409
+        password = data["password"]
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_user = Users(email=data["email"].lower(), 
+                         password=hashed_password, 
+                         name=data["name"], 
+                         last_name=data["last_name"],
+                         address=data["address"],
+                         phone_number=data["phone_number"],
+                         is_active=True)
+        db.session.add(new_user)
+        db.session.commit()
+        response_body["message"] = "User create successfully"
+        response_body["user"] = new_user.serialize()
+        return response_body, 200
+
+
+@api.route('/trainers', methods=['GET'])
+@jwt_required()
+def handle_trainers():
+    response_body = {}
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    trainers = db.session.query(Trainers).all()
+    if not trainers:
+        response_body['message'] = 'No trainers currently registered'
+        return response_body,404
+    response_body['message'] = 'Trainers currently registered'
+    response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
+    return response_body, 200
+
+
+@api.route('/trainers', methods=['POST'])
+def handle_signup_trainer():
+    response_body = {}
+    if request.method == 'POST':
+        data = request.json
+        if not data:
+            response_body["message"] = "No data provided"
+            return response_body, 400
+        required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'bank_iban']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
+        trainer = db.session.query(Trainers).filter(Trainers.email == data["email"].lower()).first()
+        if trainer:
+            if trainer.email == data["email"]:
+                response_body["message"] = "Trainer already exists with this email!"
+                return response_body, 409
+        password = data["password"]
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_trainer = Trainers(email=data["email"].lower(),
+                               password=hashed_password,
+                               name=data["name"],
+                               last_name=data["last_name"],
+                               address=data["address"],
+                               phone_number=data["phone_number"],
+                               website_url=data.get("website_url"),
+                               instagram_url=data.get("instagram_url"),
+                               facebook_url=data.get("facebook_url"),
+                               x_url=data.get("x_url"),
+                               bank_iban=data["bank_iban"],
+                               vote_user=0,
+                               sum_value=0,
+                               is_active=True)
+        db.session.add(new_trainer)
+        db.session.commit()
+        response_body["message"] = "Trainer create successfully"
+        response_body["trainer"] = new_trainer.serialize()
+        # TODO: Generar el token para que se logee en automatico
+        return response_body, 200
+
+
+@api.route('/administrators', methods=['GET'])
+@jwt_required()
+def handle_admins():
+    response_body = {}
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    admins = db.session.query(Administrators).all()
+    if not admins:
+        response_body['message'] = 'No administrators currently registered'
+        return response_body,404
+    response_body['message'] = 'Administrators currently registered'
+    response_body['results'] = [single_admin.serialize() for single_admin in admins]
+    return response_body, 200
+
+
+@api.route('/administrators', methods=['POST'])
+@jwt_required()
+def handle_admin_signup():
+    response_body = {}
+    # TODO: Validar que en el token tenga un admin, si no es admin se retorna un 405
+    current_user = get_jwt_identity()
+    print(current_user['email'])
+    print(current_user['role'])
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    if request.method == 'POST':
+        data = request.json
+        if not data:
+            response_body["message"] = "No data provided"
+            return response_body, 400
+        required_fields = ['email', 'password', 'name']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
+        admin = db.session.query(Administrators).filter(Administrators.email == data['email'].lower()).first()
+        if admin:
+            response_body['message'] = 'Admin already exists'
+            return response_body, 409
+        password = data["password"]
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_admin = Administrators(name=data['name'], 
+                                   email=data['email'].lower(), 
+                                   password=hashed_password, 
+                                   is_active=True)
+        db.session.add(new_admin)
+        db.session.commit()
+        response_body['message'] = 'Admin successfully created!'
+        response_body['results'] = new_admin.serialize()
+        return response_body, 200
+
+
+@api.route('/specializations', methods=["POST"])
+@jwt_required()
+def add_specializations():
+    response_body = {}
+    specializations = db.session.query(Specializations).all()
+    current_user = get_jwt_identity()
+    if not current_user['role'] == 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
+    data = request.json
+    if not data:
+        response_body["message"] = "No data provided"
+        return response_body, 400
+    if 'name' not in data:
+        response_body["message"] = "The 'name' field is required."
+        return response_body, 400
+    if any(specialization.name == data["name"].lower() for specialization in specializations):
+        response_body["message"] = "Specialization already exists"
+        return response_body, 400
+    new_specialization = Specializations(name=data["name"].lower(), 
+                                         description=data.get("description"), 
+                                         logo_url=data.get("logo_url"))
+                                         description=data.get("description"), 
+                                         logo_url=data.get("logo_url"))
+    db.session.add(new_specialization)
+    db.session.commit()
+    response_body["message"] = "Specialization created"
+    response_body["specialization"] = new_specialization.serialize()
+    return response_body, 201
+    
+
+@api.route('/specializations', methods=['GET'])
+@jwt_required()
+def get_specializations():
+    response_body = {}
+    specializations = db.session.query(Specializations).all()
+    if not specializations:
+            response_body["message"] = "No specializations available"
+            return response_body, 404
+    response_body["message"] = "Specializations available"
+    response_body["specializations"] = [specialization.serialize() for specialization in specializations]
+    return response_body, 200
+
+
+@api.route('/login/<user_type>', methods=['POST'])
+def handle_login(user_type):
+    response_body = {}
+    data = request.json
+    if not data:
+        response_body["message"] = "No data provided"
+        return response_body, 400
+    if "email" not in data:
+        response_body["message"] = "Email is required"
+        return response_body, 400
+    if "password" not in data:
+        response_body["message"] = "Password is required"
+        return response_body, 400
+    if user_type not in ['users', 'trainers', 'administrators']:
+        response_body['message'] = 'Invalid user type'
+        return response_body, 400
+    if user_type == 'users':
+        user = db.session.query(Users).filter_by(email=data['email'].lower()).first()
+        if not user:
+            response_body['message'] = f'{user_type.capitalize()} not found'
+            return response_body, 401
+        password = data['password']
+        if not bcrypt.check_password_hash(user.password, password):
+            response_body['message'] = f'Wrong password for email {user.email}'
+            return response_body, 401
+        access_token = create_access_token(identity={"user": user.email,
+                                                     "role": user_type,
+                                                     "id": user.id})
+        response_body['message'] = 'Successfully logged in!'
+        response_body['results'] = {"user": user.serialize(), 
+                                    "role": user_type}
+        response_body['access_token'] = access_token
+        return response_body, 200
+    elif user_type == 'trainers':
+        trainer = db.session.query(Trainers).filter_by(email=data['email'].lower()).first()
+        if not trainer:
+            response_body['message'] = f'{user_type.capitalize()} not found'
+            return response_body, 401
+        password = data['password']
+        if not bcrypt.check_password_hash(trainer.password, password):
+            response_body['message'] = f'Wrong password for email {trainer.email}'
+            return response_body, 401
+        access_token = create_access_token(identity={"trainer": trainer.email,
+                                                     "role": user_type,
+                                                     "id": trainer.id})
+        response_body['message'] = 'Successfully logged in!'
+        response_body['results'] = {"trainer": trainer.serialize(), 
+                                    "role": user_type}
+        response_body['access_token'] = access_token
+        return response_body, 200
+    elif user_type == 'administrators':
+        administrator = db.session.query(Administrators).filter_by(email=data['email'].lower()).first()
+        if not administrator:
+            response_body['message'] = f'{user_type.capitalize()} not found'
+            return response_body, 401
+        password = data['password']
+        if not bcrypt.check_password_hash(administrator.password, password):
+            response_body['message'] = f'Wrong password for email {administrator.email}'
+            return response_body, 401
+        access_token = create_access_token(identity={"administrator": administrator.email,
+                                                     "role": user_type,
+                                                     "id": administrator.id})
+        response_body['message'] = 'Successfully logged in!'
+        response_body['results'] = {"administrator": administrator.serialize(), 
+                                    "role": user_type}
+        response_body['access_token'] = access_token
+        return response_body, 200
+
+
+@api.route("/protected/<user_type>", methods=["GET"])
+@jwt_required()
+def protected_route(user_type):
+    response_body = {}
+    current_user = get_jwt_identity()
+    if not current_user:
+        response_body['message'] = 'Access denied!'
+        return response_body, 401
+    if user_type not in ['users', 'trainers', 'administrators']:
+        response_body['message'] = 'Invalid user type!'
+        return response_body, 400
+    response_body['message'] = f'Logged in as {current_user}'
+    return response_body, 200
+
+
+@api.route('/users/<int:id>', methods=["GET", "DELETE", "PATCH"])
+@jwt_required()
+def handle_user(id):
+    response_body = {}
     user = Users.query.get(id)
     if not user:
         response_body["message"] = "User not found"
@@ -445,6 +742,10 @@ def handle_user_classes(id):
     user = Users.query.get(id)
     classes_user = UsersClasses.query.filter_by(user_id=id).all()
     classes_trainer = TrainersClasses.query.get(id)
+    current_user = get_jwt_identity()
+    if current_user['role'] not in ['administrators', 'users'] or current_user['id'] != user.id:
+        response_body["message"] = 'Not allowed!'
+        return response_body, 405
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -471,14 +772,12 @@ def handle_user_classes(id):
         if not trainer_class:
             response_body["message"] = "No Trainer class available"
             return response_body, 404
-        new_class = UsersClasses(
-            amount=data["amount"], 
-            stripe_status="Cart", 
-            trainer_status="Pending", 
-            value=0,
-            user_id=id,
-            class_id=data["class_id"]
-        )
+        new_class = UsersClasses(amount=data["amount"], 
+                                 stripe_status= "Cart", 
+                                 trainer_status= "Pending", 
+                                 value=0,
+                                 user_id=id,
+                                 class_id=data["class_id"])
         db.session.add(new_class)
         db.session.commit()
         response_body["message"] = "Class added"
@@ -492,6 +791,7 @@ def handle_trainer_classes(id):
     response_body = {}
     trainer = Trainers.query.get(id)
     classes_trainer = TrainersClasses.query.filter_by(trainer_id=id).all()
+    current_user = get_jwt_identity()
     if not trainer:
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -503,6 +803,9 @@ def handle_trainer_classes(id):
         response_body["Trainer classes"] = [class_trainer.serialize() for class_trainer in classes_trainer]
         return response_body, 200
     if request.method == "POST":
+        if (current_user['role'] == 'trainers' and current_user['id'] != trainer.id) or (current_user["role"] != "administrators"):
+            response_body["message"] = 'Not allowed!'
+            return response_body, 405
         data = request.json
         if not data:
             response_body["message"] = "No data provided"
@@ -511,16 +814,14 @@ def handle_trainer_classes(id):
         if existing_class:
             response_body["message"] = "Trainer class already exists for this datetime"
             return response_body, 400
-        new_trainer_class = TrainersClasses(
-            trainer_id=id, 
-            address=data["address"], 
-            capacity=data["capacity"], 
-            duration=data["duration"],
-            date=data["date"],
-            price=data["price"],
-            training_type=data["training_type"],
-            training_level=data["training_level"]
-        )
+        new_trainer_class = TrainersClasses(trainer_id=id, 
+                                            address=data["address"], 
+                                            capacity=data["capacity"], 
+                                            duration=data["duration"],
+                                            date=data["date"],
+                                            price=data["price"],
+                                            training_type=data["training_type"],
+                                            training_level=data["training_level"])
         db.session.add(new_trainer_class)
         db.session.commit()
         response_body["message"] = "New class create"
@@ -534,6 +835,7 @@ def handle_trainer_class(id, class_id):
     response_body = {}
     trainer = Trainers.query.get(id)
     trainer_class = TrainersClasses.query.filter(TrainersClasses.trainer_id == id, TrainersClasses.id == class_id).first()
+    current_user = get_jwt_identity()
     if not trainer: 
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -544,36 +846,39 @@ def handle_trainer_class(id, class_id):
         response_body["message"] = "Trainer class"
         response_body["class"] = trainer_class.serialize()
         return response_body, 200
-    if request.method == "DELETE":
-        # No hace cancelar las classes si hay usuarios apuntados a ella
-        classes_user = UsersClasses.query.filter_by(class_id=class_id).all()
-        if classes_user:
-            response_body["message"] = "Unable to delete class, it has associated users"
-            return response_body, 400
-        db.session.delete(trainer_class)
-        db.session.commit()
-        response_body["message"] = "Class deleted successfully"
-        response_body["class"] = trainer_class.serialize()
-        return response_body, 200
-    if request.method == "PATCH":
-        data = request.json
-        if not data:
-            response_body["message"] = "No data provided for update"
-            return response_body, 400
-        if 'address' in data:
-            trainer_class.address = data["address"]
-        if 'duration' in data:
-            trainer_class.duration = data["duration"]
-        if 'date' in data:
-            trainer_class.date = data["date"]
-        if 'price' in data:
-            trainer_class.price = data["price"]
-        db.session.add(trainer_class)
-        db.session.commit()
-        response_body["message"] = "Class update"
-        response_body["result"] = trainer_class.serialize()
-        return response_body, 200
-            
+    if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
+        if request.method == "DELETE":
+            # No hace cancelar las classes si hay usuarios apuntados a ella
+            classes_user = UsersClasses.query.filter_by(class_id=class_id).all()
+            if classes_user:
+                response_body["message"] = "Unable to delete class, it has associated users"
+                return response_body, 400
+            db.session.delete(trainer_class)
+            db.session.commit()
+            response_body["message"] = "Class deleted successfully"
+            response_body["class"] = trainer_class.serialize()
+            return response_body, 200
+        if request.method == "PATCH":
+            data = request.json
+            if not data:
+                response_body["message"] = "No data provided for update"
+                return response_body, 400
+            if 'address' in data:
+                trainer_class.address = data["address"]
+            if 'duration' in data:
+                trainer_class.duration = data["duration"]
+            if 'date' in data:
+                trainer_class.date = data["date"]
+            if 'price' in data:
+                trainer_class.price = data["price"]
+            db.session.add(trainer_class)
+            db.session.commit()
+            response_body["message"] = "Class update"
+            response_body["result"] = trainer_class.serialize()
+            return response_body, 200
+    response_body["message"] = 'Not allowed!'
+    return response_body, 405
+
 
 @api.route('/users/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE"])
 @jwt_required()
@@ -585,6 +890,10 @@ def handle_user_class(id, class_id):
     user_class = UsersClasses.query.filter_by(user_id=id, class_id=class_id).first()
     # Buscar la clase del entrenador por ID de clase
     trainer_class = TrainersClasses.query.get(class_id)
+    current_user = get_jwt_identity()
+    if (current_user['role'] == 'users' and current_user['id'] != user.id) or (current_user["role"] != "administrators"):
+            response_body["message"] = 'Not allowed!'
+            return response_body, 405
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -606,7 +915,6 @@ def handle_user_class(id, class_id):
         return response_body, 200
 
 
-# New endpoint to GET and CREATE TrainersSpecializations
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
 @jwt_required()
 def handle_trainers_specializations(id):
@@ -636,12 +944,10 @@ def handle_trainers_specializations(id):
         if not specialization:
             response_body['message'] = 'No specialization with id ' + data['specialization_id'] + ' !'
             return response_body, 404
-        new_trainer_specialization = TrainersSpecializations(
-            certification = data['certification'],
-            status = "Requested",
-            specialization_id = data['specialization_id'],  
-            trainer_id = id
-        )
+        new_trainer_specialization = TrainersSpecializations(certification = data['certification'],
+                                                             status = "Requested",
+                                                             specialization_id = data['specialization_id'],  
+                                                             trainer_id = id)
         db.session.add(new_trainer_specialization)
         db.session.commit()
         response_body['message'] = 'New specialization connected with trainer ' + str(id)
