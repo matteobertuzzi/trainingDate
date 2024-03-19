@@ -16,7 +16,3 @@ def setup_admin(app):
     admin.add_view(ModelView(TrainersClasses, db.session))
     admin.add_view(ModelView(UsersClasses, db.session))
     admin.add_view(ModelView(TrainersSpecializations, db.session))
-    
- 
-
-    
