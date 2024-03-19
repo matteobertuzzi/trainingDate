@@ -8,10 +8,10 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=False)
     last_name = db.Column(db.String(100), unique=False)
-    address = db.Column(db.String(120), unique=True)
+    address = db.Column(db.String(120), unique=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    phone_number = db.Column(db.Integer, unique=True)
+    phone_number = db.Column(db.String(20), unique=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
@@ -32,14 +32,14 @@ class Trainers(db.Model):
         name = db.Column(db.String(100), unique=False)
         last_name = db.Column(db.String(100), unique=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
-        address = db.Column(db.String(120), unique=True)
+        address = db.Column(db.String(120), unique=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
-        phone_number = db.Column(db.Integer, unique=True)
+        phone_number = db.Column(db.String(20), unique=False)
         website_url = db.Column(db.String(100), unique=False)
         instagram_url = db.Column(db.String(100), unique=False)
         facebook_url = db.Column(db.String(100), unique=False)
         x_url = db.Column(db.String(100), unique=False)
-        bank_iban = db.Column(db.String(34), unique=True, nullable=False)
+        bank_iban = db.Column(db.String(34), unique=False, nullable=False)
         vote_user = db.Column(db.Integer)
         sum_value = db.Column(db.Integer)
         is_active = db.Column(db.Boolean(), unique=False, nullable=False)
@@ -54,10 +54,13 @@ class Trainers(db.Model):
                     'email': self.email,
                     'address': self.address,
                     'phone_number': self.phone_number,
+                    'website_url': self.website_url,
+                    'instagram_url': self.instagram_url,
+                    'facebook_url': self.facebook_url,
+                    'x_url': self.x_url,
                     'iban' : self.bank_iban,
                     'value': self.sum_value,
-                    'is_active': self.is_active,
-                    }
+                    'is_active': self.is_active}
 
 
 class Administrators(db.Model):
@@ -74,8 +77,7 @@ class Administrators(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'email': self.email,
-                    'isactive': self.is_active
-                    }
+                    'isactive': self.is_active}
 
 
 class Specializations(db.Model):
@@ -91,8 +93,7 @@ class Specializations(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'description': self.description,
-                    'logo': self.logo_url
-                    }
+                    'logo': self.logo_url}
 
 
 class TrainersClasses(db.Model):
@@ -122,8 +123,7 @@ class TrainersClasses(db.Model):
                     'date': self.date,
                     'price': self.price,
                     'training_type': self.training_type,
-                    'training_level': self.training_level
-                    }
+                    'training_level': self.training_level}
     
 
 class UsersClasses(db.Model):
@@ -147,8 +147,7 @@ class UsersClasses(db.Model):
                     'class': self.class_id,
                     'amount': self.amount,
                     'stripe_status': self.stripe_status,
-                    'trainer_status': self.trainer_status
-                    }
+                    'trainer_status': self.trainer_status}
 
 
 class TrainersSpecializations(db.Model):
@@ -169,5 +168,6 @@ class TrainersSpecializations(db.Model):
                     'specialization': self.specialization_id,
                     'trainer': self.trainer_id,
                     'certification': self.certification,
-                    'status': self.status,
-                    }
+                    'status': self.status,}
+
+
