@@ -11,6 +11,8 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from api.models import db
 from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
+from flask_mail import Mail
 
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -26,6 +28,15 @@ if db_url is not None:
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Flask_mail configuration
+app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = 'ac714f6759c8ed'
+app.config['MAIL_PASSWORD'] = '79f907bd0b58c5'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
+
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 # Other configuration
@@ -33,7 +44,7 @@ setup_admin(app)  # Add the admin
 setup_commands(app)  # Add the admin
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
-# Setup the Flask-JWT-Extended extension
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 
 
