@@ -256,7 +256,8 @@ def handle_login(user_type):
             response_body['message'] = f'Wrong password for email {user.email}'
             return response_body, 401
         access_token = create_access_token(identity={"user": user.email,
-                                                     "role": user_type})
+                                                     "role": user_type,
+                                                     "id": user.id})
         response_body['message'] = 'Successfully logged in!'
         response_body['results'] = {"user": user.serialize(), 
                                     "role": user_type}
@@ -272,7 +273,8 @@ def handle_login(user_type):
             response_body['message'] = f'Wrong password for email {trainer.email}'
             return response_body, 401
         access_token = create_access_token(identity={"trainer": trainer.email,
-                                                     "role": user_type})
+                                                     "role": user_type,
+                                                     "id": trainer.id})
         response_body['message'] = 'Successfully logged in!'
         response_body['results'] = {"trainer": trainer.serialize(), 
                                     "role": user_type}
@@ -288,7 +290,8 @@ def handle_login(user_type):
             response_body['message'] = f'Wrong password for email {administrator.email}'
             return response_body, 401
         access_token = create_access_token(identity={"administrator": administrator.email,
-                                                     "role": user_type})
+                                                     "role": user_type,
+                                                     "id": administrator.id})
         response_body['message'] = 'Successfully logged in!'
         response_body['results'] = {"administrator": administrator.serialize(), 
                                     "role": user_type}
@@ -315,6 +318,10 @@ def protected_route(user_type):
 @jwt_required()
 def handle_user(id):
     response_body = {}
+    current_user = get_jwt_identity()
+    if current_user['role'] == 'users' and current_user['id'] != id or current_user['role'] != 'administrators' and current_user['id'] != id:
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     user = Users.query.get(id)
     if not user:
         response_body["message"] = "User not found"
@@ -351,6 +358,10 @@ def handle_user(id):
 @jwt_required()
 def handle_trainer(id):
     response_body= {}
+    current_user = get_jwt_identity()
+    if (current_user['role'] == 'trainers' and current_user['id'] != id) or (current_user['role'] != 'administrators') and current_user['id'] != id:
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     trainer = Trainers.query.get(id)
     if not trainer:
         response_body["message"] = "Trainer not found"
@@ -396,6 +407,10 @@ def handle_trainer(id):
 @jwt_required()
 def handle_administrator(id):
     response_body = {}
+    current_user = get_jwt_identity()
+    if current_user['role'] == 'administrators' and current_user['id'] != id or current_user['role'] != 'administrators':
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     administrator = Administrators.query.get(id)
     if not administrator:
         response_body["message"] = "Admin not found"
@@ -596,6 +611,10 @@ def handle_user_class(id, class_id):
 @jwt_required()
 def handle_trainers_specializations(id):
     response_body = {}
+    current_user = get_jwt_identity()
+    if current_user['role'] == 'trainers' and current_user['id'] != id or current_user['role'] != 'administrators' and current_user['id'] != id:
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     trainer = db.session.query(Trainers).filter_by(id = id).first()
     if not trainer:
         response_body['message'] = f'No trainer with trainer id {str(id)} found!'
