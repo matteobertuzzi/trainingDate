@@ -168,6 +168,6 @@ class TrainersSpecializations(db.Model):
                     'specialization': self.specialization_id,
                     'trainer': self.trainer_id,
                     'certification': self.certification,
-                    'status': self.status,}
+                    'status': self.status}
 
 

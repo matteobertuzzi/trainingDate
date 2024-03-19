@@ -323,7 +323,7 @@ def handle_user(id):
     if current_user['role'] == 'users' and current_user['id'] != id or current_user['role'] != 'administrators' and current_user['id'] != id:
         response_body['message'] = 'Not allowed!'
         return response_body, 405
-=======
+
 @api.route('/users', methods=['GET'])
 @jwt_required()
 def handle_users():
@@ -507,8 +507,6 @@ def add_specializations():
         response_body["message"] = "Specialization already exists"
         return response_body, 400
     new_specialization = Specializations(name=data["name"].lower(), 
-                                         description=data.get("description"), 
-                                         logo_url=data.get("logo_url"))
                                          description=data.get("description"), 
                                          logo_url=data.get("logo_url"))
     db.session.add(new_specialization)
