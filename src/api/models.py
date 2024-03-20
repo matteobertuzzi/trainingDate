@@ -105,7 +105,6 @@ class TrainersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         address = db.Column(db.String(100), unique=False, nullable=False)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
-        # TODO: Hacemos start time y end time?
         start_date = db.Column(db.DateTime, unique=False, nullable=False)
         end_date = db.Column(db.DateTime, unique=False, nullable=False)
         price = db.Column(db.Integer, unique=False, nullable=False)
@@ -135,7 +134,7 @@ class UsersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         amount = db.Column(db.Integer, unique=False, nullable=False)
         stripe_status = db.Column(db.Enum("Cart", "Paid", "Reject", name="stripe_status"), nullable=False)
-        trainer_status = db.Column(db.Enum("Paid", "Pending", name=" trainer_status"), nullable=False)
+        trainer_status = db.Column(db.Enum("Paid", "Pending", name="trainer_status"), nullable=False)
         value = db.Column(db.Boolean())
         user_id = db.Column(db.Integer, db.ForeignKey("users.id")) 
         user = db.relationship("Users", foreign_keys=[user_id])
