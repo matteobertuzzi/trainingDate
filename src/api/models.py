@@ -105,7 +105,6 @@ class TrainersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         address = db.Column(db.String(100), unique=False, nullable=False)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
-        # TODO: Hacemos start time y end time?
         duration = db.Column(db.Integer, unique=False)
         date = db.Column(db.DateTime, unique=False, nullable=False)
         price = db.Column(db.Integer, unique=False, nullable=False)

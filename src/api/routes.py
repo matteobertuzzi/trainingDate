@@ -530,7 +530,6 @@ def handle_trainer_classes(id):
             if not trainers_specializations:
                 response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
                 return response_body, 400
-            # TODO: Hacer comprobacion horaria? y poner en los modelos inicio y fin?
             existing_class = db.session.query(TrainersClasses).filter_by(date = data['date']).first()
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
@@ -556,6 +555,7 @@ def handle_trainer_classes(id):
 @api.route('/trainers/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE", "PATCH"])
 @jwt_required()
 def handle_trainer_class(id, class_id):
+    
     response_body = {}
     trainer = Trainers.query.get(id)
     current_user = get_jwt_identity()
