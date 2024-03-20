@@ -26,6 +26,10 @@ mail = Mail()
 def confirm_registration(token):
     # Verificar si el token de confirmación es válido
     # Si es válido, marcar al usuario como confirmado en la base de datos
+    response_body = {}
+    if not token:
+        response_body['message'] = 'Security token missing!'
+        return response_body,400
     user = db.session.query(Users).filter_by(confirmation_token=token).first()
     if user:
         user.is_active = True  # Marcar al usuario como activo
@@ -84,6 +88,12 @@ def handle_password_reset_email(user_email, user_type, reset_token):
 @api.route('/resetpassword/<string:user_type>/<string:token>', methods=['PATCH'])
 def handle_reset_password(user_type, token):
     response_body = {}
+    if not token:
+        response_body['message'] = 'Security token missing!'
+        return response_body,400
+    if not user_type:
+        response_body['message'] = 'User type missing!'
+        return response_body,400
     if user_type == 'users':
         current_user = db.session.query(Users).filter_by(reset_token=token).first()
     if user_type == 'trainers':
@@ -102,6 +112,7 @@ def handle_reset_password(user_type, token):
         return response_body,400
     current_user.password = data['password']
     current_user.reset_token = None
+    db.session.commit()
     response_body['message'] = f'Password for {current_user.email} successfully reset!'
     return response_body,200
 
@@ -180,7 +191,7 @@ def handle_send_email(user_email, confirmation_token):
             <head></head>
             <body>
                 <h2>Welcome to Fitness App</h2>
-                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
+                <p>Please click the following button to access your dashboard.</p>
                 <button><a href={href_content}>Click Here</a></button>
             </body>
             </html>
@@ -359,7 +370,7 @@ def handle_send_email(admin_email, confirmation_token):
             </body>
             </html>
                     '''
-    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[trainer_email])
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[admin_email])
     msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
     msg.html = html_content
     mail.send(msg)
