@@ -21,6 +21,20 @@ CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
 mail = Mail()
 
+
+@api.route('/confirm/<string:token>', methods=['GET'])
+def confirm_registration(token):
+    # Verificar si el token de confirmación es válido
+    # Si es válido, marcar al usuario como confirmado en la base de datos
+    user = db.session.query(Users).filter_by(confirmation_token=token).first()
+    if user:
+        user.is_active = True  # Marcar al usuario como activo
+        user.confirmation_token = None  # Eliminar el token de confirmación
+        db.session.commit()
+        return redirect('https://www.google.com/'),200  # Redirigir al usuario a la página de inicio de sesión
+    else:
+        return jsonify({'message': 'Invalid confirmation token'}), 400
+
 # Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
 @jwt_required()
@@ -89,13 +103,15 @@ def handle_send_email(user_email, confirmation_token):
     if not confirmation_token:
         response_body['message'] = 'Access token is mandatory!'
         return response_body, 400
-    html_content = '''
+    # Add endpoint url
+    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/{confirmation_token}'
+    html_content = f'''
             <html>
             <head></head>
             <body>
                 <h2>Welcome to Fitness App</h2>
                 <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
-                <button><a href="{url_for('api.confirm_registration', token=confirmation_token, _external=True)}">Click Here</a></button>
+                <button><a href={href_content}>Click Here</a></button>
             </body>
             </html>
                     '''
@@ -105,20 +121,6 @@ def handle_send_email(user_email, confirmation_token):
     mail.send(msg)
     response_body['message'] = 'Email sent! Wait for confirmation.'
     return response_body, 200
-
-
-@api.route('/confirm/<token>', methods=['GET'])
-def confirm_registration(token):
-    # Verificar si el token de confirmación es válido
-    # Si es válido, marcar al usuario como confirmado en la base de datos
-    user = db.session.query(Users).filter_by(confirmation_token=token).first()
-    if user:
-        user.is_active = True  # Marcar al usuario como activo
-        user.confirmation_token = None  # Eliminar el token de confirmación
-        db.session.commit()
-        return redirect(url_for('login'))  # Redirigir al usuario a la página de inicio de sesión
-    else:
-        return jsonify({'message': 'Invalid confirmation token'}), 400
 
 
 # Mostrar los entrenadores disponibles
