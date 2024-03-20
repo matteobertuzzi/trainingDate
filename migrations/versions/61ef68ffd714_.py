@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c89536608f4f
+Revision ID: 61ef68ffd714
 Revises: 
-Create Date: 2024-03-20 17:43:39.891857
+Create Date: 2024-03-20 21:15:51.814467
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c89536608f4f'
+revision = '61ef68ffd714'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,8 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password', sa.String(length=80), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('confirmation_token', sa.String(length=80), nullable=True),
+    sa.Column('reset_token', sa.String(length=80), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -52,6 +54,8 @@ def upgrade():
     sa.Column('vote_user', sa.Integer(), nullable=True),
     sa.Column('sum_value', sa.Integer(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('confirmation_token', sa.String(length=80), nullable=True),
+    sa.Column('reset_token', sa.String(length=80), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -66,6 +70,7 @@ def upgrade():
     sa.Column('gender', sa.Enum('Male', 'Female', 'Not Specified', name='gender'), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('confirmation_token', sa.String(length=80), nullable=True),
+    sa.Column('reset_token', sa.String(length=80), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )

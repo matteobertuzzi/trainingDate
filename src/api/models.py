@@ -15,6 +15,7 @@ class Users(db.Model):
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     confirmation_token = db.Column(db.String(80))
+    reset_token = db.Column(db.String(80))
 
     def __repr__(self):
         return f'<User: {self.id} - Email: {self.email}>'
@@ -28,7 +29,8 @@ class Users(db.Model):
                 'phone_number': self.phone_number,
                 'gender': self.gender,
                 'is_active': self.is_active,
-                'confirmation_token': self.confirmation_token}
+                'confirmation_token': self.confirmation_token,
+                'reset_token': self.reset_token}
 
 
 class Trainers(db.Model):
@@ -48,6 +50,8 @@ class Trainers(db.Model):
         vote_user = db.Column(db.Integer)
         sum_value = db.Column(db.Integer)
         is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+        confirmation_token = db.Column(db.String(80))
+        reset_token = db.Column(db.String(80))
 
         def __repr__(self):
             return f'<Trainer: {self.id} - Email: {self.email}>'
@@ -66,7 +70,9 @@ class Trainers(db.Model):
                     'x_url': self.x_url,
                     'iban' : self.bank_iban,
                     'value': self.sum_value,
-                    'is_active': self.is_active}
+                    'is_active': self.is_active,
+                    'confirmation_token': self.confirmation_token,
+                    'reset_token': self.reset_token}
 
 
 class Administrators(db.Model):
@@ -75,6 +81,8 @@ class Administrators(db.Model):
         email = db.Column(db.String(120), unique=True, nullable=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
         is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+        confirmation_token = db.Column(db.String(80))
+        reset_token = db.Column(db.String(80))
 
         def __repr__(self):
            return f'<Admin: {self.id} - Name: {self.name} - Email: {self.email}>'
@@ -83,7 +91,9 @@ class Administrators(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'email': self.email,
-                    'isactive': self.is_active}
+                    'isactive': self.is_active,
+                    'confirmation_token': self.confirmation_token,
+                    'reset_token': self.reset_token}
 
 
 class Specializations(db.Model):
