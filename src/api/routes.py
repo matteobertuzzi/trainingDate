@@ -21,20 +21,6 @@ CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
 mail = Mail()
 
-@api.route('/confirm/<token>', methods=['GET'])
-def confirm_registration(token):
-    # Verificar si el token de confirmación es válido
-    # Si es válido, marcar al usuario como confirmado en la base de datos
-    user = db.session.query(Users).filter_by(confirmation_token=token).first()
-    if user:
-        user.is_active = True  # Marcar al usuario como activo
-        user.confirmation_token = None  # Eliminar el token de confirmación
-        db.session.commit()
-        return redirect(url_for('login'))  # Redirigir al usuario a la página de inicio de sesión
-    else:
-        return jsonify({'message': 'Invalid confirmation token'}), 400
-
-
 # Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
 @jwt_required()
@@ -82,7 +68,8 @@ def handle_signup_user():
                      address=data["address"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
-                     is_active=False)
+                     is_active=False,
+                     confirmation_token='')
     db.session.add(new_user)
     db.session.commit()
     # Generar un token de confirmación único
@@ -108,16 +95,30 @@ def handle_send_email(user_email, confirmation_token):
             <body>
                 <h2>Welcome to Fitness App</h2>
                 <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
-                <button><a href="{url_for('confirm_registration', token=confirmation_token, _external=True)}">Click Here</a></button>
+                <button><a href="{url_for('api.confirm_registration', token=confirmation_token, _external=True)}">Click Here</a></button>
             </body>
             </html>
                     '''
     msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.body = "Click the following link to confirm your registration: " + url_for('confirm_registration', token=confirmation_token, _external=True)
+    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
     msg.html = html_content
     mail.send(msg)
     response_body['message'] = 'Email sent! Wait for confirmation.'
     return response_body, 200
+
+
+@api.route('/confirm/<token>', methods=['GET'])
+def confirm_registration(token):
+    # Verificar si el token de confirmación es válido
+    # Si es válido, marcar al usuario como confirmado en la base de datos
+    user = db.session.query(Users).filter_by(confirmation_token=token).first()
+    if user:
+        user.is_active = True  # Marcar al usuario como activo
+        user.confirmation_token = None  # Eliminar el token de confirmación
+        db.session.commit()
+        return redirect(url_for('login'))  # Redirigir al usuario a la página de inicio de sesión
+    else:
+        return jsonify({'message': 'Invalid confirmation token'}), 400
 
 
 # Mostrar los entrenadores disponibles

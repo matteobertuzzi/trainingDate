@@ -14,6 +14,7 @@ class Users(db.Model):
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    confirmation_token = db.Column(db.String(80))
 
     def __repr__(self):
         return f'<User: {self.id} - Email: {self.email}>'
@@ -26,7 +27,8 @@ class Users(db.Model):
                 'address': self.address,
                 'phone_number': self.phone_number,
                 'gender': self.gender,
-                'is_active': self.is_active}
+                'is_active': self.is_active,
+                'confirmation_token': self.confirmation_token}
 
 
 class Trainers(db.Model):
