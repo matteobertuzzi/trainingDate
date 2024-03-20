@@ -181,14 +181,40 @@ def handle_signup_trainer():
                            is_active=True)
     db.session.add(new_trainer)
     db.session.commit()
-    expires = timedelta(hours=24)
-    access_token = create_access_token(identity={"trainer": new_trainer.email,
-                                                 "role": "trainers",
-                                                 "id": new_trainer.id}, expires_delta=expires)
-    response_body['results'] = {"trainer": new_trainer.serialize(), 
-                                "role": "trainers"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Trainers successfully created and logged in!'
+     # Generar un token de confirmación único
+    confirmation_token = secrets.token_urlsafe(32)  # Token único para el enlace de confirmación
+    # Asociar el token de confirmación con el trainer
+    new_trainer.confirmation_token = confirmation_token
+    db.session.commit()
+    # Enviar correo electrónico de confirmación
+    handle_send_email(new_trainer.email, confirmation_token)
+    return jsonify({'message': 'Trainer registered successfully. Confirmation email sent.'}), 200
+    
+def handle_send_email(trainer_email, confirmation_token):
+    response_body = {}
+    if not trainer_email:
+        response_body['message'] = 'Email is a mandatory field!'
+        return response_body, 400
+    if not confirmation_token:
+        response_body['message'] = 'Access token is mandatory!'
+        return response_body, 400
+    # Add endpoint url
+    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/{confirmation_token}'
+    html_content = f'''
+            <html>
+            <head></head>
+            <body>
+                <h2>Welcome to Fitness App</h2>
+                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
+                <button><a href={href_content}>Click Here</a></button>
+            </body>
+            </html>
+                    '''
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[trainer_email])
+    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
+    msg.html = html_content
+    mail.send(msg)
+    response_body['message'] = 'Email sent! Wait for confirmation.'
     return response_body, 200
 
 
@@ -234,14 +260,40 @@ def handle_signup_admin():
                                is_active=True)
     db.session.add(new_admin)
     db.session.commit()
-    expires = timedelta(hours=24)
-    access_token = create_access_token(identity={"admin": new_admin.email,
-                                                 "role": "administrators",
-                                                 "id": new_admin.id}, expires_delta=expires)
-    response_body['results'] = {"admin": new_admin.serialize(), 
-                                "role": "administrators"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Admin successfully created and logged in!'
+    # Generar un token de confirmación único
+    confirmation_token = secrets.token_urlsafe(32)  # Token único para el enlace de confirmación
+    # Asociar el token de confirmación con el admin
+    new_admin.confirmation_token = confirmation_token
+    db.session.commit()
+    # Enviar correo electrónico de confirmación
+    handle_send_email(new_admin.email, confirmation_token)
+    return jsonify({'message': 'Administrator registered successfully. Confirmation email sent.'}), 200
+    
+def handle_send_email(admin_email, confirmation_token):
+    response_body = {}
+    if not admin_email:
+        response_body['message'] = 'Email is a mandatory field!'
+        return response_body, 400
+    if not confirmation_token:
+        response_body['message'] = 'Access token is mandatory!'
+        return response_body, 400
+    # Add endpoint url
+    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/{confirmation_token}'
+    html_content = f'''
+            <html>
+            <head></head>
+            <body>
+                <h2>Welcome to Fitness App</h2>
+                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
+                <button><a href={href_content}>Click Here</a></button>
+            </body>
+            </html>
+                    '''
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[trainer_email])
+    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
+    msg.html = html_content
+    mail.send(msg)
+    response_body['message'] = 'Email sent! Wait for confirmation.'
     return response_body, 200
 
 
