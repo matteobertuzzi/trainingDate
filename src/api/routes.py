@@ -11,6 +11,8 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
+from datetime import timedelta
+import requests 
 
 
 api = Blueprint('api', __name__)
@@ -19,12 +21,24 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-@api.route('/mail')
-def send_mail():
-    msg = Message('Test mail', sender='ac714f6759c8ed', recipients=['matteo.bertuzzi@icloud.com'])
-    msg.body ="This is a test email"
+@api.route('/email', methods=['POST'])
+def handle_email():
+    response_body = {}
+    data = request.json
+    if not data:
+        response_body['message'] = 'Missing data!'
+        return response_body, 400
+    if not data['email']:
+        response_body['message'] = 'Email is a mandatory field!'
+        return response_body, 400
+    user_email = data['email']
+    msg = Message('Test mail', sender='ac714f6759c8ed', recipients=[user_email])
+    msg.body = "Click the following link to access your dashboard. The access link will expire in 24 hours. " + os.getenv("DASHBOARD_URL")
     mail.send(msg)
-    return 'Message successfully sent!'
+    response_body['message'] = 'Email sent!'
+    response_body['results'] = msg
+    return response_body, 200
+
 
 
 # Mirar los usuarios registrados
@@ -73,13 +87,16 @@ def handle_signup_user():
                      is_active=True)
     db.session.add(new_user)
     db.session.commit()
+    expires = timedelta(hours=24)
     access_token = create_access_token(identity={"user": new_user.email,
                                                  "role": "users",
-                                                 "id": new_user.id})
+                                                 "id": new_user.id}, expires_delta=expires)
     response_body['results'] = {"admin": new_user.serialize(), 
                                 "role": "users"}
     response_body['access_token'] = access_token
     response_body['message'] = 'Users successfully created and logged in!'
+    response = requests.post('https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/email', json=request.json)
+    print(response)
     return response_body, 200
 
 
@@ -137,9 +154,10 @@ def handle_signup_trainer():
                            is_active=True)
     db.session.add(new_trainer)
     db.session.commit()
+    expires = timedelta(hours=24)
     access_token = create_access_token(identity={"trainer": new_trainer.email,
                                                  "role": "trainers",
-                                                 "id": new_trainer.id})
+                                                 "id": new_trainer.id}, expires_delta=expires)
     response_body['results'] = {"trainer": new_trainer.serialize(), 
                                 "role": "trainers"}
     response_body['access_token'] = access_token
@@ -194,9 +212,10 @@ def handle_signup_admin():
                                is_active=True)
     db.session.add(new_admin)
     db.session.commit()
+    expires = timedelta(hours=24)
     access_token = create_access_token(identity={"admin": new_admin.email,
                                                  "role": "administrators",
-                                                 "id": new_admin.id})
+                                                 "id": new_admin.id}, expires_delta=expires)
     response_body['results'] = {"admin": new_admin.serialize(), 
                                 "role": "administrators"}
     response_body['access_token'] = access_token
