@@ -61,6 +61,10 @@ def handle_signup_user():
     if user:
         response_body["message"] = "User email already exists!"
         return response_body, 409
+    if data["gender"] not in ["Male", "Female", "Not Specified"]:
+        response_body["message"] = "Data contains no valid gender"
+        response_body["gender available"] = ["Male", "Female", "Not Specified"]
+        return response_body, 400
     password = data["password"]
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = Users(email=data["email"].lower(), 
@@ -118,6 +122,10 @@ def handle_signup_trainer():
         if trainer.email == data["email"]:
             response_body["message"] = "Trainer already exists with this email!"
             return response_body, 409
+    if data["gender"] not in ["Male", "Female", "Not Specified"]:
+        response_body["message"] = "Data contains no valid gender"
+        response_body["gender available"] = ["Male", "Female", "Not Specified"]
+        return response_body, 400
     password = data["password"]
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_trainer = Trainers(email=data["email"].lower(),
@@ -167,14 +175,9 @@ def handle_admins():
 
 # Crear un admin
 @api.route('/administrators', methods=['POST'])
-@jwt_required()
 def handle_signup_admin():
     response_body = {}
-    current_user = get_jwt_identity()
     data = request.json
-    if not current_user['role'] == 'administrators':
-        response_body['message'] = 'Not allowed!'
-        return response_body, 405
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
@@ -461,7 +464,7 @@ def handle_user_classes(id):
                 response_body["message"] = "No classes available"
                 return response_body, 400
             response_body["message"] = "User classes"
-            response_body["classes"] = [class_user.serialize() for class_user in user_classes]
+            response_body["result"] = [class_user.serialize() for class_user in user_classes]
             return response_body, 200
         if request.method == "POST":
             data = request.json
@@ -519,26 +522,29 @@ def handle_trainer_classes(id):
             if not data:
                 response_body["message"] = "No data provided"
                 return response_body, 400
-            required_fields = ['address', 'capacity', 'date', 'price', 'training_type', 'training_level']
+            required_fields = ['address', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
             if data['training_level'] not in ['Beginner', 'Intermediate', 'Advanced']:
                 response_body["message"] = "Invalid training level"
+                response_body["training_level available"] = ["Beginner", "Intermediate", "Advanced"]
                 return response_body, 400
             trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id, specialization_id = data["training_type"]).all()
             if not trainers_specializations:
                 response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
                 return response_body, 400
-            existing_class = db.session.query(TrainersClasses).filter_by(date = data['date']).first()
+            existing_class = db.session.query(TrainersClasses).filter(db.or_(db.and_(TrainersClasses.start_date >= data['start_date'], TrainersClasses.start_date < data['end_date']),
+                                                                             db.and_(TrainersClasses.end_date > data['start_date'], TrainersClasses.end_date <= data['end_date']),
+                                                                             db.and_(TrainersClasses.start_date <= data['start_date'], TrainersClasses.end_date >= data['end_date']))).first()
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
             new_trainer_class = TrainersClasses(trainer_id=id, 
                                                 address=data["address"], 
                                                 capacity=data["capacity"], 
-                                                duration=data["duration"],
-                                                date=data["date"],
+                                                start_date=data["start_date"],
+                                                end_date=data["end_date"],
                                                 price=data["price"],
                                                 training_type=data["training_type"],
                                                 training_level=data["training_level"])
@@ -554,8 +560,7 @@ def handle_trainer_classes(id):
 # Mostrar, crear, borrar clase trainer
 @api.route('/trainers/<int:id>/classes/<int:class_id>', methods=["GET", "DELETE", "PATCH"])
 @jwt_required()
-def handle_trainer_class(id, class_id):
-    
+def handle_trainer_class(id, class_id): 
     response_body = {}
     trainer = Trainers.query.get(id)
     current_user = get_jwt_identity()
@@ -572,7 +577,6 @@ def handle_trainer_class(id, class_id):
         return response_body, 200
     if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
         if request.method == "DELETE":
-            # No hace cancelar las classes si hay usuarios apuntados a ella
             classes_user = UsersClasses.query.filter_by(class_id=class_id).all()
             if classes_user:
                 response_body["message"] = "Unable to delete class, it has associated users"
@@ -589,15 +593,15 @@ def handle_trainer_class(id, class_id):
                 return response_body, 400
             if 'address' in data:
                 trainer_class.address = data["address"]
-            if 'duration' in data:
-                trainer_class.duration = data["duration"]
-            if 'date' in data:
-                trainer_class.date = data["date"]
+            if 'start_date' in data:
+                trainer_class.start_date = data["start_date"]
+            if 'end_date' in data:
+                trainer_class.end_date = data["end_date"]
             if 'price' in data:
                 trainer_class.price = data["price"]
             db.session.add(trainer_class)
             db.session.commit()
-            response_body["message"] = "Class update"
+            response_body["message"] = "Class updated"
             response_body["result"] = trainer_class.serialize()
             return response_body, 200
     response_body["message"] = 'Not allowed!'
@@ -727,7 +731,7 @@ def handle_specialization(id):
     current_user = get_jwt_identity()
     specialization = db.session.query(Specializations).filter_by(id=id).first()
     if not specialization:
-        response_body['message'] = f'No specialization found with id of {str(id)}!'
+        response_body['message'] = f'No specialization found with id: {str(id)}!'
         return response_body, 404
     if request.method == 'GET':
         response_body['message'] = 'Specialization details.'
@@ -759,5 +763,5 @@ def handle_specialization(id):
             return response_body,400
         db.session.delete(specialization)
         db.session.commit()
-        response_body['message'] = f'Specialization {str(id)} successfully deleted'
+        response_body['message'] = f'Specialization with id: {str(id)}, successfully deleted'
         return response_body, 200

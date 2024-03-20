@@ -105,8 +105,8 @@ class TrainersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         address = db.Column(db.String(100), unique=False, nullable=False)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
-        duration = db.Column(db.Integer, unique=False)
-        date = db.Column(db.DateTime, unique=False, nullable=False)
+        start_date = db.Column(db.DateTime, unique=False, nullable=False)
+        end_date = db.Column(db.DateTime, unique=False, nullable=False)
         price = db.Column(db.Integer, unique=False, nullable=False)
         training_level = db.Column(db.Enum("Beginner", "Intermediate", "Advanced", name="training_level"), unique=False)
         training_type = db.Column(db.Integer, db.ForeignKey("specializations.id"))
@@ -122,8 +122,8 @@ class TrainersClasses(db.Model):
                     'trainer': self.trainer_id,
                     'address': self.address,
                     'capacity': self.capacity,
-                    'duration': self.duration,
-                    'date': self.date,
+                    'start_date': self.start_date,
+                    'end_date': self.end_date,
                     'price': self.price,
                     'training_type': self.training_type,
                     'training_level': self.training_level}
@@ -134,7 +134,7 @@ class UsersClasses(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         amount = db.Column(db.Integer, unique=False, nullable=False)
         stripe_status = db.Column(db.Enum("Cart", "Paid", "Reject", name="stripe_status"), nullable=False)
-        trainer_status = db.Column(db.Enum("Paid", "Pending", name=" trainer_status"), nullable=False)
+        trainer_status = db.Column(db.Enum("Paid", "Pending", name="trainer_status"), nullable=False)
         value = db.Column(db.Boolean())
         user_id = db.Column(db.Integer, db.ForeignKey("users.id")) 
         user = db.relationship("Users", foreign_keys=[user_id])
