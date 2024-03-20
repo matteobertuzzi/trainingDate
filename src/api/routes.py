@@ -11,8 +11,9 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
+from flask import render_template
 from datetime import timedelta
-import requests 
+import requests
 
 
 api = Blueprint('api', __name__)
@@ -21,7 +22,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-@api.route('/email', methods=['POST'])
+@api.route('/signup/email', methods=['POST'])
 def handle_email():
     response_body = {}
     data = request.json
@@ -32,13 +33,22 @@ def handle_email():
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
     user_email = data['email']
-    msg = Message('Test mail', sender='ac714f6759c8ed', recipients=[user_email])
+    html_content = '''
+            <html>
+            <head></head>
+            <body>
+                <h2>Welcome to Fitness App</h2>
+                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
+                <button><a href="https://www.google.com/">Click Here</a></button>
+            </body>
+            </html>
+                    '''
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
     msg.body = "Click the following link to access your dashboard. The access link will expire in 24 hours. " + os.getenv("DASHBOARD_URL")
+    msg.html = html_content
     mail.send(msg)
-    response_body['message'] = 'Email sent!'
-    response_body['results'] = msg
+    response_body['message'] = 'Email sent! Wait for confirmation.'
     return response_body, 200
-
 
 
 # Mirar los usuarios registrados
