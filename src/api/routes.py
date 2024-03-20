@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, redirect
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Trainers, Administrators, Specializations, TrainersClasses, UsersClasses, TrainersSpecializations
@@ -13,7 +13,7 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from flask import render_template
 from datetime import timedelta
-import requests
+import secrets
 
 
 api = Blueprint('api', __name__)
@@ -21,34 +21,18 @@ CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
 mail = Mail()
 
-
-@api.route('/signup/email', methods=['POST'])
-def handle_email():
-    response_body = {}
-    data = request.json
-    if not data:
-        response_body['message'] = 'Missing data!'
-        return response_body, 400
-    if not data['email']:
-        response_body['message'] = 'Email is a mandatory field!'
-        return response_body, 400
-    user_email = data['email']
-    html_content = '''
-            <html>
-            <head></head>
-            <body>
-                <h2>Welcome to Fitness App</h2>
-                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
-                <button><a href="https://www.google.com/">Click Here</a></button>
-            </body>
-            </html>
-                    '''
-    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.body = "Click the following link to access your dashboard. The access link will expire in 24 hours. " + os.getenv("DASHBOARD_URL")
-    msg.html = html_content
-    mail.send(msg)
-    response_body['message'] = 'Email sent! Wait for confirmation.'
-    return response_body, 200
+@api.route('/confirm/<token>', methods=['GET'])
+def confirm_registration(token):
+    # Verificar si el token de confirmación es válido
+    # Si es válido, marcar al usuario como confirmado en la base de datos
+    user = db.session.query(Users).filter_by(confirmation_token=token).first()
+    if user:
+        user.is_active = True  # Marcar al usuario como activo
+        user.confirmation_token = None  # Eliminar el token de confirmación
+        db.session.commit()
+        return redirect(url_for('login'))  # Redirigir al usuario a la página de inicio de sesión
+    else:
+        return jsonify({'message': 'Invalid confirmation token'}), 400
 
 
 # Mirar los usuarios registrados
@@ -98,19 +82,41 @@ def handle_signup_user():
                      address=data["address"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
-                     is_active=True)
+                     is_active=False)
     db.session.add(new_user)
     db.session.commit()
-    expires = timedelta(hours=24)
-    access_token = create_access_token(identity={"user": new_user.email,
-                                                 "role": "users",
-                                                 "id": new_user.id}, expires_delta=expires)
-    response_body['results'] = {"admin": new_user.serialize(), 
-                                "role": "users"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Users successfully created and logged in!'
-    response = requests.post('https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/email', json=request.json)
-    print(response)
+    # Generar un token de confirmación único
+    confirmation_token = secrets.token_urlsafe(32)  # Token único para el enlace de confirmación
+    # Asociar el token de confirmación con el usuario
+    new_user.confirmation_token = confirmation_token
+    db.session.commit()
+    # Enviar correo electrónico de confirmación
+    handle_send_email(new_user.email, confirmation_token)
+    return jsonify({'message': 'User registered successfully. Confirmation email sent.'}), 200
+    
+def handle_send_email(user_email, confirmation_token):
+    response_body = {}
+    if not user_email:
+        response_body['message'] = 'Email is a mandatory field!'
+        return response_body, 400
+    if not confirmation_token:
+        response_body['message'] = 'Access token is mandatory!'
+        return response_body, 400
+    html_content = '''
+            <html>
+            <head></head>
+            <body>
+                <h2>Welcome to Fitness App</h2>
+                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
+                <button><a href="{url_for('confirm_registration', token=confirmation_token, _external=True)}">Click Here</a></button>
+            </body>
+            </html>
+                    '''
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
+    msg.body = "Click the following link to confirm your registration: " + url_for('confirm_registration', token=confirmation_token, _external=True)
+    msg.html = html_content
+    mail.send(msg)
+    response_body['message'] = 'Email sent! Wait for confirmation.'
     return response_body, 200
 
 
