@@ -114,14 +114,11 @@ def handle_reset_password(user_type):
     if not data['password']:
         response_body['password'] = 'Missing password. Can\'t update user!'
         return response_body,400
-    if data['email'] != current_user.email:
-        response_body['message'] = 'Invalid email adress, please provide the correct data.'
-        return response_body, 400
     current_user.password = data['password']
     db.session.commit()
     response_body['message'] = f'Password for {current_user.email} successfully reset!'
     # Redirect to login page front
-    return response_body, redirect('https://www.google.com/'),200
+    return response_body,200
 
 # Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
