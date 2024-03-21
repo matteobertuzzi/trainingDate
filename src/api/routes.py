@@ -9,11 +9,13 @@ from api.models import db, Users, Trainers, Administrators, Specializations, Tra
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import decode_token
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from flask import render_template
 from datetime import timedelta
 import secrets
+import requests
 
 
 api = Blueprint('api', __name__)
@@ -33,7 +35,6 @@ def confirm_registration(token):
     user = db.session.query(Users).filter_by(confirmation_token=token).first()
     if user:
         user.is_active = True  # Marcar al usuario como activo
-        user.confirmation_token = None  # Eliminar el token de confirmación
         db.session.commit()
         return redirect('https://www.google.com/'),200  # Redirigir al usuario a la página de inicio de sesión
     else:
@@ -60,18 +61,18 @@ def handle_forget_password(email, user_type):
     # reset_token = secrets.token_urlsafe(32)
     # current_user.reset_token = reset_token
     # db.session.commit()
-    handle_password_reset_email(current_user.email, user_type)
+    handle_password_reset_email(current_user.email, user_type, confirmation_token)
     return jsonify({f'message': 'Reset password link to {current_user.email}',
                     'token': confirmation_token}), 200
 
 
-def handle_password_reset_email(user_email, user_type):
+def handle_password_reset_email(user_email, user_type, confirmation_token):
     response_body = {}
     if not user_email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
     # Pass URl of the front where you reset password
-    href_content = f'/resetpassword/{user_type}'
+    href_content = f'/confirm/reset/{user_type}/<{confirmation_token}'
     html_content = f'''
             <html>
             <head></head>
@@ -83,11 +84,45 @@ def handle_password_reset_email(user_email, user_type):
             </html>
                     '''
     msg = Message('Reset Password', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.body = "Click the following link to reset password: "
     msg.html = html_content
     mail.send(msg)
     response_body['message'] = 'Email sent! Reset password.'
     return response_body, 200
+
+@api.route('/confirm/reset/<string:user_type>/<string:confirmation_token>', methods=['PATCH'])
+def handle_confirm_reset(user_type, confirmation_token):
+    response_body = {}
+    token_payload = decode_token(confirmation_token)
+    current_user_identity = token_payload.get('identity')
+    id = current_user_identity['id']
+    if not user_type:
+        response_body['message'] = 'User type missing!'
+        return response_body,400
+    if user_type == 'users':
+        current_user = db.session.query(Users).filter_by(id=id).first()
+    if user_type == 'trainers':
+        current_user = db.session.query(Trainers).filter_by(id=id).first()
+    if user_type == 'administrators':
+        current_user = db.session.query(Administrators).filter_by(id=id).first()
+    if not current_user:
+        response_body['message'] = 'No user found!'
+        return response_body,404
+    current_user.is_confirmed = True
+    db.session.commit()
+    json_data = {
+        'token': confirmation_token,
+        'email': current_user.email,
+        'user_type': user_type
+    }
+    # We send a POST request to the front that stores the json data for the respective user so that when /resetpassword is called the JWT can be sent
+    response = requests.post('/front_url', json=json_data)
+    if response.status_code == 200:
+        response_body['message'] = 'Password reset successfully requested'
+        return response_body, 200
+    else:
+        response_body['message'] = 'Failed to request password reset'
+        return response_body, response.status_code
+
 
 @api.route('/resetpassword/<string:user_type>', methods=['PATCH'])
 @jwt_required()
