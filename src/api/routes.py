@@ -609,6 +609,8 @@ def handle_trainer_class(id, class_id):
                 trainer_class.street_name = data["street_name"]
             if 'street_number' in data:
                 trainer_class.street_number = data["street_number"]
+            if 'additional_info' in data:
+                trainer_class.additional_info = data["additional_info"]
             if 'start_date' in data:
                 trainer_class.start_date = data["start_date"]
             if 'end_date' in data:
