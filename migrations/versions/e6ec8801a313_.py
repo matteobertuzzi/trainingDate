@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: ad20299867be
+Revision ID: e6ec8801a313
 Revises: 
-Create Date: 2024-03-20 11:57:35.529079
+Create Date: 2024-03-21 10:18:20.782197
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ad20299867be'
+revision = 'e6ec8801a313'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -40,7 +40,8 @@ def upgrade():
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('last_name', sa.String(length=100), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('address', sa.String(length=120), nullable=True),
+    sa.Column('city', sa.String(length=120), nullable=False),
+    sa.Column('postal_code', sa.Integer(), nullable=False),
     sa.Column('password', sa.String(length=80), nullable=False),
     sa.Column('phone_number', sa.String(length=20), nullable=True),
     sa.Column('gender', sa.Enum('Male', 'Female', 'Not Specified', name='gender'), nullable=False),
@@ -59,7 +60,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('last_name', sa.String(length=100), nullable=True),
-    sa.Column('address', sa.String(length=120), nullable=True),
+    sa.Column('city', sa.String(length=120), nullable=False),
+    sa.Column('postal_code', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('phone_number', sa.String(length=20), nullable=True),
@@ -70,7 +72,11 @@ def upgrade():
     )
     op.create_table('trainers_classes',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('address', sa.String(length=100), nullable=False),
+    sa.Column('city', sa.String(length=120), nullable=False),
+    sa.Column('postal_code', sa.Integer(), nullable=False),
+    sa.Column('street_name', sa.String(length=120), nullable=False),
+    sa.Column('street_number', sa.Integer(), nullable=False),
+    sa.Column('additional_info', sa.String(length=255), nullable=True),
     sa.Column('capacity', sa.Integer(), nullable=False),
     sa.Column('start_date', sa.DateTime(), nullable=False),
     sa.Column('end_date', sa.DateTime(), nullable=False),
@@ -97,7 +103,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('amount', sa.Integer(), nullable=False),
     sa.Column('stripe_status', sa.Enum('Cart', 'Paid', 'Reject', name='stripe_status'), nullable=False),
-    sa.Column('trainer_status', sa.Enum('Paid', 'Pending', name=' trainer_status'), nullable=False),
+    sa.Column('trainer_status', sa.Enum('Paid', 'Pending', name='trainer_status'), nullable=False),
     sa.Column('value', sa.Boolean(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('class_id', sa.Integer(), nullable=True),

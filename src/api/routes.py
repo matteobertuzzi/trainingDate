@@ -39,7 +39,7 @@ def handle_users():
     users = db.session.query(Users).all()
     if not users:
         response_body['message'] = 'No users currently registered'
-        return response_body,404
+        return response_body, 404
     response_body['message'] = 'Users currently registered'
     response_body['results'] = [single_user.serialize() for single_user in users]
     return response_body, 200
@@ -53,7 +53,7 @@ def handle_signup_user():
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
-    required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'gender']
+    required_fields = ['email', 'password', 'name', 'last_name', 'city', 'postal_code', 'phone_number', 'gender']
     if not request.json or not all(field in request.json for field in required_fields):
         response_body["message"] = "Missing required fields in the request."
         return response_body, 400
@@ -71,7 +71,8 @@ def handle_signup_user():
                      password=hashed_password, 
                      name=data["name"], 
                      last_name=data["last_name"],
-                     address=data["address"],
+                     city=data["city"],
+                     postal_code=data["postal_code"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
                      is_active=True)
@@ -99,7 +100,7 @@ def handle_trainers():
     trainers = db.session.query(Trainers).all()
     if not trainers:
         response_body['message'] = 'No trainers currently registered'
-        return response_body,404
+        return response_body, 404
     response_body['message'] = 'Trainers currently registered'
     response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
     return response_body, 200
@@ -113,7 +114,7 @@ def handle_signup_trainer():
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
-    required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'gender', 'bank_iban']
+    required_fields = ['email', 'password', 'name', 'last_name', 'city', 'postal_code', 'phone_number', 'gender', 'bank_iban']
     if not request.json or not all(field in request.json for field in required_fields):
         response_body["message"] = "Missing required fields in the request."
         return response_body, 400
@@ -132,7 +133,8 @@ def handle_signup_trainer():
                            password=hashed_password,
                            name=data["name"],
                            last_name=data["last_name"],
-                           address=data["address"],
+                           city=data["city"],
+                           postal_code=data["postal_code"],
                            phone_number=data["phone_number"],
                            gender=data["gender"],
                            website_url=data.get("website_url"),
@@ -348,8 +350,10 @@ def handle_user(id):
                 return response_body, 200
             if 'password' in data:
                 user.password = data["password"]
-            if "address" in data:
-                user.address = data["address"]
+            if "city" in data:
+                user.city = data["city"]
+            if "postal_code" in postal_code:
+                user.postal_code = data["city"]
             if "phone_number" in data:
                 user.phone_number = data["phone_number"]
             db.session.add(user)
@@ -388,8 +392,10 @@ def handle_trainer(id):
                 response_body["message"] = "No data provided for update"
             if 'password' in data:
                 trainer.password = data["password"]
-            if "address" in data:
-                trainer.address = data["address"]
+            if "city" in data:
+                trainer.city = data["city"]
+            if "postal_code" in postal_code:
+                trainer.postal_code = data["city"]
             if "phone_number" in data:
                 trainer.phone_number = data["phone_number"]
             if "website_url" in data:
@@ -484,8 +490,8 @@ def handle_user_classes(id):
                 response_body["message"] = "No Trainer class available"
                 return response_body, 404
             new_class = UsersClasses(amount=data["amount"], 
-                                     stripe_status= "Cart", 
-                                     trainer_status= "Pending", 
+                                     stripe_status="Cart", 
+                                     trainer_status="Pending", 
                                      value=0,
                                      user_id=id,
                                      class_id=data["class_id"])
@@ -522,7 +528,7 @@ def handle_trainer_classes(id):
             if not data:
                 response_body["message"] = "No data provided"
                 return response_body, 400
-            required_fields = ['address', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
+            required_fields = ['city', 'postal_code', 'street_name', 'street_number', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
@@ -541,7 +547,11 @@ def handle_trainer_classes(id):
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
             new_trainer_class = TrainersClasses(trainer_id=id, 
-                                                address=data["address"], 
+                                                city=data["city"], 
+                                                postal_code=data["postal_code"],
+                                                street_name=data["street_name"],
+                                                street_number=data["street_number"],
+                                                additional_info=data.get("additional_info"),
                                                 capacity=data["capacity"], 
                                                 start_date=data["start_date"],
                                                 end_date=data["end_date"],
@@ -591,8 +601,14 @@ def handle_trainer_class(id, class_id):
             if not data:
                 response_body["message"] = "No data provided for update"
                 return response_body, 400
-            if 'address' in data:
-                trainer_class.address = data["address"]
+            if 'city' in data:
+                trainer_class.city = data["city"]
+            if 'postal_code' in data:
+                trainer_class.postal_code = data["postal_code"]
+            if 'street_name' in data:
+                trainer_class.street_name = data["street_name"]
+            if 'street_number' in data:
+                trainer_class.street_number = data["street_number"]
             if 'start_date' in data:
                 trainer_class.start_date = data["start_date"]
             if 'end_date' in data:
