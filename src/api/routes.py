@@ -11,20 +11,15 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
+from flask import render_template
+from datetime import timedelta
+import secrets
 
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
 mail = Mail()
-
-
-@api.route('/mail')
-def send_mail():
-    msg = Message('Test mail', sender='ac714f6759c8ed', recipients=['matteo.bertuzzi@icloud.com'])
-    msg.body ="This is a test email"
-    mail.send(msg)
-    return 'Message successfully sent!'
 
 
 # Mirar los usuarios registrados
@@ -44,6 +39,28 @@ def handle_users():
     response_body['results'] = [single_user.serialize() for single_user in users]
     return response_body, 200
 
+
+@api.route('/confirm', methods=['POST'])
+def confirm_registration():
+    response_body = {}
+    data = request.json
+    if not data:
+        response_body['message'] = 'Missing data'
+        return response_body, 400
+    token = data.get('token')
+    if not token:
+        response_body['message'] = 'Missing token in request body'
+        return response_body, 400
+    user = db.session.query(Users).filter_by(token=token).first()
+    if user:
+        user.is_active = True
+        user.token = None
+        db.session.commit()
+        response_body["message"] =  'User confirmed successfully'
+        return response_body, 200
+    else:
+        response_body["message"] = 'Invalid confirmation token'
+        return response_body, 400
 
 # Crear un usuario
 @api.route('/users', methods=['POST'])
@@ -67,6 +84,7 @@ def handle_signup_user():
         return response_body, 400
     password = data["password"]
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    confirmation_token = secrets.token_urlsafe(32)
     new_user = Users(email=data["email"].lower(), 
                      password=hashed_password, 
                      name=data["name"], 
@@ -75,18 +93,39 @@ def handle_signup_user():
                      postal_code=data["postal_code"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
-                     is_active=True)
+                     is_active=False,
+                     token=confirmation_token)
     db.session.add(new_user)
     db.session.commit()
-    access_token = create_access_token(identity={"user": new_user.email,
-                                                 "role": "users",
-                                                 "id": new_user.id})
-    response_body['results'] = {"admin": new_user.serialize(), 
-                                "role": "users"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Users successfully created and logged in!'
-    return response_body, 200
+    handle_send_email(new_user.email, confirmation_token)
+    return jsonify({'message': 'User registered successfully. Confirmation email sent.'}), 200
 
+
+def handle_send_email(user_email, confirmation_token):
+    response_body = {}
+    if not user_email:
+        response_body['message'] = 'Email is a mandatory field!'
+        return response_body, 400
+    if not confirmation_token:
+        response_body['message'] = 'Access token is mandatory!'
+        return response_body, 400
+    # Add endpoint url
+    html_content = f'''
+            <html>
+            <head></head>
+            <body>
+                <h2>Welcome to Fitness App</h2>
+                <p>Please click the following button to access your dashboard.</p>
+                <button><a href='www.google.com'>Click Here</a></button>
+            </body>
+            </html>
+                    '''
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
+    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
+    msg.html = html_content
+    mail.send(msg)
+    response_body['message'] = 'Email sent! Wait for confirmation.'
+    return response_body, 200
 
 # Mostrar los entrenadores disponibles
 @api.route('/trainers', methods=['GET'])
@@ -274,6 +313,9 @@ def handle_login(user_type):
         if not user:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
+        if not user.is_active:
+            response_body["message"] = "The user is not active."
+            return response_body, 400
         password = data['password']
         if not bcrypt.check_password_hash(user.password, password):
             response_body['message'] = f'Wrong password for email {user.email}'
@@ -291,6 +333,9 @@ def handle_login(user_type):
         if not trainer:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
+        if not trainer.is_active:
+            response_body["message"] = "The trainer is not active."
+            return response_body, 400
         password = data['password']
         if not bcrypt.check_password_hash(trainer.password, password):
             response_body['message'] = f'Wrong password for email {trainer.email}'
@@ -308,6 +353,9 @@ def handle_login(user_type):
         if not administrator:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
+        if not administrator.is_active:
+            response_body["message"] = "The administrator is not active."
+            return response_body, 400
         password = data['password']
         if not bcrypt.check_password_hash(administrator.password, password):
             response_body['message'] = f'Wrong password for email {administrator.email}'

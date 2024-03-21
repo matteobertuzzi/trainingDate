@@ -14,7 +14,8 @@ class Users(db.Model):
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
+    token = db.Column(db.String(80))
 
     def __repr__(self):
         return f'<User: {self.id} - Email: {self.email}>'
@@ -28,7 +29,8 @@ class Users(db.Model):
                 'postal_code': self.postal_code,
                 'phone_number': self.phone_number,
                 'gender': self.gender,
-                'is_active': self.is_active}
+                'is_active': self.is_active,
+                'token': self.token}
 
 
 class Trainers(db.Model):

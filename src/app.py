@@ -31,8 +31,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Flask_mail configuration
 app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
 app.config['MAIL_PORT'] = 2525
-app.config['MAIL_USERNAME'] = 'ac714f6759c8ed'
-app.config['MAIL_PASSWORD'] = '79f907bd0b58c5'
+app.config['MAIL_USERNAME'] = '4e089d42968016'
+app.config['MAIL_PASSWORD'] = '0da2f3555ff4cd'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
