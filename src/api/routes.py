@@ -52,22 +52,26 @@ def handle_forget_password(email, user_type):
         current_user = db.session.query(Trainers).filter_by(email=email).first()
     if user_type == 'administrators':
         current_user = db.session.query(Administrators).filter_by(email=email).first()
-    reset_token = secrets.token_urlsafe(32)
-    current_user.reset_token = reset_token
-    db.session.commit()
-    handle_password_reset_email(current_user.email, user_type, reset_token)
-    return jsonify({f'message': 'Reset password link to {current_user.email}'}), 200
+    expires = timedelta(minutes=30)
+    confirmation_token = create_access_token(identity={'email': current_user.email,
+                                                       'role': user_type,
+                                                       'id': current_user.id
+                                                       }, expires_delta=expires)
+    # reset_token = secrets.token_urlsafe(32)
+    # current_user.reset_token = reset_token
+    # db.session.commit()
+    handle_password_reset_email(current_user.email, user_type)
+    return jsonify({f'message': 'Reset password link to {current_user.email}',
+                    'token': confirmation_token}), 200
 
 
-def handle_password_reset_email(user_email, user_type, reset_token):
+def handle_password_reset_email(user_email, user_type):
     response_body = {}
     if not user_email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
-    if not reset_token:
-        response_body['message'] = 'Reset token is mandatory!'
-        return response_body, 400
-    href_content = f'/resetpassword/{user_type}/{reset_token}'
+    # Pass URl of the front where you reset password
+    href_content = f'/resetpassword/{user_type}'
     html_content = f'''
             <html>
             <head></head>
@@ -79,27 +83,27 @@ def handle_password_reset_email(user_email, user_type, reset_token):
             </html>
                     '''
     msg = Message('Reset Password', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.body = "Click the following link to reset password: " + url_for('api.confirm_registration', token=reset_token, _external=True)
+    msg.body = "Click the following link to reset password: "
     msg.html = html_content
     mail.send(msg)
     response_body['message'] = 'Email sent! Reset password.'
     return response_body, 200
 
-@api.route('/resetpassword/<string:user_type>/<string:token>', methods=['PATCH'])
-def handle_reset_password(user_type, token):
+@api.route('/resetpassword/<string:user_type>', methods=['PATCH'])
+@jwt_required()
+def handle_reset_password(user_type):
     response_body = {}
-    if not token:
-        response_body['message'] = 'Security token missing!'
-        return response_body,400
+    current_user_identity = get_jwt_identity()
+    id = current_user_identity['id']
     if not user_type:
         response_body['message'] = 'User type missing!'
         return response_body,400
     if user_type == 'users':
-        current_user = db.session.query(Users).filter_by(reset_token=token).first()
+        current_user = db.session.query(Users).filter_by(id=id).first()
     if user_type == 'trainers':
-        current_user = db.session.query(Trainers).filter_by(reset_token=token).first()
+        current_user = db.session.query(Trainers).filter_by(id=id).first()
     if user_type == 'administrators':
-        current_user = db.session.query(Administrators).filter_by(reset_token=token).first()
+        current_user = db.session.query(Administrators).filter_by(id=id).first()
     if not current_user:
         response_body['message'] = 'No user found!'
         return response_body,404
@@ -110,11 +114,14 @@ def handle_reset_password(user_type, token):
     if not data['password']:
         response_body['password'] = 'Missing password. Can\'t update user!'
         return response_body,400
+    if data['email'] != current_user.email:
+        response_body['message'] = 'Invalid email adress, please provide the correct data.'
+        return response_body, 400
     current_user.password = data['password']
-    current_user.reset_token = None
     db.session.commit()
     response_body['message'] = f'Password for {current_user.email} successfully reset!'
-    return response_body,200
+    # Redirect to login page front
+    return response_body, redirect('https://www.google.com/'),200
 
 # Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
