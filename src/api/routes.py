@@ -72,7 +72,7 @@ def handle_password_reset_email(user_email, user_type, confirmation_token):
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
     # Pass URl of the front where you reset password
-    href_content = f'/confirm/reset/{user_type}/<{confirmation_token}'
+    href_content = f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/reset/{user_type}/<{confirmation_token}'
     html_content = f'''
             <html>
             <head></head>
@@ -93,7 +93,8 @@ def handle_password_reset_email(user_email, user_type, confirmation_token):
 def handle_confirm_reset(user_type, confirmation_token):
     response_body = {}
     token_payload = decode_token(confirmation_token)
-    current_user_identity = token_payload.get('identity')
+    current_user_identity = token_payload['sub']
+    print(current_user_identity)
     id = current_user_identity['id']
     if not user_type:
         response_body['message'] = 'User type missing!'
@@ -107,6 +108,7 @@ def handle_confirm_reset(user_type, confirmation_token):
     if not current_user:
         response_body['message'] = 'No user found!'
         return response_body,404
+    print(current_user.serialize())
     current_user.is_confirmed = True
     db.session.commit()
     json_data = {
@@ -115,13 +117,23 @@ def handle_confirm_reset(user_type, confirmation_token):
         'user_type': user_type
     }
     # We send a POST request to the front that stores the json data for the respective user so that when /resetpassword is called the JWT can be sent
-    response = requests.post('/front_url', json=json_data)
+    response = requests.post('https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/test/post', json=json_data)
     if response.status_code == 200:
         response_body['message'] = 'Password reset successfully requested'
         return response_body, 200
     else:
         response_body['message'] = 'Failed to request password reset'
         return response_body, response.status_code
+    
+
+@api.route('/test/post', methods=['POST'])
+def handle_test_post():
+    response_body = {}
+    data = request.json
+    response_body['token'] = data['token']
+    response_body['email'] = data['email']
+    response_body['user_type'] = data['user_type']
+    return response_body, 200
 
 
 @api.route('/resetpassword/<string:user_type>', methods=['PATCH'])
@@ -142,6 +154,9 @@ def handle_reset_password(user_type):
     if not current_user:
         response_body['message'] = 'No user found!'
         return response_body,404
+    if current_user.is_confirmed == False:
+        response_body['message'] = 'Not allowed!'
+        return response_body, 405
     data = request.json
     if not data:
         response_body['message'] = 'Missing data. Can\'t update user!'
@@ -203,7 +218,8 @@ def handle_signup_user():
                      phone_number=data["phone_number"],
                      gender=data["gender"],
                      is_active=False,
-                     confirmation_token='')
+                     confirmation_token='',
+                     is_confirmed=False)
     db.session.add(new_user)
     db.session.commit()
     # Generar un token de confirmación único
@@ -298,7 +314,8 @@ def handle_signup_trainer():
                            bank_iban=data["bank_iban"],
                            vote_user=0,
                            sum_value=0,
-                           is_active=True)
+                           is_active=True,
+                           is_confirmed=False)
     db.session.add(new_trainer)
     db.session.commit()
      # Generar un token de confirmación único
@@ -377,7 +394,8 @@ def handle_signup_admin():
     new_admin = Administrators(name=data['name'], 
                                email=data['email'].lower(), 
                                password=hashed_password, 
-                               is_active=True)
+                               is_active=True,
+                               is_confirmed=False)
     db.session.add(new_admin)
     db.session.commit()
     # Generar un token de confirmación único
