@@ -15,7 +15,7 @@ class Users(db.Model):
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
-    token = db.Column(db.String(80))
+    token = db.Column(db.String())
 
     def __repr__(self):
         return f'<User: {self.id} - Email: {self.email}>'

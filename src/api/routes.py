@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, redirect
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Trainers, Administrators, Specializations, TrainersClasses, UsersClasses, TrainersSpecializations
@@ -40,27 +40,23 @@ def handle_users():
     return response_body, 200
 
 
-@api.route('/confirm', methods=['POST'])
+@api.route('/confirm/', methods=['POST'])
+@jwt_required()
 def confirm_registration():
     response_body = {}
-    data = request.json
-    if not data:
-        response_body['message'] = 'Missing data'
+    token_header = request.headers.get('Authorization')
+    if not token_header:
+        response_body["message"] = 'Missing Authorization header'
         return response_body, 400
-    token = data.get('token')
-    if not token:
-        response_body['message'] = 'Missing token in request body'
-        return response_body, 400
-    user = db.session.query(Users).filter_by(token=token).first()
-    if user:
-        user.is_active = True
-        user.token = None
-        db.session.commit()
-        response_body["message"] =  'User confirmed successfully'
-        return response_body, 200
-    else:
+    token = token_header.split(" ")[1]
+    user = Users.query.filter_by(token=token).first()
+    if not user:
         response_body["message"] = 'Invalid confirmation token'
         return response_body, 400
+    user.is_active = True
+    user.token = None
+    db.session.commit()
+    return redirect('https://www.google.com'), 302
 
 # Crear un usuario
 @api.route('/users', methods=['POST'])
@@ -84,7 +80,7 @@ def handle_signup_user():
         return response_body, 400
     password = data["password"]
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    confirmation_token = secrets.token_urlsafe(32)
+    confirmation_token = create_access_token(identity="")
     new_user = Users(email=data["email"].lower(), 
                      password=hashed_password, 
                      name=data["name"], 
@@ -97,8 +93,10 @@ def handle_signup_user():
                      token=confirmation_token)
     db.session.add(new_user)
     db.session.commit()
-    handle_send_email(new_user.email, confirmation_token)
-    return jsonify({'message': 'User registered successfully. Confirmation email sent.'}), 200
+    handle_send_email(new_user.email, new_user.token)
+    response_body["message"] = "Mail send to user, wait for the confirmation!"
+    response_body["result"] = new_user.serialize()
+    return response_body, 200
 
 
 def handle_send_email(user_email, confirmation_token):
@@ -109,23 +107,54 @@ def handle_send_email(user_email, confirmation_token):
     if not confirmation_token:
         response_body['message'] = 'Access token is mandatory!'
         return response_body, 400
-    # Add endpoint url
-    html_content = f'''
-            <html>
-            <head></head>
-            <body>
-                <h2>Welcome to Fitness App</h2>
-                <p>Please click the following button to access your dashboard.</p>
-                <button><a href='www.google.com'>Click Here</a></button>
-            </body>
-            </html>
-                    '''
-    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
-    msg.html = html_content
-    mail.send(msg)
-    response_body['message'] = 'Email sent! Wait for confirmation.'
-    return response_body, 200
+    try:
+        confirmation_api_url = 'https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/confirm'
+        html_content = f'''
+    <html>
+    <head></head>
+    <body>
+        <h2>Welcome to Fitness App</h2>
+        <p>Please click the following button to confirm your registration:</p>
+        <form id="confirmationForm" action="{confirmation_api_url}" method="post">
+            <button id="confirmButton" type="submit">Click Here!</button>
+        </form>
+        <script>
+            document.getElementById("confirmationForm").addEventListener("submit", function(event) {{
+                event.preventDefault(); 
+                fetch('{confirmation_api_url}', {{
+                    method: 'POST',
+                    headers: {{
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer  {confirmation_token}'
+                    }},
+                    body: JSON.stringify({{
+                        token: ''
+                    }})
+                }})
+                .then(response => {{
+                    if (response.ok) {{
+                        alert('Registration confirmed successfully!');
+                    }} else {{
+                        alert('Error confirming registration');
+                    }}
+                }})
+                .catch(error => {{
+                    alert('Error confirming registration: ' + error);
+                }});
+            }});
+        </script>
+    </body>
+    </html>
+'''
+        msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
+        msg.html = html_content
+        mail.send(msg)
+        response_body['message'] = 'Email sent! Please check your inbox and follow the instructions to confirm your registration.'
+        return response_body, 200
+    except Exception as e:
+        response_body['message'] = f'Failed to send email: {str(e)}'
+        return response_body, 500
+
 
 # Mostrar los entrenadores disponibles
 @api.route('/trainers', methods=['GET'])

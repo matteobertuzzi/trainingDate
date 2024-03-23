@@ -13,6 +13,7 @@ from api.models import db
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
+from itsdangerous.serializer import Serializer
 
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -31,8 +32,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Flask_mail configuration
 app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
 app.config['MAIL_PORT'] = 2525
-app.config['MAIL_USERNAME'] = '4e089d42968016'
-app.config['MAIL_PASSWORD'] = '0da2f3555ff4cd'
+app.config['MAIL_USERNAME'] = '40e9445888987f'
+app.config['MAIL_PASSWORD'] = '1907aeea2dd1eb'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
