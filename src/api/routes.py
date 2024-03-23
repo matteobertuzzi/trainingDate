@@ -77,6 +77,9 @@ def handle_password_reset_email(user_email, user_type):
     if not user_email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
+    if not user_type:
+        response_body['message'] = 'User type is a mandatory field!'
+        return response_body, 400
     # Pass URL of the front where you reset password
     href_content = f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/resetpassword/{user_type}'
     html_content = f'''
@@ -186,14 +189,14 @@ def handle_signup_user():
     access_token = create_access_token(identity={'email': new_user.email,
                                                  'id': new_user.id,
                                                  'role': 'users'}, expires_delta=expires)
-    handle_send_email(new_user.email)
-    response_body["message"] = "Mail send to user, wait for the confirmation!"
+    handle_user_email(new_user.email)
+    response_body["message"] = "Mail sent to user, wait for the confirmation!"
     response_body["result"] = new_user.serialize()
     # Return access_token to Front and store access_token in localStorage() in order to invoke '/confirm' endpoint
     response_body["token"] = access_token
     return response_body, 200
     
-def handle_send_email(email):
+def handle_user_email(email):
     response_body = {}
     if not email:
         response_body['message'] = 'Email is a mandatory field!'
@@ -279,14 +282,14 @@ def handle_signup_trainer():
     access_token = create_access_token(identity={'email': new_trainer.email,
                                                  'id': new_trainer.id,
                                                  'role': 'trainers'}, expires_delta=expires)
-    handle_send_email(new_trainer.email)
+    handle_trainers_email(new_trainer.email)
     response_body["message"] = "Mail send to trainer, wait for the confirmation!"
     response_body["result"] = new_trainer.serialize()
     # Return access_token to Front and store access_token in localStorage() in order to invoke '/confirm' endpoint
     response_body["token"] = access_token
     return response_body, 200
     
-def handle_send_email(email):
+def handle_trainers_email(email):
     response_body = {}
     if not email:
         response_body['message'] = 'Email is a mandatory field!'
@@ -355,14 +358,14 @@ def handle_signup_admin():
     access_token = create_access_token(identity={'email': new_admin.email,
                                                  'id': new_admin.id,
                                                  'role': 'administrators'}, expires_delta=expires)
-    handle_send_email(new_admin.email)
+    handle_admin_email(new_admin.email)
     response_body["message"] = "Mail send to administrator, wait for the confirmation!"
     response_body["result"] = new_admin.serialize()
     # Return access_token to Front and store access_token in localStorage() in order to invoke '/confirm' endpoint
     response_body["token"] = access_token
     return response_body, 200
     
-def handle_send_email(email):
+def handle_admin_email(email):
     response_body = {}
     if not email:
         response_body['message'] = 'Email is a mandatory field!'
