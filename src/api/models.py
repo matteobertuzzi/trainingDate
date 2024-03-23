@@ -8,14 +8,13 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=False)
     last_name = db.Column(db.String(100), unique=False)
-    address = db.Column(db.String(120), unique=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    city = db.Column(db.String(120), unique=False, nullable=False)
+    postal_code = db.Column(db.Integer, unique=False, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    confirmation_token = db.Column(db.String(80))
-    is_confirmed = db.Column(db.Boolean(), unique=False, nullable=True)
 
     def __repr__(self):
         return f'<User: {self.id} - Email: {self.email}>'
@@ -25,12 +24,11 @@ class Users(db.Model):
                 'name': self.name,
                 'last_name': self.last_name,
                 'email': self.email,
-                'address': self.address,
+                'city': self.city,
+                'postal_code': self.postal_code,
                 'phone_number': self.phone_number,
                 'gender': self.gender,
-                'is_active': self.is_active,
-                'confirmation_token': self.confirmation_token,
-                'is_confirmed': self.is_confirmed}
+                'is_active': self.is_active}
 
 
 class Trainers(db.Model):
@@ -38,7 +36,8 @@ class Trainers(db.Model):
         name = db.Column(db.String(100), unique=False)
         last_name = db.Column(db.String(100), unique=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
-        address = db.Column(db.String(120), unique=False)
+        city = db.Column(db.String(120), unique=False, nullable=False)
+        postal_code = db.Column(db.Integer, unique=False, nullable=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
         phone_number = db.Column(db.String(20), unique=False)
         gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
@@ -50,8 +49,6 @@ class Trainers(db.Model):
         vote_user = db.Column(db.Integer)
         sum_value = db.Column(db.Integer)
         is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-        confirmation_token = db.Column(db.String(80))
-        is_confirmed = db.Column(db.Boolean(), unique=False, nullable=True)
 
         def __repr__(self):
             return f'<Trainer: {self.id} - Email: {self.email}>'
@@ -61,7 +58,8 @@ class Trainers(db.Model):
                     'name': self.name,
                     'last_name': self.last_name,
                     'email': self.email,
-                    'address': self.address,
+                    'city': self.city,
+                    'postal_code': self.postal_code,
                     'phone_number': self.phone_number,
                     'gender': self.gender,
                     'website_url': self.website_url,
@@ -70,9 +68,7 @@ class Trainers(db.Model):
                     'x_url': self.x_url,
                     'iban' : self.bank_iban,
                     'value': self.sum_value,
-                    'is_active': self.is_active,
-                    'confirmation_token': self.confirmation_token,
-                    'is_confirmed': self.is_confirmed}
+                    'is_active': self.is_active}
 
 
 class Administrators(db.Model):
@@ -81,8 +77,6 @@ class Administrators(db.Model):
         email = db.Column(db.String(120), unique=True, nullable=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
         is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-        confirmation_token = db.Column(db.String(80))
-        is_confirmed = db.Column(db.Boolean(), unique=False, nullable=True)
 
         def __repr__(self):
            return f'<Admin: {self.id} - Name: {self.name} - Email: {self.email}>'
@@ -91,9 +85,7 @@ class Administrators(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'email': self.email,
-                    'isactive': self.is_active,
-                    'confirmation_token': self.confirmation_token,
-                    'is_confirmed': self.is_confirmed}
+                    'is_active': self.is_active}
 
 
 class Specializations(db.Model):

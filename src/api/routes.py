@@ -24,21 +24,29 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-@api.route('/confirm/<string:token>', methods=['GET'])
-def confirm_registration(token):
-    # Verificar si el token de confirmación es válido
-    # Si es válido, marcar al usuario como confirmado en la base de datos
+@api.route('/confirm', methods=['PATCH'])
+@jwt_required()
+def confirm_registration():
     response_body = {}
-    if not token:
-        response_body['message'] = 'Security token missing!'
-        return response_body,400
-    user = db.session.query(Users).filter_by(confirmation_token=token).first()
-    if user:
-        user.is_active = True  # Marcar al usuario como activo
-        db.session.commit()
-        return redirect('https://www.google.com/'),200  # Redirigir al usuario a la página de inicio de sesión
-    else:
-        return jsonify({'message': 'Invalid confirmation token'}), 400
+    current_user = get_jwt_identity()
+    print(current_user)
+    id = current_user['id']
+    email = current_user['email']
+    role = current_user['role']
+    if not id or not email or not role:
+        response_body['message'] = 'Required user data missing. Cannot fetch user'
+        return response_body, 400
+    if role == 'users':
+        user = db.session.query(Users).filter_by(id=id, email=email).first()
+    if role == 'trainers':
+        user = db.session.query(Trainers).filter_by(id=id, email=email).first()
+    if role == 'administrators':
+        user = db.session.query(Administrators).filter_by(id=id, email=email).first()
+    user.is_active = True
+    db.session.commit()
+    response_body['message'] = f'User id {id} with email address {email} successfully confirmed!'
+    response_body['results'] = user.serialize()
+    return response_body, 200
 
 
 @api.route('/forgetpassword/<string:user_type>/<string:email>', methods=['GET'])
@@ -58,27 +66,25 @@ def handle_forget_password(email, user_type):
                                                        'role': user_type,
                                                        'id': current_user.id
                                                        }, expires_delta=expires)
-    # reset_token = secrets.token_urlsafe(32)
-    # current_user.reset_token = reset_token
-    # db.session.commit()
-    handle_password_reset_email(current_user.email, user_type, confirmation_token)
-    return jsonify({f'message': 'Reset password link to {current_user.email}',
+    handle_password_reset_email(current_user.email, user_type)
+    # Return access token to front, which store token in localStorage
+    return jsonify({'message': f'Reset password link to {current_user.email}',
                     'token': confirmation_token}), 200
 
 
-def handle_password_reset_email(user_email, user_type, confirmation_token):
+def handle_password_reset_email(user_email, user_type):
     response_body = {}
     if not user_email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
-    # Pass URl of the front where you reset password
-    href_content = f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/reset/{user_type}/<{confirmation_token}'
+    # Pass URL of the front where you reset password
+    href_content = f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/resetpassword/{user_type}'
     html_content = f'''
             <html>
             <head></head>
             <body>
                 <h2>Reset Password</h2>
-                <p>Please enter a new password for email {user_email} and confirm!</p>
+                <p>Click the following link to reset the password for {user_email}. The link expires in 30 minutes.</p>
                 <button><a href={href_content}>Reset Password</a></button>
             </body>
             </html>
@@ -89,53 +95,8 @@ def handle_password_reset_email(user_email, user_type, confirmation_token):
     response_body['message'] = 'Email sent! Reset password.'
     return response_body, 200
 
-@api.route('/confirm/reset/<string:user_type>/<string:confirmation_token>', methods=['PATCH'])
-def handle_confirm_reset(user_type, confirmation_token):
-    response_body = {}
-    token_payload = decode_token(confirmation_token)
-    current_user_identity = token_payload['sub']
-    print(current_user_identity)
-    id = current_user_identity['id']
-    if not user_type:
-        response_body['message'] = 'User type missing!'
-        return response_body,400
-    if user_type == 'users':
-        current_user = db.session.query(Users).filter_by(id=id).first()
-    if user_type == 'trainers':
-        current_user = db.session.query(Trainers).filter_by(id=id).first()
-    if user_type == 'administrators':
-        current_user = db.session.query(Administrators).filter_by(id=id).first()
-    if not current_user:
-        response_body['message'] = 'No user found!'
-        return response_body,404
-    print(current_user.serialize())
-    current_user.is_confirmed = True
-    db.session.commit()
-    json_data = {
-        'token': confirmation_token,
-        'email': current_user.email,
-        'user_type': user_type
-    }
-    # We send a POST request to the front that stores the json data for the respective user so that when /resetpassword is called the JWT can be sent
-    response = requests.post('https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/test/post', json=json_data)
-    if response.status_code == 200:
-        response_body['message'] = 'Password reset successfully requested'
-        return response_body, 200
-    else:
-        response_body['message'] = 'Failed to request password reset'
-        return response_body, response.status_code
-    
 
-@api.route('/test/post', methods=['POST'])
-def handle_test_post():
-    response_body = {}
-    data = request.json
-    response_body['token'] = data['token']
-    response_body['email'] = data['email']
-    response_body['user_type'] = data['user_type']
-    return response_body, 200
-
-
+# This endpoint and the function therein is invoked from the Front, where the token stored in local_storage is read and sent in the header as Authentication
 @api.route('/resetpassword/<string:user_type>', methods=['PATCH'])
 @jwt_required()
 def handle_reset_password(user_type):
@@ -196,7 +157,7 @@ def handle_signup_user():
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
-    required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'gender']
+    required_fields = ['email', 'password', 'name', 'last_name', 'city', 'postal_code', 'phone_number', 'gender']
     if not request.json or not all(field in request.json for field in required_fields):
         response_body["message"] = "Missing required fields in the request."
         return response_body, 400
@@ -214,45 +175,41 @@ def handle_signup_user():
                      password=hashed_password, 
                      name=data["name"], 
                      last_name=data["last_name"],
-                     address=data["address"],
+                     city=data["city"],
+                     postal_code=data["postal_code"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
-                     is_active=False,
-                     confirmation_token='',
-                     is_confirmed=False)
+                     is_active=False)
     db.session.add(new_user)
     db.session.commit()
-    # Generar un token de confirmación único
-    confirmation_token = secrets.token_urlsafe(32)  # Token único para el enlace de confirmación
-    # Asociar el token de confirmación con el usuario
-    new_user.confirmation_token = confirmation_token
-    db.session.commit()
-    # Enviar correo electrónico de confirmación
-    handle_send_email(new_user.email, confirmation_token)
-    return jsonify({'message': 'User registered successfully. Confirmation email sent.'}), 200
+    expires = timedelta(minutes=30)
+    access_token = create_access_token(identity={'email': new_user.email,
+                                                 'id': new_user.id,
+                                                 'role': 'users'}, expires_delta=expires)
+    handle_send_email(new_user.email)
+    response_body["message"] = "Mail send to user, wait for the confirmation!"
+    response_body["result"] = new_user.serialize()
+    # Return access_token to Front and store access_token in localStorage() in order to invoke '/confirm' endpoint
+    response_body["token"] = access_token
+    return response_body, 200
     
-def handle_send_email(user_email, confirmation_token):
+def handle_send_email(email):
     response_body = {}
-    if not user_email:
+    if not email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
-    if not confirmation_token:
-        response_body['message'] = 'Access token is mandatory!'
-        return response_body, 400
-    # Add endpoint url
-    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/{confirmation_token}'
+    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm'
     html_content = f'''
             <html>
             <head></head>
             <body>
                 <h2>Welcome to Fitness App</h2>
-                <p>Please click the following button to access your dashboard.</p>
+                <p>Please click the following button to access your dashboard. The link will expires in 24 hours</p>
                 <button><a href={href_content}>Click Here</a></button>
             </body>
             </html>
                     '''
-    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[email])
     msg.html = html_content
     mail.send(msg)
     response_body['message'] = 'Email sent! Wait for confirmation.'
@@ -285,7 +242,7 @@ def handle_signup_trainer():
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
-    required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'gender', 'bank_iban']
+    required_fields = ['email', 'password', 'name', 'last_name', 'city', 'postal_code', 'phone_number', 'gender', 'bank_iban']
     if not request.json or not all(field in request.json for field in required_fields):
         response_body["message"] = "Missing required fields in the request."
         return response_body, 400
@@ -304,7 +261,8 @@ def handle_signup_trainer():
                            password=hashed_password,
                            name=data["name"],
                            last_name=data["last_name"],
-                           address=data["address"],
+                           city=data["city"],
+                           postal_code=data["postal_code"],
                            phone_number=data["phone_number"],
                            gender=data["gender"],
                            website_url=data.get("website_url"),
@@ -314,29 +272,26 @@ def handle_signup_trainer():
                            bank_iban=data["bank_iban"],
                            vote_user=0,
                            sum_value=0,
-                           is_active=True,
-                           is_confirmed=False)
+                           is_active=False)
     db.session.add(new_trainer)
     db.session.commit()
-     # Generar un token de confirmación único
-    confirmation_token = secrets.token_urlsafe(32)  # Token único para el enlace de confirmación
-    # Asociar el token de confirmación con el trainer
-    new_trainer.confirmation_token = confirmation_token
-    db.session.commit()
-    # Enviar correo electrónico de confirmación
-    handle_send_email(new_trainer.email, confirmation_token)
-    return jsonify({'message': 'Trainer registered successfully. Confirmation email sent.'}), 200
+    expires = timedelta(minutes=30)
+    access_token = create_access_token(identity={'email': new_trainer.email,
+                                                 'id': new_trainer.id,
+                                                 'role': 'trainers'}, expires_delta=expires)
+    handle_send_email(new_trainer.email)
+    response_body["message"] = "Mail send to trainer, wait for the confirmation!"
+    response_body["result"] = new_trainer.serialize()
+    # Return access_token to Front and store access_token in localStorage() in order to invoke '/confirm' endpoint
+    response_body["token"] = access_token
+    return response_body, 200
     
-def handle_send_email(trainer_email, confirmation_token):
+def handle_send_email(email):
     response_body = {}
-    if not trainer_email:
+    if not email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
-    if not confirmation_token:
-        response_body['message'] = 'Access token is mandatory!'
-        return response_body, 400
-    # Add endpoint url
-    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/{confirmation_token}'
+    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm'
     html_content = f'''
             <html>
             <head></head>
@@ -347,8 +302,7 @@ def handle_send_email(trainer_email, confirmation_token):
             </body>
             </html>
                     '''
-    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[trainer_email])
-    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[email])
     msg.html = html_content
     mail.send(msg)
     response_body['message'] = 'Email sent! Wait for confirmation.'
@@ -394,29 +348,26 @@ def handle_signup_admin():
     new_admin = Administrators(name=data['name'], 
                                email=data['email'].lower(), 
                                password=hashed_password, 
-                               is_active=True,
-                               is_confirmed=False)
+                               is_active=False)
     db.session.add(new_admin)
     db.session.commit()
-    # Generar un token de confirmación único
-    confirmation_token = secrets.token_urlsafe(32)  # Token único para el enlace de confirmación
-    # Asociar el token de confirmación con el admin
-    new_admin.confirmation_token = confirmation_token
-    db.session.commit()
-    # Enviar correo electrónico de confirmación
-    handle_send_email(new_admin.email, confirmation_token)
-    return jsonify({'message': 'Administrator registered successfully. Confirmation email sent.'}), 200
+    expires = timedelta(minutes=30)
+    access_token = create_access_token(identity={'email': new_admin.email,
+                                                 'id': new_admin.id,
+                                                 'role': 'administrators'}, expires_delta=expires)
+    handle_send_email(new_admin.email)
+    response_body["message"] = "Mail send to administrator, wait for the confirmation!"
+    response_body["result"] = new_admin.serialize()
+    # Return access_token to Front and store access_token in localStorage() in order to invoke '/confirm' endpoint
+    response_body["token"] = access_token
+    return response_body, 200
     
-def handle_send_email(admin_email, confirmation_token):
+def handle_send_email(email):
     response_body = {}
-    if not admin_email:
+    if not email:
         response_body['message'] = 'Email is a mandatory field!'
         return response_body, 400
-    if not confirmation_token:
-        response_body['message'] = 'Access token is mandatory!'
-        return response_body, 400
-    # Add endpoint url
-    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm/{confirmation_token}'
+    href_content= f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/confirm'
     html_content = f'''
             <html>
             <head></head>
@@ -427,8 +378,7 @@ def handle_send_email(admin_email, confirmation_token):
             </body>
             </html>
                     '''
-    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[admin_email])
-    msg.body = "Click the following link to confirm your registration: " + url_for('api.confirm_registration', token=confirmation_token, _external=True)
+    msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[email])
     msg.html = html_content
     mail.send(msg)
     response_body['message'] = 'Email sent! Wait for confirmation.'
