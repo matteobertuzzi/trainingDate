@@ -14,10 +14,7 @@ from flask_mail import Mail, Message
 from flask import render_template
 from datetime import timedelta
 import secrets
-from flask_login import login_required
-from flask_login import login_user
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 
 api = Blueprint('api', __name__)
@@ -66,7 +63,7 @@ def confirm_email(token):
     user.is_active = True
     db.session.add(user)
     db.session.commit()
-    return '<h1>The token works!</h1>'
+    return redirect("www.google.com")
 
 
 # Crear un usuario
