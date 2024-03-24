@@ -14,12 +14,17 @@ from flask_mail import Mail, Message
 from flask import render_template
 from datetime import timedelta
 import secrets
+from flask_login import login_required
+from flask_login import login_user
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+
 
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
 bcrypt = Bcrypt()
 mail = Mail()
+s = URLSafeTimedSerializer('Thisisasecret!')
 
 
 # Mirar los usuarios registrados
@@ -40,23 +45,29 @@ def handle_users():
     return response_body, 200
 
 
-@api.route('/confirm/', methods=['POST'])
-@jwt_required()
-def confirm_registration():
+@api.route('/confirm/<token>', methods=['GET'])
+def confirm_email(token):
     response_body = {}
-    token_header = request.headers.get('Authorization')
-    if not token_header:
-        response_body["message"] = 'Missing Authorization header'
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+    except SignatureExpired:
+        response_body["message"] = 'The token is expired!'
         return response_body, 400
-    token = token_header.split(" ")[1]
-    user = Users.query.filter_by(token=token).first()
+    except BadSignature:
+        response_body["message"] = 'Invalid token!'
+        return response_body, 400
+    user = Users.query.filter_by(email=email).first()
     if not user:
-        response_body["message"] = 'Invalid confirmation token'
+        response_body["message"] = 'Invalid user!'
+        return response_body, 400
+    if user.is_active:
+        response_body["message"] = "Account already confirmed."
         return response_body, 400
     user.is_active = True
-    user.token = None
+    db.session.add(user)
     db.session.commit()
-    return redirect('https://www.google.com'), 302
+    return '<h1>The token works!</h1>'
+
 
 # Crear un usuario
 @api.route('/users', methods=['POST'])
@@ -80,7 +91,6 @@ def handle_signup_user():
         return response_body, 400
     password = data["password"]
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    confirmation_token = create_access_token(identity="")
     new_user = Users(email=data["email"].lower(), 
                      password=hashed_password, 
                      name=data["name"], 
@@ -89,71 +99,71 @@ def handle_signup_user():
                      postal_code=data["postal_code"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
-                     is_active=False,
-                     token=confirmation_token)
+                     is_active=False)
     db.session.add(new_user)
     db.session.commit()
-    handle_send_email(new_user.email, new_user.token)
-    response_body["message"] = "Mail send to user, wait for the confirmation!"
-    response_body["result"] = new_user.serialize()
+    token = s.dumps(new_user.email, salt='email-confirm')
+    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/confirm/{token}"
+    subject = 'Confirm Email'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 0;
+                            }}
+                            .container {{
+                                display: flex,
+                                flex-direction: column,
+                                align-items: center,
+                                max-width: 600px;
+                                margin: auto;
+                                padding: 20px;
+                                background-color: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }}
+                            .message {{
+                                margin-bottom: 20px;
+                            }}
+                            .button {{
+                                display: inline-block;
+                                padding: 12px 24px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                            }}
+                            .button:hover {{
+                                background-color: #0056b3;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="message">
+                                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>
+                            </div>
+                            <div class="action">
+                                <a class="button" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    '''
+
+    msg = Message(subject, recipients=[new_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = "Email sent, wait for the confirmation!"
     return response_body, 200
-
-
-def handle_send_email(user_email, confirmation_token):
-    response_body = {}
-    if not user_email:
-        response_body['message'] = 'Email is a mandatory field!'
-        return response_body, 400
-    if not confirmation_token:
-        response_body['message'] = 'Access token is mandatory!'
-        return response_body, 400
-    try:
-        confirmation_api_url = 'https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/confirm'
-        html_content = f'''
-    <html>
-    <head></head>
-    <body>
-        <h2>Welcome to Fitness App</h2>
-        <p>Please click the following button to confirm your registration:</p>
-        <form id="confirmationForm" action="{confirmation_api_url}" method="post">
-            <button id="confirmButton" type="submit">Click Here!</button>
-        </form>
-        <script>
-            document.getElementById("confirmationForm").addEventListener("submit", function(event) {{
-                event.preventDefault(); 
-                fetch('{confirmation_api_url}', {{
-                    method: 'POST',
-                    headers: {{
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer  {confirmation_token}'
-                    }},
-                    body: JSON.stringify({{
-                        token: ''
-                    }})
-                }})
-                .then(response => {{
-                    if (response.ok) {{
-                        alert('Registration confirmed successfully!');
-                    }} else {{
-                        alert('Error confirming registration');
-                    }}
-                }})
-                .catch(error => {{
-                    alert('Error confirming registration: ' + error);
-                }});
-            }});
-        </script>
-    </body>
-    </html>
-'''
-        msg = Message('Dashboard URL', sender='ac714f6759c8ed', recipients=[user_email])
-        msg.html = html_content
-        mail.send(msg)
-        response_body['message'] = 'Email sent! Please check your inbox and follow the instructions to confirm your registration.'
-        return response_body, 200
-    except Exception as e:
-        response_body['message'] = f'Failed to send email: {str(e)}'
-        return response_body, 500
 
 
 # Mostrar los entrenadores disponibles

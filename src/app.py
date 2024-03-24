@@ -13,7 +13,6 @@ from api.models import db
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
-from itsdangerous.serializer import Serializer
 
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -36,7 +35,10 @@ app.config['MAIL_USERNAME'] = '40e9445888987f'
 app.config['MAIL_PASSWORD'] = '1907aeea2dd1eb'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_DEFAULT_SENDER'] = "sandbox.smtp.mailtrap.io"
 mail = Mail(app)
+
+
 
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
