@@ -8,9 +8,9 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=False)
     last_name = db.Column(db.String(100), unique=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     city = db.Column(db.String(120), unique=False, nullable=False)
     postal_code = db.Column(db.Integer, unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
@@ -85,7 +85,7 @@ class Administrators(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'email': self.email,
-                    'isactive': self.is_active}
+                    'is_active': self.is_active}
 
 
 class Specializations(db.Model):
