@@ -22,118 +22,84 @@ mail = Mail()
 s = URLSafeTimedSerializer('Thisisasecret!')
 
 
-@api.route('/forgot_password', methods=['POST'])
-def forgot_password():
+@api.route('/forgetpassword/<user_type>', methods=['POST'])
+def handle_forget_password(user_type):
     response_body = {}
-    if request.method == 'POST':
-        data = request.json
-        email = data['email']
-        if not email:
-            response_body["message"] = "Email is required"
-            return response_body, 400
-        user = Users.query.filter_by(email=email).first()
-        if not user:
-            response_body["message"] = "No user found with that email"
-            return response_body, 404
-        if not user.is_active:
-            response_body["message"] = "User is not already active"
-            return response_body, 404
-        token = s.dumps(user.email, salt='forgot-password')
-        confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/reset_password/{token}"
-        subject = 'Reset Password'
-        html_content = f'''
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Email Confirmation</title>
-                        <style>
-                            body {{
-                                font-family: Arial, sans-serif;
-                                background-color: #f9f9f9;
-                                margin: 0;
-                                padding: 0;
-                            }}
-                            .container {{
-                                display: flex,
-                                flex-direction: column,
-                                align-items: center,
-                                max-width: 600px;
-                                margin: auto;
-                                padding: 20px;
-                                background-color: #fff;
-                                border-radius: 8px;
-                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                            }}
-                            .message {{
-                                margin-bottom: 20px;
-                            }}
-                            .button {{
-                                display: inline-block;
-                                padding: 12px 24px;
-                                background-color: #007bff;
-                                color: #fff;
-                                text-decoration: none;
-                                border-radius: 5px;
-                                transition: background-color 0.3s ease;
-                            }}
-                            .button:hover {{
-                                background-color: #0056b3;
-                            }}
-                        </style>
-                    </head>
-                    <body>
-                        <div class="message">
-                            <p>¡Hola!</p>
-                            <p>Recibiste este correo electrónico porque solicitaste restablecer tu contraseña.</p>
-                            <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-                        </div>
-                        <div class="action">
-                            <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
-                        </div>
-                    </body>
-                    </html>
-                    '''
-        msg = Message(subject, recipients=[email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
-        mail.send(msg)
-        response_body["message"] = "Password reset instructions have been sent to your email"
-        return response_body, 200
-
-
-@api.route('/reset_password/<token>', methods=['PUT', "GET"])
-def reset_password(token):
-    response_body = {}
-    try:
-        email = s.loads(token, salt='forgot-password', max_age=1800)
-    except SignatureExpired:
-        response_body["message"] = 'The token is expired!'
-        return response_body, 400
-    except BadSignature:
-        response_body["message"] = 'Invalid token!'
-        return response_body, 400
-    user = Users.query.filter_by(email=email).first()
-    if not user:
-        response_body["message"] = 'Invalid user or trainer!'
-        return response_body, 400
-    if not user.is_active:
-        response_body["message"] = "User account not already active."
-        return response_body, 400
-    if request.method == "PUT":
-        data = request.json
-        new_password = data['password']
-        if 'password' not in data:
-            response_body["message"] = "New password is required"
-            return response_body, 400
-        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-        user.password = hashed_password
-        db.session.add(user)
-        db.session.commit()
-        response_body["message"] = "Password reset successful"
-        return response_body, 200
-    if request.method == "GET":
-        pass
-        # return render_template('reset_password.html')
+    data = request.json
+    if not "email" in data:
+        response_body['message'] = 'Email missing, please provide necessary data!'
+        return response_body,400
+    if user_type == 'users':
+        current_user = db.session.query(Users).filter_by(email=email).first()
+    if user_type == 'trainers':
+        current_user = db.session.query(Trainers).filter_by(email=email).first()
+    if user_type == 'administrators':
+        current_user = db.session.query(Administrators).filter_by(email=email).first()
+    expires = timedelta(minutes=30)
+    confirmation_token = create_access_token(identity={'email': current_user.email,
+                                                       'role': user_type,
+                                                       'id': current_user.id
+                                                       }, expires_delta=expires)
+    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/reset_password/{token}" # Cambiarlo
+    subject = 'Reset Password'
+    html_content = f'''
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Email Confirmation</title>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex,
+                            flex-direction: column,
+                            align-items: center,
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                        .message {{
+                            margin-bottom: 20px;
+                        }}
+                        .button {{
+                            display: inline-block;
+                            padding: 12px 24px;
+                            background-color: #007bff;
+                            color: #fff;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: background-color 0.3s ease;
+                        }}
+                        .button:hover {{
+                            background-color: #0056b3;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="message">
+                        <p>¡Hola!</p>
+                        <p>Recibiste este correo electrónico porque solicitaste restablecer tu contraseña.</p>
+                        <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+                    </div>
+                    <div class="action">
+                        <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
+                    </div>
+                </body>
+                </html>
+                '''
+    msg = Message(subject, recipients=[current_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = "Password reset instructions have been sent to your email"
+    return response_body, 200
 
 
 # Mirar los usuarios registrados
