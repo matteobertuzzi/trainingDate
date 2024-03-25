@@ -30,17 +30,16 @@ def handle_forget_password(user_type):
         response_body['message'] = 'Email missing, please provide necessary data!'
         return response_body,400
     if user_type == 'users':
-        current_user = db.session.query(Users).filter_by(email=email).first()
+        current_user = db.session.query(Users).filter_by(email=data["email"]).first()
     if user_type == 'trainers':
-        current_user = db.session.query(Trainers).filter_by(email=email).first()
+        current_user = db.session.query(Trainers).filter_by(email=data["email"]).first()
     if user_type == 'administrators':
-        current_user = db.session.query(Administrators).filter_by(email=email).first()
+        current_user = db.session.query(Administrators).filter_by(email=data["email"]).first()
     expires = timedelta(minutes=30)
     confirmation_token = create_access_token(identity={'email': current_user.email,
                                                        'role': user_type,
                                                        'id': current_user.id
                                                        }, expires_delta=expires)
-    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/reset_password/{token}" # Cambiarlo
     subject = 'Reset Password'
     html_content = f'''
                 <!DOCTYPE html>
@@ -91,7 +90,7 @@ def handle_forget_password(user_type):
                         <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
                     </div>
                     <div class="action">
-                        <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
+                        <a class="button" href="www.google.com" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
                     </div>
                 </body>
                 </html>
@@ -99,6 +98,8 @@ def handle_forget_password(user_type):
     msg = Message(subject, recipients=[current_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
     mail.send(msg)
     response_body["message"] = "Password reset instructions have been sent to your email"
+    response_body["token"] = confirmation_token
+    response_body["id"] = current_user.id
     return response_body, 200
 
 
