@@ -49,10 +49,11 @@ def confirm_registration():
     return response_body, 200
 
 
-@api.route('/forgetpassword/<string:user_type>/<string:email>', methods=['GET'])
-def handle_forget_password(email, user_type):
+@api.route('/forgetpassword/<user_type>', methods=['POST'])
+def handle_forget_password(user_type):
     response_body = {}
-    if not email:
+    data = request.json
+    if not "email" in data:
         response_body['message'] = 'Email missing, please provide necessary data!'
         return response_body,400
     if user_type == 'users':
@@ -66,38 +67,67 @@ def handle_forget_password(email, user_type):
                                                        'role': user_type,
                                                        'id': current_user.id
                                                        }, expires_delta=expires)
-    handle_password_reset_email(current_user.email, user_type)
-    # Return access token to front, which store token in localStorage
-    return jsonify({'message': f'Reset password link to {current_user.email}',
-                    'token': confirmation_token}), 200
 
-
-def handle_password_reset_email(user_email, user_type):
-    response_body = {}
-    if not user_email:
-        response_body['message'] = 'Email is a mandatory field!'
-        return response_body, 400
-    if not user_type:
-        response_body['message'] = 'User type is a mandatory field!'
-        return response_body, 400
-    # Pass URL of the front where you reset password
-    href_content = f'https://jubilant-train-7v9q9wrg96rw3rg7x-3001.app.github.dev/api/resetpassword/{user_type}'
+    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/reset_password/{token}" # Cambiarlo
+    subject = 'Reset Password'
     html_content = f'''
-            <html>
-            <head></head>
-            <body>
-                <h2>Reset Password</h2>
-                <p>Click the following link to reset the password for {user_email}. The link expires in 30 minutes.</p>
-                <button><a href={href_content}>Reset Password</a></button>
-            </body>
-            </html>
-                    '''
-    msg = Message('Reset Password', sender='ac714f6759c8ed', recipients=[user_email])
-    msg.html = html_content
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Email Confirmation</title>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex,
+                            flex-direction: column,
+                            align-items: center,
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                        .message {{
+                            margin-bottom: 20px;
+                        }}
+                        .button {{
+                            display: inline-block;
+                            padding: 12px 24px;
+                            background-color: #007bff;
+                            color: #fff;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: background-color 0.3s ease;
+                        }}
+                        .button:hover {{
+                            background-color: #0056b3;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="message">
+                        <p>¡Hola!</p>
+                        <p>Recibiste este correo electrónico porque solicitaste restablecer tu contraseña.</p>
+                        <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+                    </div>
+                    <div class="action">
+                        <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
+                    </div>
+                </body>
+                </html>
+                '''
+    msg = Message(subject, recipients=[current_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
     mail.send(msg)
-    response_body['message'] = 'Email sent! Reset password.'
+    response_body["message"] = "Password reset instructions have been sent to your email"
     return response_body, 200
-
 
 # This endpoint and the function therein is invoked from the Front, where the token stored in local_storage is read and sent in the header as Authentication
 @api.route('/resetpassword/<string:user_type>', methods=['PATCH'])
