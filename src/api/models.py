@@ -48,7 +48,7 @@ class Trainers(db.Model):
         bank_iban = db.Column(db.String(34), unique=False, nullable=False)
         vote_user = db.Column(db.Integer)
         sum_value = db.Column(db.Integer)
-        is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+        is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
 
         def __repr__(self):
             return f'<Trainer: {self.id} - Email: {self.email}>'
@@ -76,7 +76,7 @@ class Administrators(db.Model):
         name = db.Column(db.String(100), unique=False, nullable=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
-        is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+        is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
 
         def __repr__(self):
            return f'<Admin: {self.id} - Name: {self.name} - Email: {self.email}>'

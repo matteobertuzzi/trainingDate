@@ -174,6 +174,14 @@ def handle_signup_user():
     if user:
         response_body["message"] = "User email already exists!"
         return response_body, 409
+    trainer = db.session.query(Trainers).filter(Trainers.email == data["email"].lower()).first()
+    if trainer:
+        response_body["message"] = "Found trainer with same email!!"
+        return response_body, 409
+    administrator = db.session.query(Administrators).filter(Administrators.email == data["email"].lower()).first()
+    if administrator:
+        response_body["message"] = "Found administrator with same email!"
+        return response_body, 409
     if data["gender"] not in ["Male", "Female", "Not Specified"]:
         response_body["message"] = "Data contains no valid gender"
         response_body["gender available"] = ["Male", "Female", "Not Specified"]
@@ -187,8 +195,7 @@ def handle_signup_user():
                      city=data["city"],
                      postal_code=data["postal_code"],
                      phone_number=data["phone_number"],
-                     gender=data["gender"],
-                     is_active=False)
+                     gender=data["gender"])
     db.session.add(new_user)
     db.session.commit()
     token = s.dumps(new_user.email, salt='email-confirm')
@@ -286,9 +293,16 @@ def handle_signup_trainer():
         return response_body, 400
     trainer = db.session.query(Trainers).filter(Trainers.email == data["email"].lower()).first()
     if trainer:
-        if trainer.email == data["email"]:
-            response_body["message"] = "Trainer already exists with this email!"
-            return response_body, 409
+        response_body["message"] = "Trainer already exists with this email!"
+        return response_body, 409
+    user = db.session.query(Users).filter(Users.email == data["email"].lower()).first()
+    if user:
+        response_body["message"] = "Found user with same email!"
+        return response_body, 409
+    administrator = db.session.query(Administrators).filter(Administrators.email == data["email"].lower()).first()
+    if administrator:
+        response_body["message"] = "Found administrator with same email!"
+        return response_body, 409
     if data["gender"] not in ["Male", "Female", "Not Specified"]:
         response_body["message"] = "Data contains no valid gender"
         response_body["gender available"] = ["Male", "Female", "Not Specified"]
@@ -309,8 +323,7 @@ def handle_signup_trainer():
                            x_url=data.get("x_url"),
                            bank_iban=data["bank_iban"],
                            vote_user=0,
-                           sum_value=0,
-                           is_active=False)
+                           sum_value=0)
     db.session.add(new_trainer)
     db.session.commit()
     token = s.dumps(new_trainer.email, salt='email-confirm')
@@ -410,12 +423,19 @@ def handle_signup_admin():
     if admin:
         response_body['message'] = 'Admin already exists'
         return response_body, 409
+    trainer = db.session.query(Trainers).filter(Trainers.email == data["email"].lower()).first()
+    if trainer:
+        response_body["message"] = "Found trainer with same email!!"
+        return response_body, 409
+    user = db.session.query(Users).filter(Users.email == data["email"].lower()).first()
+    if user:
+        response_body["message"] = "Found user with same email!"
+        return response_body, 409
     password = data["password"]
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_admin = Administrators(name=data['name'], 
                                email=data['email'].lower(), 
-                               password=hashed_password, 
-                               is_active=True)
+                               password=hashed_password)
     db.session.add(new_admin)
     db.session.commit()
     access_token = create_access_token(identity={"admin": new_admin.email,
