@@ -6,9 +6,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint, redirect
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Trainers, Administrators, Specializations, TrainersClasses, UsersClasses, TrainersSpecializations
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from flask import render_template
@@ -18,10 +16,124 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 
 api = Blueprint('api', __name__)
-CORS(api)  # Allow CORS requests to this API
+CORS(api) 
 bcrypt = Bcrypt()
 mail = Mail()
 s = URLSafeTimedSerializer('Thisisasecret!')
+
+
+@api.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    response_body = {}
+    if request.method == 'POST':
+        data = request.json
+        email = data['email']
+        if not email:
+            response_body["message"] = "Email is required"
+            return response_body, 400
+        user = Users.query.filter_by(email=email).first()
+        if not user:
+            response_body["message"] = "No user found with that email"
+            return response_body, 404
+        if not user.is_active:
+            response_body["message"] = "User is not already active"
+            return response_body, 404
+        token = s.dumps(user.email, salt='forgot-password')
+        confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/reset_password/{token}"
+        subject = 'Reset Password'
+        html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 0;
+                            }}
+                            .container {{
+                                display: flex,
+                                flex-direction: column,
+                                align-items: center,
+                                max-width: 600px;
+                                margin: auto;
+                                padding: 20px;
+                                background-color: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }}
+                            .message {{
+                                margin-bottom: 20px;
+                            }}
+                            .button {{
+                                display: inline-block;
+                                padding: 12px 24px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                            }}
+                            .button:hover {{
+                                background-color: #0056b3;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="message">
+                            <p>¡Hola!</p>
+                            <p>Recibiste este correo electrónico porque solicitaste restablecer tu contraseña.</p>
+                            <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+                        </div>
+                        <div class="action">
+                            <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
+                        </div>
+                    </body>
+                    </html>
+                    '''
+        msg = Message(subject, recipients=[email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+        mail.send(msg)
+        response_body["message"] = "Password reset instructions have been sent to your email"
+        return response_body, 200
+
+
+@api.route('/reset_password/<token>', methods=['PUT', "GET"])
+def reset_password(token):
+    response_body = {}
+    try:
+        email = s.loads(token, salt='forgot-password', max_age=1800)
+    except SignatureExpired:
+        response_body["message"] = 'The token is expired!'
+        return response_body, 400
+    except BadSignature:
+        response_body["message"] = 'Invalid token!'
+        return response_body, 400
+    user = Users.query.filter_by(email=email).first()
+    if not user:
+        response_body["message"] = 'Invalid user or trainer!'
+        return response_body, 400
+    if not user.is_active:
+        response_body["message"] = "User account not already active."
+        return response_body, 400
+    if request.method == "PUT":
+        data = request.json
+        new_password = data['password']
+        if 'password' not in data:
+            response_body["message"] = "New password is required"
+            return response_body, 400
+        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        user.password = hashed_password
+        db.session.add(user)
+        db.session.commit()
+        response_body["message"] = "Password reset successful"
+        return response_body, 200
+    if request.method == "GET":
+        pass
+        # return render_template('reset_password.html')
 
 
 # Mirar los usuarios registrados
@@ -42,11 +154,12 @@ def handle_users():
     return response_body, 200
 
 
+# Confirmacion registracion con token
 @api.route('/confirm/<token>', methods=['GET'])
 def confirm_email(token):
     response_body = {}
     try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
+        email = s.loads(token, salt='email-confirm', max_age=1800)
     except SignatureExpired:
         response_body["message"] = 'The token is expired!'
         return response_body, 400
@@ -54,19 +167,31 @@ def confirm_email(token):
         response_body["message"] = 'Invalid token!'
         return response_body, 400
     user = Users.query.filter_by(email=email).first()
-    if not user:
-        response_body["message"] = 'Invalid user!'
+    trainer = Trainers.query.filter_by(email=email).first()
+    if not user and not trainer:
+        response_body["message"] = 'Invalid user or trainer!'
         return response_body, 400
-    if user.is_active:
-        response_body["message"] = "Account already confirmed."
-        return response_body, 400
-    user.is_active = True
-    db.session.add(user)
-    db.session.commit()
-    return redirect("www.google.com")
+    if user:
+        if user.is_active:
+            response_body["message"] = "User account already confirmed."
+            return response_body, 400
+        user.is_active = True
+        db.session.add(user)
+        db.session.commit()
+        response_body["message"] = "User registration successful."
+        return response_body, 200
+    elif trainer:
+        if trainer.is_active:
+            response_body["message"] = "Trainer account already confirmed."
+            return response_body, 400
+        trainer.is_active = True
+        db.session.add(trainer)
+        db.session.commit()
+        response_body["message"] = "Trainer registration successful."
+        return response_body, 200
 
 
-# Crear un usuario
+# Crear un usuario y enviar correo para la confirma de la registracion
 @api.route('/users', methods=['POST'])
 def handle_signup_user():
     response_body = {}
@@ -156,7 +281,6 @@ def handle_signup_user():
                     </body>
                     </html>
                     '''
-
     msg = Message(subject, recipients=[new_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
     mail.send(msg)
     response_body["message"] = "Email sent, wait for the confirmation!"
@@ -219,16 +343,69 @@ def handle_signup_trainer():
                            bank_iban=data["bank_iban"],
                            vote_user=0,
                            sum_value=0,
-                           is_active=True)
+                           is_active=False)
     db.session.add(new_trainer)
     db.session.commit()
-    access_token = create_access_token(identity={"trainer": new_trainer.email,
-                                                 "role": "trainers",
-                                                 "id": new_trainer.id})
-    response_body['results'] = {"trainer": new_trainer.serialize(), 
-                                "role": "trainers"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Trainers successfully created and logged in!'
+    token = s.dumps(new_trainer.email, salt='email-confirm')
+    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/confirm/{token}"
+    subject = 'Confirm Email'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 0;
+                            }}
+                            .container {{
+                                display: flex,
+                                flex-direction: column,
+                                align-items: center,
+                                max-width: 600px;
+                                margin: auto;
+                                padding: 20px;
+                                background-color: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }}
+                            .message {{
+                                margin-bottom: 20px;
+                            }}
+                            .button {{
+                                display: inline-block;
+                                padding: 12px 24px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                            }}
+                            .button:hover {{
+                                background-color: #0056b3;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="message">
+                                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>
+                            </div>
+                            <div class="action">
+                                <a class="button" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    '''
+    msg = Message(subject, recipients=[new_trainer.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = "Email sent, wait for the confirmation!"
     return response_body, 200
 
 
@@ -433,11 +610,12 @@ def handle_user(id):
                 response_body["message"] = "No data provided for update"
                 return response_body, 200
             if 'password' in data:
-                user.password = data["password"]
+                hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+                user.password = hashed_password
             if "city" in data:
                 user.city = data["city"]
-            if "postal_code" in postal_code:
-                user.postal_code = data["city"]
+            if "postal_code" in data:
+                user.postal_code = data["postal_code"]
             if "phone_number" in data:
                 user.phone_number = data["phone_number"]
             db.session.add(user)
@@ -475,11 +653,12 @@ def handle_trainer(id):
             if not data:
                 response_body["message"] = "No data provided for update"
             if 'password' in data:
-                trainer.password = data["password"]
+                hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+                trainer.password = hashed_password
             if "city" in data:
                 trainer.city = data["city"]
-            if "postal_code" in postal_code:
-                trainer.postal_code = data["city"]
+            if "postal_code" in data:
+                trainer.postal_code = data["postal_code"]
             if "phone_number" in data:
                 trainer.phone_number = data["phone_number"]
             if "website_url" in data:
@@ -527,7 +706,8 @@ def handle_administrator(id):
             if not data:
                 response_body["message"] = "No data provided for update"
             if 'password' in data:
-                administrator.password = data["password"]
+                hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+                administrator.password = hashed_password
             db.session.add(administrator)
             db.session.commit()
             response_body["message"] = "Admin Update"
