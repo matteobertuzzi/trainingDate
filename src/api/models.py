@@ -8,12 +8,13 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=False)
     last_name = db.Column(db.String(100), unique=False)
-    address = db.Column(db.String(120), unique=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    city = db.Column(db.String(120), unique=False, nullable=False)
+    postal_code = db.Column(db.Integer, unique=False, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
 
     def __repr__(self):
         return f'<User: {self.id} - Email: {self.email}>'
@@ -23,7 +24,8 @@ class Users(db.Model):
                 'name': self.name,
                 'last_name': self.last_name,
                 'email': self.email,
-                'address': self.address,
+                'city': self.city,
+                'postal_code': self.postal_code,
                 'phone_number': self.phone_number,
                 'gender': self.gender,
                 'is_active': self.is_active}
@@ -34,7 +36,8 @@ class Trainers(db.Model):
         name = db.Column(db.String(100), unique=False)
         last_name = db.Column(db.String(100), unique=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
-        address = db.Column(db.String(120), unique=False)
+        city = db.Column(db.String(120), unique=False, nullable=False)
+        postal_code = db.Column(db.Integer, unique=False, nullable=False)
         password = db.Column(db.String(80), unique=False, nullable=False)
         phone_number = db.Column(db.String(20), unique=False)
         gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
@@ -55,7 +58,8 @@ class Trainers(db.Model):
                     'name': self.name,
                     'last_name': self.last_name,
                     'email': self.email,
-                    'address': self.address,
+                    'city': self.city,
+                    'postal_code': self.postal_code,
                     'phone_number': self.phone_number,
                     'gender': self.gender,
                     'website_url': self.website_url,
@@ -81,7 +85,7 @@ class Administrators(db.Model):
             return {'id': self.id,
                     'name': self.name,
                     'email': self.email,
-                    'isactive': self.is_active}
+                    'is_active': self.is_active}
 
 
 class Specializations(db.Model):
@@ -103,7 +107,11 @@ class Specializations(db.Model):
 class TrainersClasses(db.Model):
         __tablename__= "trainers_classes"
         id = db.Column(db.Integer, primary_key=True)
-        address = db.Column(db.String(100), unique=False, nullable=False)
+        city = db.Column(db.String(120), unique=False, nullable=False)
+        postal_code = db.Column(db.Integer, unique=False, nullable=False)
+        street_name = db.Column(db.String(120), unique=False, nullable=False)
+        street_number = db.Column(db.Integer, unique=False, nullable=False)
+        additional_info = db.Column(db.String(255),unique=False, nullable=True)
         capacity = db.Column(db.Integer, unique=False, nullable=False)
         start_date = db.Column(db.DateTime, unique=False, nullable=False)
         end_date = db.Column(db.DateTime, unique=False, nullable=False)
@@ -120,7 +128,11 @@ class TrainersClasses(db.Model):
         def serialize(self):
             return {'id': self.id,
                     'trainer': self.trainer_id,
-                    'address': self.address,
+                    'city': self.city,
+                    'postal_code': self.postal_code,
+                    'street_name': self.street_name,
+                    'street_number': self.street_number,
+                    'additional_info': self.additional_info,
                     'capacity': self.capacity,
                     'start_date': self.start_date,
                     'end_date': self.end_date,

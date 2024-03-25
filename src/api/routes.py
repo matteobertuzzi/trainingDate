@@ -2,29 +2,105 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, redirect
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Trainers, Administrators, Specializations, TrainersClasses, UsersClasses, TrainersSpecializations
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
+from flask import render_template
+from datetime import timedelta
+import secrets
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 
 api = Blueprint('api', __name__)
-CORS(api)  # Allow CORS requests to this API
+CORS(api) 
 bcrypt = Bcrypt()
 mail = Mail()
+s = URLSafeTimedSerializer('Thisisasecret!')
 
 
-@api.route('/mail')
-def send_mail():
-    msg = Message('Test mail', sender='ac714f6759c8ed', recipients=['matteo.bertuzzi@icloud.com'])
-    msg.body ="This is a test email"
+@api.route('/forgetpassword/<user_type>', methods=['POST'])
+def handle_forget_password(user_type):
+    response_body = {}
+    data = request.json
+    if not "email" in data:
+        response_body['message'] = 'Email missing, please provide necessary data!'
+        return response_body,400
+    if user_type == 'users':
+        current_user = db.session.query(Users).filter_by(email=data["email"]).first()
+    if user_type == 'trainers':
+        current_user = db.session.query(Trainers).filter_by(email=data["email"]).first()
+    if user_type == 'administrators':
+        current_user = db.session.query(Administrators).filter_by(email=data["email"]).first()
+    expires = timedelta(minutes=30)
+    confirmation_token = create_access_token(identity={'email': current_user.email,
+                                                       'role': user_type,
+                                                       'id': current_user.id
+                                                       }, expires_delta=expires)
+    subject = 'Reset Password'
+    html_content = f'''
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Email Confirmation</title>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex,
+                            flex-direction: column,
+                            align-items: center,
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                        .message {{
+                            margin-bottom: 20px;
+                        }}
+                        .button {{
+                            display: inline-block;
+                            padding: 12px 24px;
+                            background-color: #007bff;
+                            color: #fff;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: background-color 0.3s ease;
+                        }}
+                        .button:hover {{
+                            background-color: #0056b3;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="message">
+                        <p>¡Hola!</p>
+                        <p>Recibiste este correo electrónico porque solicitaste restablecer tu contraseña.</p>
+                        <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+                    </div>
+                    <div class="action">
+                        <a class="button" href="www.google.com" target="_blank">¡Haz clic aquí para restablecer tu contraseña!</a>
+                    </div>
+                </body>
+                </html>
+                '''
+    msg = Message(subject, recipients=[current_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
     mail.send(msg)
-    return 'Message successfully sent!'
+    response_body["message"] = "Password reset instructions have been sent to your email"
+    response_body["token"] = confirmation_token
+    response_body["id"] = current_user.id
+    return response_body, 200
 
 
 # Mirar los usuarios registrados
@@ -39,13 +115,50 @@ def handle_users():
     users = db.session.query(Users).all()
     if not users:
         response_body['message'] = 'No users currently registered'
-        return response_body,404
+        return response_body, 404
     response_body['message'] = 'Users currently registered'
     response_body['results'] = [single_user.serialize() for single_user in users]
     return response_body, 200
 
 
-# Crear un usuario
+# Confirmacion registracion con token
+@api.route('/confirm/<token>', methods=['GET'])
+def confirm_email(token):
+    response_body = {}
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=1800)
+    except SignatureExpired:
+        response_body["message"] = 'The token is expired!'
+        return response_body, 400
+    except BadSignature:
+        response_body["message"] = 'Invalid token!'
+        return response_body, 400
+    user = Users.query.filter_by(email=email).first()
+    trainer = Trainers.query.filter_by(email=email).first()
+    if not user and not trainer:
+        response_body["message"] = 'Invalid user or trainer!'
+        return response_body, 400
+    if user:
+        if user.is_active:
+            response_body["message"] = "User account already confirmed."
+            return response_body, 400
+        user.is_active = True
+        db.session.add(user)
+        db.session.commit()
+        response_body["message"] = "User registration successful."
+        return response_body, 200
+    elif trainer:
+        if trainer.is_active:
+            response_body["message"] = "Trainer account already confirmed."
+            return response_body, 400
+        trainer.is_active = True
+        db.session.add(trainer)
+        db.session.commit()
+        response_body["message"] = "Trainer registration successful."
+        return response_body, 200
+
+
+# Crear un usuario y enviar correo para la confirma de la registracion
 @api.route('/users', methods=['POST'])
 def handle_signup_user():
     response_body = {}
@@ -53,7 +166,7 @@ def handle_signup_user():
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
-    required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'gender']
+    required_fields = ['email', 'password', 'name', 'last_name', 'city', 'postal_code', 'phone_number', 'gender']
     if not request.json or not all(field in request.json for field in required_fields):
         response_body["message"] = "Missing required fields in the request."
         return response_body, 400
@@ -71,19 +184,73 @@ def handle_signup_user():
                      password=hashed_password, 
                      name=data["name"], 
                      last_name=data["last_name"],
-                     address=data["address"],
+                     city=data["city"],
+                     postal_code=data["postal_code"],
                      phone_number=data["phone_number"],
                      gender=data["gender"],
-                     is_active=True)
+                     is_active=False)
     db.session.add(new_user)
     db.session.commit()
-    access_token = create_access_token(identity={"user": new_user.email,
-                                                 "role": "users",
-                                                 "id": new_user.id})
-    response_body['results'] = {"admin": new_user.serialize(), 
-                                "role": "users"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Users successfully created and logged in!'
+    token = s.dumps(new_user.email, salt='email-confirm')
+    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/confirm/{token}"
+    subject = 'Confirm Email'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 0;
+                            }}
+                            .container {{
+                                display: flex,
+                                flex-direction: column,
+                                align-items: center,
+                                max-width: 600px;
+                                margin: auto;
+                                padding: 20px;
+                                background-color: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }}
+                            .message {{
+                                margin-bottom: 20px;
+                            }}
+                            .button {{
+                                display: inline-block;
+                                padding: 12px 24px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                            }}
+                            .button:hover {{
+                                background-color: #0056b3;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="message">
+                                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>
+                            </div>
+                            <div class="action">
+                                <a class="button" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    '''
+    msg = Message(subject, recipients=[new_user.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = "Email sent, wait for the confirmation!"
     return response_body, 200
 
 
@@ -99,7 +266,7 @@ def handle_trainers():
     trainers = db.session.query(Trainers).all()
     if not trainers:
         response_body['message'] = 'No trainers currently registered'
-        return response_body,404
+        return response_body, 404
     response_body['message'] = 'Trainers currently registered'
     response_body['results'] = [single_trainer.serialize() for single_trainer in trainers]
     return response_body, 200
@@ -113,7 +280,7 @@ def handle_signup_trainer():
     if not data:
         response_body["message"] = "No data provided"
         return response_body, 400
-    required_fields = ['email', 'password', 'name', 'last_name', 'address', 'phone_number', 'gender', 'bank_iban']
+    required_fields = ['email', 'password', 'name', 'last_name', 'city', 'postal_code', 'phone_number', 'gender', 'bank_iban']
     if not request.json or not all(field in request.json for field in required_fields):
         response_body["message"] = "Missing required fields in the request."
         return response_body, 400
@@ -132,7 +299,8 @@ def handle_signup_trainer():
                            password=hashed_password,
                            name=data["name"],
                            last_name=data["last_name"],
-                           address=data["address"],
+                           city=data["city"],
+                           postal_code=data["postal_code"],
                            phone_number=data["phone_number"],
                            gender=data["gender"],
                            website_url=data.get("website_url"),
@@ -142,16 +310,69 @@ def handle_signup_trainer():
                            bank_iban=data["bank_iban"],
                            vote_user=0,
                            sum_value=0,
-                           is_active=True)
+                           is_active=False)
     db.session.add(new_trainer)
     db.session.commit()
-    access_token = create_access_token(identity={"trainer": new_trainer.email,
-                                                 "role": "trainers",
-                                                 "id": new_trainer.id})
-    response_body['results'] = {"trainer": new_trainer.serialize(), 
-                                "role": "trainers"}
-    response_body['access_token'] = access_token
-    response_body['message'] = 'Trainers successfully created and logged in!'
+    token = s.dumps(new_trainer.email, salt='email-confirm')
+    confirm_url = f"https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/confirm/{token}"
+    subject = 'Confirm Email'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 0;
+                            }}
+                            .container {{
+                                display: flex,
+                                flex-direction: column,
+                                align-items: center,
+                                max-width: 600px;
+                                margin: auto;
+                                padding: 20px;
+                                background-color: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                            }}
+                            .message {{
+                                margin-bottom: 20px;
+                            }}
+                            .button {{
+                                display: inline-block;
+                                padding: 12px 24px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                            }}
+                            .button:hover {{
+                                background-color: #0056b3;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="message">
+                                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>
+                            </div>
+                            <div class="action">
+                                <a class="button" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    '''
+    msg = Message(subject, recipients=[new_trainer.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = "Email sent, wait for the confirmation!"
     return response_body, 200
 
 
@@ -272,6 +493,9 @@ def handle_login(user_type):
         if not user:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
+        if not user.is_active:
+            response_body["message"] = "The user is not active."
+            return response_body, 400
         password = data['password']
         if not bcrypt.check_password_hash(user.password, password):
             response_body['message'] = f'Wrong password for email {user.email}'
@@ -289,6 +513,9 @@ def handle_login(user_type):
         if not trainer:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
+        if not trainer.is_active:
+            response_body["message"] = "The trainer is not active."
+            return response_body, 400
         password = data['password']
         if not bcrypt.check_password_hash(trainer.password, password):
             response_body['message'] = f'Wrong password for email {trainer.email}'
@@ -306,6 +533,9 @@ def handle_login(user_type):
         if not administrator:
             response_body['message'] = f'{user_type.capitalize()} not found'
             return response_body, 401
+        if not administrator.is_active:
+            response_body["message"] = "The administrator is not active."
+            return response_body, 400
         password = data['password']
         if not bcrypt.check_password_hash(administrator.password, password):
             response_body['message'] = f'Wrong password for email {administrator.email}'
@@ -347,9 +577,12 @@ def handle_user(id):
                 response_body["message"] = "No data provided for update"
                 return response_body, 200
             if 'password' in data:
-                user.password = data["password"]
-            if "address" in data:
-                user.address = data["address"]
+                hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+                user.password = hashed_password
+            if "city" in data:
+                user.city = data["city"]
+            if "postal_code" in data:
+                user.postal_code = data["postal_code"]
             if "phone_number" in data:
                 user.phone_number = data["phone_number"]
             db.session.add(user)
@@ -387,9 +620,12 @@ def handle_trainer(id):
             if not data:
                 response_body["message"] = "No data provided for update"
             if 'password' in data:
-                trainer.password = data["password"]
-            if "address" in data:
-                trainer.address = data["address"]
+                hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+                trainer.password = hashed_password
+            if "city" in data:
+                trainer.city = data["city"]
+            if "postal_code" in data:
+                trainer.postal_code = data["postal_code"]
             if "phone_number" in data:
                 trainer.phone_number = data["phone_number"]
             if "website_url" in data:
@@ -437,7 +673,8 @@ def handle_administrator(id):
             if not data:
                 response_body["message"] = "No data provided for update"
             if 'password' in data:
-                administrator.password = data["password"]
+                hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+                administrator.password = hashed_password
             db.session.add(administrator)
             db.session.commit()
             response_body["message"] = "Admin Update"
@@ -484,8 +721,8 @@ def handle_user_classes(id):
                 response_body["message"] = "No Trainer class available"
                 return response_body, 404
             new_class = UsersClasses(amount=data["amount"], 
-                                     stripe_status= "Cart", 
-                                     trainer_status= "Pending", 
+                                     stripe_status="Cart", 
+                                     trainer_status="Pending", 
                                      value=0,
                                      user_id=id,
                                      class_id=data["class_id"])
@@ -522,7 +759,7 @@ def handle_trainer_classes(id):
             if not data:
                 response_body["message"] = "No data provided"
                 return response_body, 400
-            required_fields = ['address', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
+            required_fields = ['city', 'postal_code', 'street_name', 'street_number', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
                 return response_body, 400
@@ -541,7 +778,11 @@ def handle_trainer_classes(id):
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
             new_trainer_class = TrainersClasses(trainer_id=id, 
-                                                address=data["address"], 
+                                                city=data["city"], 
+                                                postal_code=data["postal_code"],
+                                                street_name=data["street_name"],
+                                                street_number=data["street_number"],
+                                                additional_info=data.get("additional_info"),
                                                 capacity=data["capacity"], 
                                                 start_date=data["start_date"],
                                                 end_date=data["end_date"],
@@ -591,8 +832,16 @@ def handle_trainer_class(id, class_id):
             if not data:
                 response_body["message"] = "No data provided for update"
                 return response_body, 400
-            if 'address' in data:
-                trainer_class.address = data["address"]
+            if 'city' in data:
+                trainer_class.city = data["city"]
+            if 'postal_code' in data:
+                trainer_class.postal_code = data["postal_code"]
+            if 'street_name' in data:
+                trainer_class.street_name = data["street_name"]
+            if 'street_number' in data:
+                trainer_class.street_number = data["street_number"]
+            if 'additional_info' in data:
+                trainer_class.additional_info = data["additional_info"]
             if 'start_date' in data:
                 trainer_class.start_date = data["start_date"]
             if 'end_date' in data:
