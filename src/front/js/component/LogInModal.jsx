@@ -11,10 +11,11 @@ import Nav from 'react-bootstrap/Nav';
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { useContext } from "react";
+import { FaCheckCircle } from "react-icons/fa";
 
 
 export const LogInModal = ({ show, onHide }) => {
-    const { store, actions } = useContext(Context)
+    const { actions } = useContext(Context)
     const { loginUser, setLogged } = actions
     const [validated, setValidated] = useState(false)
     const [activeTab, setActiveTab] = useState("");
@@ -39,20 +40,20 @@ export const LogInModal = ({ show, onHide }) => {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            setValidated(true)
-            if (validated) {
-                const userType = activeTab === "users" ? "users" : "trainers";
-                const validateLog = await loginUser(inputs, userType);
-                if (!validateLog) {
-                    setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
-                } else {
-                    setLogged(true);
-                    setInputs({
-                        email: "",
-                        password: "",
-                    });
-                    onHide();
-                }
+            setValidated(true);
+            const userType = activeTab === "users" ? "users" : "trainers";
+            const validateLog = await loginUser(inputs, userType);
+            if (!validateLog) {
+                setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
+            } else {
+                setLogged(true);
+                setInputs({
+                    email: '',
+                    password: ''
+                });
+                setLoginError(null)
+                setActiveTab("")
+                onHide();
             }
         }
     };
@@ -68,10 +69,10 @@ export const LogInModal = ({ show, onHide }) => {
             <p className="text-center p-2 m-0">Elige cómo deseas iniciar sesión:</p>
             <Nav defaultActiveKey={activeTab} variant="pills" fill className="d-flex flex-row justify-content-betweeen px-3">
                 <Nav.Item>
-                    <Nav.Link eventKey="users" onClick={() => handleTabChange("users")}>Usuario</Nav.Link>
+                    <Nav.Link eventKey="users" onClick={() => handleTabChange("users")}>Usuario<FaCheckCircle className={`ms-2 ${activeTab === "users" ? "" : "d-none"}`} /></Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="trainers" onClick={() => handleTabChange("trainers")}>Entrenador</Nav.Link>
+                    <Nav.Link eventKey="trainers" onClick={() => handleTabChange("trainers")}>Entrenador<FaCheckCircle className={`ms-2 ${activeTab === "trainers" ? "" : "d-none"}`} /></Nav.Link>
                 </Nav.Item>
             </Nav>
             <Modal.Body className="w-100 d-flex flex-column p-20">

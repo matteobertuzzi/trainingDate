@@ -7,7 +7,9 @@ import { LogInModal } from "./LogInModal.jsx";
 import { useState } from 'react';
 import { useContext } from "react";
 import { Context } from "../store/appContext";
-
+import { FaUserAlt } from "react-icons/fa";
+import { CgGym } from "react-icons/cg";
+import { FaShoppingCart } from "react-icons/fa";
 
 
 export const MyNavbar = () => {
@@ -23,10 +25,12 @@ export const MyNavbar = () => {
         {logged
           ?
           (
-            <Col xs="auto">
+            <Col xs="auto" className="d-flex gap-3">
               <Button variant="danger" onClick={() => { setLogged(false); setUser([]) }}>
-                Log Out
+                <FaUserAlt onClick={() => { setLogged(false); setUser([]) }} />
               </Button>
+              <CgGym />
+              <FaShoppingCart />
             </Col>
           )
           :
