@@ -3,9 +3,42 @@ const getState = ({ getStore, getActions, setStore }) => {
     store: {
       message: null,
       demo: [{title: "FIRST", background: "white", initial: "white"},
-             {title: "SECOND", background: "white", initial: "white"}]
+             {title: "SECOND", background: "white", initial: "white"}],
+      currentUser: {},
+      logged: false,
     },
+
     actions: {
+      setLogged: (value) =>{
+				if (!value) {
+                    localStorage.removeItem("accessToken");
+                }
+				setStore({ logged: value });	  
+			},
+
+			setUser: (value) => {
+				setStore({ user: value})
+			},
+
+      loginUser: async(inputs, user_type) => {
+        const options = {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              email: inputs.email,
+              password: inputs.password,
+          }),
+        };
+        const response = await fetch(`https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/login/${user_type}`, options)
+        if (!response.ok) return false
+        const data = await response.json()
+        localStorage.setItem("accessToken", data.access_token);
+        setStore({ currentUser: data.results });
+        return true
+      },
+
       // Use getActions to call a function within a fuction
       exampleFunction: () => { getActions().changeColor(0, "green"); },
       getMessage: async () => {

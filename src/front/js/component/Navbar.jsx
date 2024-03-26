@@ -1,21 +1,44 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import { LogInModal } from "./LogInModal.jsx";
+import { useState } from 'react';
+import { useContext } from "react";
+import { Context } from "../store/appContext";
 
 
-export const Navbar = () => {
-  
+
+export const MyNavbar = () => {
+  const [loginModalShow, setLoginModalShow] = useState(false);
+  const { store, actions } = useContext(Context)
+  const { logged } = store
+  const { setLogged, setUser } = actions
+
   return (
-    <nav className="navbar navbar-light bg-light">
-      <div className="container">
-        <Link to="/">
-          <span className="navbar-brand mb-0 h1">React Boilerplate</span>
-        </Link>
-        <div className="ml-auto">
-          <Link to="/demo">
-            <button className="btn btn-primary">Check the Context in action</button>
-          </Link>
-        </div>
-      </div>
-    </nav>
+    <Navbar fixed="top" expand="lg" className="bg-body-primary" data-bs-theme="dark">
+      <Container fluid className=" justify-content-between p-2 mx-2">
+        <Navbar.Brand href="#home">Training Date</Navbar.Brand>
+        {logged
+          ?
+          (
+            <Col xs="auto">
+              <Button variant="danger" onClick={() => { setLogged(false); setUser([]) }}>
+                Log Out
+              </Button>
+            </Col>
+          )
+          :
+          (
+            <Col xs="auto">
+              <Button onClick={() => setLoginModalShow(true)} className="btn btn-primary">
+                Log In
+              </Button>
+            </Col>
+          )}
+        <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
+      </Container>
+    </Navbar>
   );
 };
