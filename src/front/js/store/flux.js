@@ -31,7 +31,7 @@ const getState = ({ getStore, getActions, setStore }) => {
               password: inputs.password,
           }),
         };
-        const response = await fetch(`https://expert-capybara-7v9qpq594qr52prwr-3001.app.github.dev/api/login/${user_type}`, options)
+        const response = await fetch(`${process.env.BACKEND_URL}/api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
         localStorage.setItem("accessToken", data.access_token);

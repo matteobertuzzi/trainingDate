@@ -67,7 +67,7 @@ export const LogInModal = ({ show, onHide }) => {
                 <CloseButton onClick={onHide}></CloseButton>
             </Modal.Header>
             <p className="text-center p-2 m-0">Elige cómo deseas iniciar sesión:</p>
-            <Nav defaultActiveKey={activeTab} variant="pills" fill className="d-flex flex-row justify-content-betweeen px-3">
+            <Nav defaultActiveKey={activeTab} variant="pills" justify className="d-flex flex-row justify-content-betweeen px-3">
                 <Nav.Item>
                     <Nav.Link eventKey="users" onClick={() => handleTabChange("users")}>Usuario<FaCheckCircle className={`ms-2 ${activeTab === "users" ? "" : "d-none"}`} /></Nav.Link>
                 </Nav.Item>

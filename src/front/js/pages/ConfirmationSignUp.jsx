@@ -65,7 +65,7 @@ export const ConfirmationSignUp = () => {
         <div className="text-center mb-3">
           <h4>Elige cómo deseas iniciar sesión:</h4>
         </div>
-        <Nav defaultActiveKey={activeTab} variant="pills" fill className="d-flex flex-row justify-content-betweeen mb-3">
+        <Nav defaultActiveKey={activeTab} variant="pills" justify className="d-flex flex-row justify-content-betweeen mb-3">
           <Nav.Item>
             <Nav.Link eventKey="users" onClick={() => handleTabChange("users")}>Usuario<FaCheckCircle className={`ms-2 ${activeTab === "users" ? "" : "d-none"}`} /></Nav.Link>
           </Nav.Item>
