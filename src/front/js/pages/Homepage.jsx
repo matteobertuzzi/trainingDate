@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from '../store/appContext';
 import { Form, DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
+import HomeClassList from '../component/HomeClassList.jsx';
+import HomeUserClasses from '../component/HomeUserClasses.jsx';
 
 
 const Homepage = () => {
+    const { store, actions } = useContext(Context);
     const [trainingType, setTrainingtype] = useState('');
     const [trainingLevel, setTraininglevel] = useState('');
+
+    const userClasses = store.userClasses;
+
 
     return (
         <>
@@ -51,10 +58,10 @@ const Homepage = () => {
                         </Form>
                     </div>
                     <div className='col-lg-6 col-md-6 col-sm-10'>
-                        Results
+                        <HomeClassList />
                     </div>
                     <div className='col-lg-3 col-md-3 col-sm-10' style={{ 'backgroundColor': '#D3D3D3', 'height': '100vh' }}>
-                        Classes
+                        <HomeUserClasses />
                     </div>
                 </div>
             </div>
