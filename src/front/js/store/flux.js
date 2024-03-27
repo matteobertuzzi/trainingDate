@@ -39,6 +39,29 @@ const getState = ({ getStore, getActions, setStore }) => {
         return true
       },
 
+      getAvailableAccount: async () => {
+				const token = localStorage.getItem("accessToken");
+				if (!token) {
+					console.error("No access token found");
+					return null;
+				}
+				const options = {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				};
+				const response = await fetch(`${process.env.BACKEND_URL}/api/current_available_account`, options);
+				if (!response.ok) {
+					console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+					return null;
+				}
+				const data = await response.json();
+        console.log(data)
+				setStore({ currentUser : data.account})
+				getActions().setLogged(true)
+			},
+
+
       // Use getActions to call a function within a fuction
       exampleFunction: () => { getActions().changeColor(0, "green"); },
       getMessage: async () => {

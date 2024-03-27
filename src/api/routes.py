@@ -103,6 +103,20 @@ def handle_forget_password(user_type):
     return response_body, 200
 
 
+# Controlar si hay un account con session activa
+@api.route('/current_available_account', methods=['GET'])
+@jwt_required()
+def handle_current_available_account():
+    response_body = {}
+    current_user = get_jwt_identity()
+    if current_user:
+        response_body["message"] = "Welcome, your account is active"
+        response_body["account"] = current_user
+        return response_body, 200
+    response_body["message"] = "No current user available"
+    return response_body, 404
+
+
 # Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
 @jwt_required()

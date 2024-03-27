@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 import { FaUserAlt } from "react-icons/fa";
-import { CgGym } from "react-icons/cg";
-import { FaShoppingCart } from "react-icons/fa";
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
 export const MyNavbar = () => {
@@ -26,19 +26,68 @@ export const MyNavbar = () => {
           ?
           (
             <Col xs="auto" className="d-flex gap-3">
-              <Button variant="danger" onClick={() => { setLogged(false); setUser([]) }}>
-                <FaUserAlt onClick={() => { setLogged(false); setUser([]) }} />
-              </Button>
-              <CgGym />
-              <FaShoppingCart />
+              <Nav>
+                <NavDropdown
+                  id="nav-dropdown-cart-shopping"
+                  title={<i className="fa-solid fa-cart-shopping"></i>}
+                  menuVariant="dark"
+                  align='end'
+                >
+                  <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+              <Nav>
+                <NavDropdown
+                  id="nav-dropdown-dumbbell"
+                  title={<i className="fa-solid fa-dumbbell"></i>}
+                  menuVariant="dark"
+                  align='end'
+                >
+                  <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+              <Nav>
+                <NavDropdown
+                  id="nav-dropdown-dumbbell"
+                  title={<i className="fa-solid fa-user"></i>}
+                  menuVariant="dark"
+                  align='end'
+                  className="mw-100"
+                >
+                  <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
+                    <span>Mi Perfil</span>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
+                    <span>Mis Classes</span>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
+                    <span>Adjustes</span>
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={() => { setLogged(false); setUser([]) }} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
+                    <span>LogOut</span>
+                    <i className="fa-solid fa-right-from-bracket"></i>
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
             </Col>
           )
           :
           (
-            <Col xs="auto">
-              <Button onClick={() => setLoginModalShow(true)} className="btn btn-primary">
-                Log In
-              </Button>
+            <Col xs="auto d-flex align-items-center justify-content-center gap-3">
+              <Nav>
+                <NavDropdown
+                  id="nav-dropdown-cart-shopping"
+                  title={<i className="fa-solid fa-cart-shopping"></i>}
+                  menuVariant="dark"
+                  align='end'
+                >
+                  <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+              <Nav.Item onClick={() => setLoginModalShow(true)}>
+                <i className="fa-solid fa-right-to-bracket text-success"></i>
+              </Nav.Item>
             </Col>
           )}
         <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />

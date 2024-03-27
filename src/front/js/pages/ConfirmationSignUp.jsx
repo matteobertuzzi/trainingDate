@@ -111,8 +111,6 @@ export const ConfirmationSignUp = () => {
           <Button onClick={handleSubmit} variant="success" style={{ borderRadius: '20px', padding: '10px 20px' }}>Log In</Button>
         </div>
       </Form>
-
-
     </Container>
   )
 }
