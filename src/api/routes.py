@@ -840,7 +840,7 @@ def handle_trainer_classes(id):
             db.session.add(new_trainer_class)
             db.session.commit()
             response_body["message"] = "New class create"
-            response_body["new class"] = new_trainer_class.serialize()
+            response_body["class"] = new_trainer_class.serialize()
             return response_body, 201
         response_body["message"] = 'Not allowed!'
         return response_body, 405
