@@ -19,7 +19,7 @@ const Homepage = () => {
     };
 
     const handleFilterSubmit = (event) => {
-        event.preventDefault(); 
+        // event.preventDefault(); 
         console.log('Filters submitted:', filters);
     };
 

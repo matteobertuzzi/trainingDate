@@ -8,16 +8,17 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
     const [trainingLevel, setTraininglevel] = useState('');
 
     const handleFormSubmit = (event) => {
+        console.log(event)
         event.preventDefault();
         onFilterSubmit(filters);
     };
 
-    const handleFilters = (event) => {
-        const { name, value } = event.target;
+    const handleFilters = (selectedValue, name) => {
         onFilterChange({
             ...filters,
-            [name]: value,
+            [name]: selectedValue,
         });
+        console.log(filters)
     };
 
 
@@ -37,27 +38,27 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
                 <Form.Group controlId="trainingType" className='my-4'>
                     <Form.Label>Training Type</Form.Label>
                     <DropdownButton
-                        title={trainingType || 'Select training type'}
+                        title={filters.trainingType || 'Select training type'}
                         name='trainingType'
                         value={filters.trainingType}
-                        onChange={handleFilters}
+                        onSelect={(selectedValue) => handleFilters(selectedValue, 'trainingType')}
                     >
-                        <Dropdown.Item value="hiit">HIIT</Dropdown.Item>
-                        <Dropdown.Item value="spinning">Spinning</Dropdown.Item>
-                        <Dropdown.Item value="aerobics">Aerobics</Dropdown.Item>
+                        <Dropdown.Item eventKey="hiit">HIIT</Dropdown.Item>
+                        <Dropdown.Item eventKey="spinning">Spinning</Dropdown.Item>
+                        <Dropdown.Item eventKey="aerobics">Aerobics</Dropdown.Item>
                     </DropdownButton>
                 </Form.Group>
                 <Form.Group controlId="trainingLevel" className='my-4'>
                     <Form.Label>Training Level</Form.Label>
                     <DropdownButton
-                        title={trainingLevel || 'Select training level'}
+                        title={filters.trainingLevel || 'Select training level'}
                         name='trainingLevel'
                         value={filters.trainingLevel}
-                        onChange={handleFilters}
+                        onSelect={(selectedValue) => handleFilters(selectedValue, 'trainingLevel')}
                     >
-                        <Dropdown.Item value="beginner">Beginner</Dropdown.Item>
-                        <Dropdown.Item value="intermediate">Intermediate</Dropdown.Item>
-                        <Dropdown.Item value="advanced">Advanced</Dropdown.Item>
+                        <Dropdown.Item eventKey="beginner">Beginner</Dropdown.Item>
+                        <Dropdown.Item eventKey="intermediate">Intermediate</Dropdown.Item>
+                        <Dropdown.Item eventKey="advanced">Advanced</Dropdown.Item>
                     </DropdownButton>
                 </Form.Group>
                 <Button variant="primary" type="submit">
