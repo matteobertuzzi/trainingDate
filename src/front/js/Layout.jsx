@@ -10,6 +10,7 @@ import { Footer } from "./component/Footer.jsx";
 import { Home } from "./pages/Home.jsx";
 import { Demo } from "./pages/Demo.jsx";
 import { Single } from "./pages/Single.jsx";
+import Homepage from "./pages/Homepage.jsx";
 
 
 // Create your first component
@@ -28,6 +29,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Homepage />} path='/homepage' />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
