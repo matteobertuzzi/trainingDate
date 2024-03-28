@@ -27,8 +27,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       setTrainersClases: (value) => {
         setStore({trainersClasses: value})
-      },
-
+				setStore({ user: value})
+			},
+        
       getAllClasses: async ()=>{
         const url = `${process.env.BACKEND_URL}api/classes`
         const response = await fetch(url)
@@ -57,6 +58,28 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
     },
 
+      loginUser: async(inputs, user_type) => {
+        const options = {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              email: inputs.email,
+              password: inputs.password,
+          }),
+        };
+        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
+        if (!response.ok) return false
+        const data = await response.json()
+        setStore({ currentUser:  JSON.stringify(data.results) });
+        localStorage.setItem("availableAccount", JSON.stringify(data.results));
+        localStorage.setItem("accessToken", data.access_token);
+        getActions().setLogged(true)
+        return true
+      },
+
+        
       getUserClasses: async () => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
@@ -98,6 +121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         console.log(getStore().userClasses);
       },
 
+        
       addUser: async (newUser)=>{
         console.log(newUser)
         const url = process.env.BACKEND_URL + '/api/users'
@@ -118,6 +142,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         return data
       },
 
+       
       addTrainer: async (newTrainer) => {
         const url= process.env.BACKEND_URL + 'api/trainers'
         const options = {
@@ -137,26 +162,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         return data
       },
 
-      loginUser: async(inputs, user_type) => {
-        const options = {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              email: inputs.email,
-              password: inputs.password,
-          }),
-        };
-        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
-        if (!response.ok) return false
-        const data = await response.json()
-        setStore({ currentUser:  JSON.stringify(data.results) });
-        localStorage.setItem("availableAccount", JSON.stringify(data.results));
-        localStorage.setItem("accessToken", data.access_token);
-        getActions().setLogged(true)
-        return true
-      },
 
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
@@ -189,6 +194,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ currentUser: JSON.parse(account) });
 				  getActions().setLogged(true)
       },
+
 
       postTrainerClasses: async (inputs) => {
         const token = localStorage.getItem("accessToken");
