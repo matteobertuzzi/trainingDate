@@ -4,17 +4,20 @@ import injectContext from "./store/appContext.js";
 // Import custom component
 import ScrollToTop from "./component/scrollToTop.js";
 import { BackendURL } from "./component/BackendURL.jsx";
-import { Navbar } from "./component/Navbar.jsx";
+import { MyNavbar } from "./component/Navbar.jsx";
 import { Footer } from "./component/Footer.jsx";
 // Import custom pages
 import { Home } from "./pages/Home.jsx";
 import { Demo } from "./pages/Demo.jsx";
+import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
+import { InvalidToken } from "./pages/InvalidToken.jsx";
+import { CreateClass } from "./pages/CreateClass.jsx";
+import { SessionEnd } from "./pages/SessionEnd.jsx";
 import { Single } from "./pages/Single.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
 import SignupTrainer from "./pages/SignupTrainer.jsx";
 import SignupUser from "./pages/SignupUser.jsx";
-
 
 // Create your first component
 const Layout = () => {
@@ -27,10 +30,14 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
+                    <MyNavbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
+                        <Route element={<CreateClass />} path="/trainers/:trainerId/create/class" />
+                        <Route element={<ConfirmationSignUp />} path="/confirmation" />
+                        <Route element={<SessionEnd />} path="/end/session" />
+                        <Route element={<InvalidToken />} path="/invalid" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Homepage />} path='/homepage' />
                         <Route element={<TrainerProfile />} path='/profile/trainer' />
