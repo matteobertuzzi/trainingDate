@@ -31,13 +31,11 @@ const Layout = () => {
                 <ScrollToTop>
                     <MyNavbar />
                     <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
                         <Route element={<CreateClass />} path="/trainers/:trainerId/create/class" />
                         <Route element={<ConfirmationSignUp />} path="/confirmation" />
                         <Route element={<SessionEnd />} path="/end/session" />
                         <Route element={<InvalidToken />} path="/invalid" />
-                        <Route element={<Homepage />} path='/homepage' />
+                        <Route element={<Homepage />} path='/' />
                         <Route element={<TrainerProfile />} path='/profile/trainer' />
                         <Route element={<SignupTrainer />} path='/signup/trainer' />
                         <Route element={<SignupUser />} path='/signup/user' />
