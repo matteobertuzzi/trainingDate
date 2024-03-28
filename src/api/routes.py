@@ -103,6 +103,20 @@ def handle_forget_password(user_type):
     return response_body, 200
 
 
+# Controlar si hay un account con session activa
+@api.route('/current_available_account', methods=['GET'])
+@jwt_required()
+def handle_current_available_account():
+    response_body = {}
+    current_user = get_jwt_identity()
+    if current_user:
+        response_body["message"] = "Welcome, your account is active"
+        response_body["account"] = current_user
+        return response_body, 200
+    response_body["message"] = "No current user available"
+    return response_body, 404
+
+
 # Mirar los usuarios registrados
 @api.route('/users', methods=['GET'])
 @jwt_required()
@@ -797,7 +811,9 @@ def handle_trainer_classes(id):
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
-            new_trainer_class = TrainersClasses(trainer_id=id, 
+            new_trainer_class = TrainersClasses(trainer_id=id,
+                                                class_name = data.get("class_name"),
+                                                class_details = data.get("class_details"),
                                                 city=data["city"], 
                                                 postal_code=data["postal_code"],
                                                 street_name=data["street_name"],
@@ -811,7 +827,7 @@ def handle_trainer_classes(id):
                                                 training_level=data["training_level"])
             db.session.add(new_trainer_class)
             db.session.commit()
-            response_body["message"] = "New class create"
+            response_body["message"] = "New class created"
             response_body["new class"] = new_trainer_class.serialize()
             return response_body, 201
         response_body["message"] = 'Not allowed!'
@@ -852,6 +868,10 @@ def handle_trainer_class(id, class_id):
             if not data:
                 response_body["message"] = "No data provided for update"
                 return response_body, 400
+            if 'class_name' in data:
+                trainer_class.class_name = data["class_name"]
+            if 'class_details' in data:
+                trainer_class.class_details = data["class_details"]
             if 'city' in data:
                 trainer_class.city = data["city"]
             if 'postal_code' in data:
@@ -909,6 +929,30 @@ def handle_user_class(id, class_id):
     response_body["message"] = 'Not allowed!'
     return response_body, 405
 
+# Mostrar todas las clases
+@api.route('/classes', methods=['GET'])
+def handle_show_classes():
+    response_body = {}
+    all_classes = db.session.query(TrainersClasses).all()
+    if not all_classes:
+        response_body['message'] = 'No classes available.'
+        return response_body, 404
+    response_body['message'] = 'List of classes available.'
+    response_body['results'] = [single_class.serialize() for single_class in all_classes]
+    return response_body, 200
+
+
+# Mostrar una clase en función de ID
+@api.route('/classes/<int:id>', methods=['GET'])
+def handle_show_single_class(id):
+    response_body = {}
+    single_class = db.session.query(TrainersClasses).filter_by(id=id).first()
+    if not single_class:
+        response_body['message'] = f'No class with id {str(id)} found!'
+        return response_body, 404
+    response_body['message'] = 'Class details.'
+    response_body['results'] = single_class.serialize()
+    return response_body, 200
 
 # Mostrar y crear especializaciones para trainer
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])

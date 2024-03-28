@@ -20,7 +20,6 @@ flask-admin = "*"
 typing-extensions = "*"
 bcrypt = "*"
 flask-bcrypt = "*"
-flask-mail = "*"
 flask-jwt-extended = "*"
 flask-login = "*"
 
