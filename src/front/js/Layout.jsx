@@ -29,7 +29,7 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
-                        <Route element={<CreateClass />} path="/trainer/:trainerId/create/class" />
+                        <Route element={<CreateClass />} path="/trainers/:trainerId/create/class" />
                         <Route element={<ConfirmationSignUp />} path="/confirmation" />
                         <Route element={<SessionEnd />} path="/end/session" />
                         <Route element={<InvalidToken />} path="/invalid" />

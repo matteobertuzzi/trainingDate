@@ -10,13 +10,25 @@ import { Context } from "../store/appContext";
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export const MyNavbar = () => {
   const [loginModalShow, setLoginModalShow] = useState(false);
+  const navigate = useNavigate()
   const { store, actions } = useContext(Context)
   const { logged, currentUser } = store
-  const { setLogged, setUser } = actions
+  const { setLogged, setUser, getAvailableAccount } = actions
+
+  const handleLogout = () => {
+    setLogged(false);
+    setUser([]);
+  };
+
+  const handleCreateClass = async () => {
+    navigate(`trainers/${JSON.parse(currentUser.trainer.id)}/create/class`)
+    await getAvailableAccount()
+  }
 
   return (
     <Navbar fixed="top" expand="lg" className="bg-body-primary" data-bs-theme="dark">
@@ -61,10 +73,10 @@ export const MyNavbar = () => {
                     <span>Mis Classes</span>
                   </NavDropdown.Item>
                   <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                    <Link to={`/trainer/${currentUser.id}/create/class`}>Crear clase</Link>
+                    <span onClick={handleCreateClass}>Crear clase</span>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={() => { setLogged(false); setUser([]) }} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
+                  <NavDropdown.Item onClick={handleLogout} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
                     <span>LogOut</span>
                     <i className="fa-solid fa-right-from-bracket"></i>
                   </NavDropdown.Item>

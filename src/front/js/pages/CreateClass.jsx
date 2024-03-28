@@ -54,7 +54,7 @@ export const CreateClass = () => {
         }
 
         setValidated(true);
-        const postClass = await postTrainerClasses(inputs, currentUser.aid);
+        const postClass = await postTrainerClasses(inputs);
         if (!postClass) {
             setLoginError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {

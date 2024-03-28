@@ -7,7 +7,6 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Trainers, Administrators, Specializations, TrainersClasses, UsersClasses, TrainersSpecializations
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from flask import render_template
@@ -111,12 +110,8 @@ def handle_current_available_account():
     response_body = {}
     try:
         current_user = get_jwt_identity()
-    except ExpiredSignatureError:
-        response_body["message"] = "Expire access Token"
-        return response_body, 401
-    except InvalidTokenError:
-        response_body["message"] = "Invalid Token"
-        return response_body, 401    
+    except SignatureExpired:
+        return redirect(f"{process.env.FRONT_URL}/end/session") 
     response_body["message"] = "Welcome, your account is active"
     response_body["results"] = current_user
     return response_body, 200
@@ -232,7 +227,7 @@ def handle_signup_user():
     db.session.add(new_user)
     db.session.commit()
     token = s.dumps(new_user.email, salt='email-confirm')
-    confirm_url = f"{process.env.BACKEND_URL}/api/confirm/{token}"
+    confirm_url = f"{process.env.BACKEND_URL}api/confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -360,7 +355,7 @@ def handle_signup_trainer():
     db.session.add(new_trainer)
     db.session.commit()
     token = s.dumps(new_trainer.email, salt='email-confirm')
-    confirm_url = f"{process.env.BACKEND_URL}/api/confirm/{token}"
+    confirm_url = f"{process.env.BACKEND_URL}api/confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -807,54 +802,55 @@ def handle_trainer_classes(id):
         response_body["Trainer classes"] = [class_trainer.serialize() for class_trainer in trainer_classes]
         return response_body, 200
     if request.method == "POST":
-        if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
-            data = request.json
-            if not data:
-                response_body["message"] = "No data provided"
-                return response_body, 400
-            required_fields = ['city', 'postal_code', 'street_name', 'street_number', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
-            if not request.json or not all(field in request.json for field in required_fields):
-                response_body["message"] = "Missing required fields in the request."
-                return response_body, 400
-            try:
-                start_date = datetime.strptime(data['start_date'], '%Y-%m-%dT%H:%M')
-                end_date = datetime.strptime(data['end_date'], '%Y-%m-%dT%H:%M')
-            except ValueError:
-                response_body["message"] = "Invalid datetime format. Use format: YYYY-MM-DDTHH:MM"
-                return response_body, 400
-            if data['training_level'] not in ['Beginner', 'Intermediate', 'Advanced']:
-                response_body["message"] = "Invalid training level"
-                response_body["training_level available"] = ["Beginner", "Intermediate", "Advanced"]
-                return response_body, 400
-            trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id, specialization_id = data["training_type"]).all()
-            if not trainers_specializations:
-                response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
-                return response_body, 400
-            existing_class = db.session.query(TrainersClasses).filter(db.or_(db.and_(TrainersClasses.start_date >= data['start_date'], TrainersClasses.start_date < data['end_date']),
-                                                                             db.and_(TrainersClasses.end_date > data['start_date'], TrainersClasses.end_date <= data['end_date']),
-                                                                             db.and_(TrainersClasses.start_date <= data['start_date'], TrainersClasses.end_date >= data['end_date']))).first()
-            if existing_class:
-                response_body["message"] = "Trainer class already exists for this datetime"
-                return response_body, 400
-            new_trainer_class = TrainersClasses(trainer_id=id, 
-                                                city=data["city"], 
-                                                postal_code=data["postal_code"],
-                                                street_name=data["street_name"],
-                                                street_number=data["street_number"],
-                                                additional_info=data.get("additional_info"),
-                                                capacity=data["capacity"], 
-                                                start_date=data["start_date"],
-                                                end_date=data["end_date"],
-                                                price=data["price"],
-                                                training_type=data["training_type"],
-                                                training_level=data["training_level"])
-            db.session.add(new_trainer_class)
-            db.session.commit()
-            response_body["message"] = "New class create"
-            response_body["class"] = new_trainer_class.serialize()
-            return response_body, 201
-        response_body["message"] = 'Not allowed!'
-        return response_body, 405
+        # if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
+        data = request.json
+        print(data)
+        if not data:
+            response_body["message"] = "No data provided"
+            return response_body, 400
+        required_fields = ['city', 'postal_code', 'street_name', 'street_number', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
+        if not request.json or not all(field in request.json for field in required_fields):
+            response_body["message"] = "Missing required fields in the request."
+            return response_body, 400
+        # try:
+            # start_date = datetime.strptime(data['start_date'], '%Y-%m-%dT%H:%M')
+            # end_date = datetime.strptime(data['end_date'], '%Y-%m-%dT%H:%M')
+        # except ValueError:
+            # response_body["message"] = "Invalid datetime format. Use format: YYYY-MM-DDTHH:MM"
+            # return response_body, 400
+        if data['training_level'] not in ['Beginner', 'Intermediate', 'Advanced']:
+            response_body["message"] = "Invalid training level"
+            response_body["training_level available"] = ["Beginner", "Intermediate", "Advanced"]
+            return response_body, 400
+        trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id, specialization_id = data["training_type"]).all()
+        if not trainers_specializations:
+            response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
+            return response_body, 400
+        existing_class = db.session.query(TrainersClasses).filter(db.or_(db.and_(TrainersClasses.start_date >= data['start_date'], TrainersClasses.start_date < data['end_date']),
+                                                                            db.and_(TrainersClasses.end_date > data['start_date'], TrainersClasses.end_date <= data['end_date']),
+                                                                            db.and_(TrainersClasses.start_date <= data['start_date'], TrainersClasses.end_date >= data['end_date']))).first()
+        if existing_class:
+            response_body["message"] = "Trainer class already exists for this datetime"
+            return response_body, 400
+        new_trainer_class = TrainersClasses(trainer_id=id, 
+                                            city=data["city"], 
+                                            postal_code=data["postal_code"],
+                                            street_name=data["street_name"],
+                                            street_number=data["street_number"],
+                                            additional_info=data.get("additional_info"),
+                                            capacity=data["capacity"], 
+                                            start_date=data["start_date"],
+                                            end_date=data["end_date"],
+                                            price=data["price"],
+                                            training_type=data["training_type"],
+                                            training_level=data["training_level"])
+        db.session.add(new_trainer_class)
+        db.session.commit()
+        response_body["message"] = "New class create"
+        response_body["class"] = new_trainer_class.serialize()
+        return response_body, 201
+        # response_body["message"] = 'Not allowed!'
+        # return response_body, 405
         
 
 # Mostrar, crear, borrar clase trainer
