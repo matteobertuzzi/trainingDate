@@ -11,6 +11,10 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         onFilterSubmit(filters);
+        onFilterChange({
+            trainingType: '',
+            trainingLevel: ''
+        });
     };
 
     const handleFilters = (selectedValue, name) => {
@@ -62,7 +66,7 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
                     </DropdownButton>
                 </Form.Group>
                 <Button variant="primary" type="submit">
-                    Search classes
+                    Filter classes
                 </Button>
             </Form>
         </>

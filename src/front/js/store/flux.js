@@ -126,6 +126,43 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({userClasses: classDetails})
         console.log(getStore().userClasses);
       },
+      addUser: async (newUser)=>{
+        console.log(newUser)
+        const url = process.env.BACKEND_URL + '/api/users'
+        const options = {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(newUser),
+        };
+        const response = await fetch(url, options);
+        if(!response.ok){
+          console.log(response.status, response.statusText);
+          return response.statusText;
+        };
+        const data = await response.json();
+        console.log(data);
+        return data
+      },
+      addTrainer: async (newTrainer) => {
+        const url= process.env.BACKEND_URL + '/api/trainers'
+        const options = {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(newTrainer),
+        };
+        const response = await fetch(url, options);
+        if(!response.ok){
+          console.log(response.status, response.statusText);
+          return response.statusText;
+        };
+        const data = await response.json();
+        console.log(data);
+        return data
+      },
 
       // Use getActions to call a function within a fuction
       exampleFunction: () => { getActions().changeColor(0, "green"); },

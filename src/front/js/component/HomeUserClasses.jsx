@@ -30,7 +30,7 @@ const HomeUserClasses = () => {
                         </Card.Body>
                     </Card>
                 )) :
-                <Loading />
+                <h3>No hay clases próximas.</h3>
             }
         </>
     )

@@ -29,18 +29,21 @@ const HomeClassList = ({ filters }) => {
                         </Card.Body>
                     </Card>
                 )) :
-                allClasses.map(oneClass => (
-                    <Card key={oneClass.id} className='my-3'>
-                        <Card.Header>Class Details</Card.Header>
-                        <Card.Body>
-                            <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
-                            <Card.Text>
-                                {oneClass.class_details ? oneClass.class_details : 'Training class'}
-                            </Card.Text>
-                            <Button variant="primary">Signup for Class</Button>
-                        </Card.Body>
-                    </Card>
-                ))
+                <>
+                    <h3>No hay clases por esos filtros. Lista de las clases:</h3>
+                    {allClasses.map(oneClass => (
+                        <Card key={oneClass.id} className='my-3'>
+                            <Card.Header>Class Details</Card.Header>
+                            <Card.Body>
+                                <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
+                                <Card.Text>
+                                    {oneClass.class_details ? oneClass.class_details : 'Training class'}
+                                </Card.Text>
+                                <Button variant="primary">Signup for Class</Button>
+                            </Card.Body>
+                        </Card>
+                    ))}
+                </>
             }
         </>
     )
