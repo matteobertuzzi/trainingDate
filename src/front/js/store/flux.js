@@ -19,7 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			setUser: (value) => {
-				setStore({ user: value})
+				setStore({ currentUser: value})
 			},
 
       setSpecializations: (value) => {
@@ -41,11 +41,12 @@ const getState = ({ getStore, getActions, setStore }) => {
               password: inputs.password,
           }),
         };
-        const response = await fetch(`${process.env.BACKEND_URL}/api/login/${user_type}`, options)
+        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
-        localStorage.setItem("accessToken", data.access_token);
         setStore({ currentUser: data.results });
+        localStorage.setItem("availableAccount", JSON.stringify(data.results));
+        localStorage.setItem("accessToken",  JSON.stringify(data.access_token))
         return true
       },
 
@@ -93,6 +94,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("No access token found");
             return null;
         }
+
         const options = {
             method: "POST",
             headers: {
@@ -113,7 +115,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 training_type: inputs.training_type,
             }),
         };
-        const response = await fetch(`${process.env.BACKEND_URL}/api/trainers/${id}/classes`, options);
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${id}/classes`, options);
         if (!response.ok) return response.status; 
         const data = await response.json();
         setStore({ trainersClasses: data.class })

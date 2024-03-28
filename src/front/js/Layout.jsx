@@ -12,6 +12,7 @@ import { Demo } from "./pages/Demo.jsx";
 import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
 import { InvalidToken } from "./pages/InvalidToken.jsx";
 import { CreateClass } from "./pages/CreateClass.jsx";
+import { SessionEnd } from "./pages/SessionEnd.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -30,6 +31,7 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<CreateClass />} path="/trainer/:trainerId/create/class" />
                         <Route element={<ConfirmationSignUp />} path="/confirmation" />
+                        <Route element={<SessionEnd />} path="/end/session" />
                         <Route element={<InvalidToken />} path="/invalid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

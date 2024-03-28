@@ -7,15 +7,15 @@ import { LogInModal } from "./LogInModal.jsx";
 import { useState } from 'react';
 import { useContext } from "react";
 import { Context } from "../store/appContext";
-import { FaUserAlt } from "react-icons/fa";
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { Link } from "react-router-dom";
 
 
 export const MyNavbar = () => {
   const [loginModalShow, setLoginModalShow] = useState(false);
   const { store, actions } = useContext(Context)
-  const { logged } = store
+  const { logged, currentUser } = store
   const { setLogged, setUser } = actions
 
   return (
@@ -61,7 +61,7 @@ export const MyNavbar = () => {
                     <span>Mis Classes</span>
                   </NavDropdown.Item>
                   <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                    <span>Adjustes</span>
+                    <Link to={`/trainer/${currentUser.id}/create/class`}>Crear clase</Link>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={() => { setLogged(false); setUser([]) }} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">

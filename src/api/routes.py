@@ -7,10 +7,11 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Trainers, Administrators, Specializations, TrainersClasses, UsersClasses, TrainersSpecializations
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from flask import render_template
-from datetime import timedelta
+from datetime import timedelta, datetime
 import secrets
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
@@ -108,13 +109,17 @@ def handle_forget_password(user_type):
 @jwt_required()
 def handle_current_available_account():
     response_body = {}
-    current_user = get_jwt_identity()
-    if current_user:
-        response_body["message"] = "Welcome, your account is active"
-        response_body["account"] = current_user
-        return response_body, 200
-    response_body["message"] = "No current user available"
-    return response_body, 404
+    try:
+        current_user = get_jwt_identity()
+    except ExpiredSignatureError:
+        response_body["message"] = "Expire access Token"
+        return response_body, 401
+    except InvalidTokenError:
+        response_body["message"] = "Invalid Token"
+        return response_body, 401    
+    response_body["message"] = "Welcome, your account is active"
+    response_body["results"] = current_user
+    return response_body, 200
 
 
 # Mirar los usuarios registrados
@@ -810,6 +815,12 @@ def handle_trainer_classes(id):
             required_fields = ['city', 'postal_code', 'street_name', 'street_number', 'capacity', 'start_date', 'end_date', 'price', 'training_type', 'training_level']
             if not request.json or not all(field in request.json for field in required_fields):
                 response_body["message"] = "Missing required fields in the request."
+                return response_body, 400
+            try:
+                start_date = datetime.strptime(data['start_date'], '%Y-%m-%dT%H:%M')
+                end_date = datetime.strptime(data['end_date'], '%Y-%m-%dT%H:%M')
+            except ValueError:
+                response_body["message"] = "Invalid datetime format. Use format: YYYY-MM-DDTHH:MM"
                 return response_body, 400
             if data['training_level'] not in ['Beginner', 'Intermediate', 'Advanced']:
                 response_body["message"] = "Invalid training level"

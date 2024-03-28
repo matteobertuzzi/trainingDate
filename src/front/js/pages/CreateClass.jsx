@@ -43,7 +43,6 @@ export const CreateClass = () => {
         setInputs((prevState) => ({ ...prevState, training_type: eventKey }));
     };
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -55,11 +54,11 @@ export const CreateClass = () => {
         }
 
         setValidated(true);
-        const postClass = await postTrainerClasses(inputs, currentUser.id);
+        const postClass = await postTrainerClasses(inputs, currentUser.aid);
         if (!postClass) {
             setLoginError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {
-            setInputs({
+            /*setInputs({
                 city: "",
                 postal_code: "",
                 street_name: "",
@@ -71,7 +70,7 @@ export const CreateClass = () => {
                 price: "",
                 training_level: "",
                 training_type: "",
-            });
+            });*/
             setLoginError(null);
             alert("¡Clase grabada con éxito!");
         }
@@ -102,11 +101,12 @@ export const CreateClass = () => {
                                 <Form.Label>Código Postal:</Form.Label>
                                 <Form.Control
                                     required
-                                    type="text"
+                                    type="number"
                                     placeholder="Código Postal"
                                     value={inputs.postal_code || ""}
                                     onChange={handleChange}
                                     name="postal_code"
+                                    autoComplete="postal_code"
                                 />
                                 <Form.Control.Feedback type="invalid">Por favor, elige un código postal.</Form.Control.Feedback>
                             </Form.Group>
@@ -130,7 +130,7 @@ export const CreateClass = () => {
                                 <Form.Label>Número:</Form.Label>
                                 <Form.Control
                                     required
-                                    type="text"
+                                    type="number"
                                     placeholder="Número"
                                     value={inputs.street_number || ""}
                                     onChange={handleChange}
@@ -226,15 +226,15 @@ export const CreateClass = () => {
                         </Col>
                         <Col md="6">
                             <Form.Group controlId="training_type">
-                                <Form.Label>Tipo de entrenamiento:</Form.Label>
+                                <Form.Label >Tipo de entrenamiento:</Form.Label>
                                 <DropdownButton
                                     variant="primary"
                                     title={inputs.training_type ? inputs.training_type.charAt(0).toUpperCase() + inputs.training_type.slice(1) : "Selecciona una especialización"}
-                                    id="dropdown-specializations"
+                                    id="training_type"
                                     onSelect={(eventKey, event) => handleSelect(eventKey, event)}
                                 >
                                     {specializations.map((specialization, index) => (
-                                        <Dropdown.Item key={index} eventKey={specialization.name}>
+                                        <Dropdown.Item key={index} eventKey={specialization.id}>
                                             {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}
                                         </Dropdown.Item>
                                     ))}
