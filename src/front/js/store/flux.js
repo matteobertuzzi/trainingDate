@@ -7,7 +7,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       allClasses: [],
       currentUser: {id:1},
       logged: false,
-      userClasses: []
+      userClasses: [],
+      specializations: []
     },
 
     actions: {
@@ -22,7 +23,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ user: value})
 			},
       getAllClasses: async ()=>{
-        const url = 'https://symmetrical-guide-q7qrq69wqx5qf999q-3001.app.github.dev/api/classes'
+        const url = `${process.env.BACKEND_URL}/api/classes`
         const response = await fetch(url)
         if (!response.ok) {
           console.error(`Error fetching classes. HTTP Status ${response.status}`)
@@ -31,6 +32,18 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json()
         setStore({allClasses: data.results})
         console.log(getStore().allClasses)
+      },
+      getSpecializations: async ()=>{
+        const url = `${process.env.BACKEND_URL}/api/specializations`
+        const response = await fetch(url)
+        if (!response.ok) {
+          console.error(`Error fetching specializations. HTTP Status ${response.status}`)
+          return null
+        }
+        const data = await response.json()
+        const specializations = data.specializations
+        setStore({specializations: specializations})
+        console.log(getStore().specializations)
       },
 
       loginUser: async(inputs, user_type) => {

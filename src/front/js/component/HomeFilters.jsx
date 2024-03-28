@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from '../store/appContext';
 import { Form, DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 
 const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
-    const [trainingType, setTrainingtype] = useState('');
-    const [trainingLevel, setTraininglevel] = useState('');
+    const { store, actions } = useContext(Context);
+    const specializations = store.specializations;
 
     const handleFormSubmit = (event) => {
-        console.log(event)
         event.preventDefault();
         onFilterSubmit(filters);
     };
@@ -43,9 +43,9 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
                         value={filters.trainingType}
                         onSelect={(selectedValue) => handleFilters(selectedValue, 'trainingType')}
                     >
-                        <Dropdown.Item eventKey="hiit">HIIT</Dropdown.Item>
-                        <Dropdown.Item eventKey="spinning">Spinning</Dropdown.Item>
-                        <Dropdown.Item eventKey="aerobics">Aerobics</Dropdown.Item>
+                        {specializations.map((specialization) =>
+                            <Dropdown.Item eventKey={specialization.id}>{specialization.name}</Dropdown.Item>
+                        )}
                     </DropdownButton>
                 </Form.Group>
                 <Form.Group controlId="trainingLevel" className='my-4'>
@@ -56,9 +56,9 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
                         value={filters.trainingLevel}
                         onSelect={(selectedValue) => handleFilters(selectedValue, 'trainingLevel')}
                     >
-                        <Dropdown.Item eventKey="beginner">Beginner</Dropdown.Item>
-                        <Dropdown.Item eventKey="intermediate">Intermediate</Dropdown.Item>
-                        <Dropdown.Item eventKey="advanced">Advanced</Dropdown.Item>
+                        <Dropdown.Item eventKey="Beginner">Beginner</Dropdown.Item>
+                        <Dropdown.Item eventKey="Intermediate">Intermediate</Dropdown.Item>
+                        <Dropdown.Item eventKey="Advanced">Advanced</Dropdown.Item>
                     </DropdownButton>
                 </Form.Group>
                 <Button variant="primary" type="submit">

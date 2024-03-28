@@ -5,15 +5,19 @@ import Card from 'react-bootstrap/Card';
 import Loading from './Loading.jsx';
 
 
-const HomeClassList = () => {
+const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
 
     const allClasses = store.allClasses;
+    const filteredClasses = allClasses.filter((cls) => {
+        return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
+    });
+    console.log(filteredClasses)
 
     return (
         <>
-            {allClasses != '' ?
-                allClasses.map(oneClass => (
+            {filteredClasses.length > 0 ?
+                filteredClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
                         <Card.Header>Class Details</Card.Header>
                         <Card.Body>
@@ -25,7 +29,18 @@ const HomeClassList = () => {
                         </Card.Body>
                     </Card>
                 )) :
-                <Loading />
+                allClasses.map(oneClass => (
+                    <Card key={oneClass.id} className='my-3'>
+                        <Card.Header>Class Details</Card.Header>
+                        <Card.Body>
+                            <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
+                            <Card.Text>
+                                {oneClass.class_details ? oneClass.class_details : 'Training class'}
+                            </Card.Text>
+                            <Button variant="primary">Signup for Class</Button>
+                        </Card.Body>
+                    </Card>
+                ))
             }
         </>
     )
