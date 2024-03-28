@@ -73,10 +73,15 @@
 		]
 	},
 	"dependencies": {
+		"bootstrap": "^5.3.3",
+		"bootstrap-icons": "^1.11.3",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-bootstrap": "^2.10.2",
+<<<<<<< HEAD
 		"react-datepicker": "^6.6.0",
+=======
+>>>>>>> a17312c9cfe418427fb2d7b2150285e9273a56fd
 		"react-dom": "^16.8.4",
 		"react-icons": "^5.0.1",
 		"react-polyfills": "0.0.1",
