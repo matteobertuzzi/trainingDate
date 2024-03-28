@@ -3,15 +3,11 @@ const getState = ({ getStore, getActions, setStore }) => {
     store: {
       message: null,
       demo: [{title: "FIRST", background: "white", initial: "white"},
-<<<<<<< HEAD
              {title: "SECOND", background: "white", initial: "white"}],
       currentUser: {},
       logged: false,
       specializations: [],
       trainersClasses: []
-=======
-             {title: "SECOND", background: "white", initial: "white"}]      
->>>>>>> f366117a2e7be3dbab78eafb3b2925ea0ea4283e
     },
 
     actions: {
