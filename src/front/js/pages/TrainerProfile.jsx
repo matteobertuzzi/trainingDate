@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 
 
 const TrainerProfile = () => {
+    const { id } = useParams();
     const { store, actions } = useContext(Context);
     const [trainer, setTrainer] = useState(null)
     let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
     let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
 
     async function fetchTrainer() {
-        const id = store.currentUser.id
+        const trainerId = id
         const token = localStorage.getItem("accessToken");
-        // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxMTY0MDM2NCwianRpIjoiNGEzZTBmNzUtN2FmNS00YmE3LWI4ZTItMjBjZGUxNmQwMDUxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJ0cmFpbmVyIjoiYS5iQGMuY29tIiwicm9sZSI6InRyYWluZXJzIiwiaWQiOjF9LCJuYmYiOjE3MTE2NDAzNjQsImNzcmYiOiI0NTIzYWQ3YS04MjVjLTRlZDYtYmJkOC0wOTMxMDczMDI2MDQiLCJleHAiOjE3MTE2NDEyNjR9.xf3H5PkkJy4lLarXwHJcyQzfwuf0KqPOOqdEVS9t0R4'
         if (!token) {
             console.error("No access token provided!");
             return null;
@@ -24,7 +25,7 @@ const TrainerProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `/api/trainers/${id}`
+        const url = process.env.BACKEND_URL + `/api/trainers/${trainerId}`
         const response = await fetch(url, options)
         if (!response.ok) {
             console.error(`Error fetching trainer data. HTTP Status ${response.status}`)
