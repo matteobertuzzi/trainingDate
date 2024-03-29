@@ -39,7 +39,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const data = await response.json()
         setStore({allClasses: data.results})
-        console.log(getStore().allClasses)
       },
 
       getSpecializations: async () => {
@@ -56,7 +55,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             localStorage.setItem('specializations', JSON.stringify(data.specializations));
             setStore({ specializations: data.specializations });
         }
-    },
+      },
 
       loginUser: async(inputs, user_type) => {
         const options = {
@@ -79,7 +78,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         return true
       },
 
-        
       getUserClasses: async () => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
@@ -121,28 +119,31 @@ const getState = ({ getStore, getActions, setStore }) => {
         console.log(getStore().userClasses);
       },
 
-        
-      addUser: async (newUser)=>{
-        console.log(newUser)
-        const url = process.env.BACKEND_URL + '/api/users'
+      addUser: async (inputs)=>{
         const options = {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
           },
-          body: JSON.stringify(newUser),
+          body: JSON.stringify({
+            name: inputs.name,
+            last_name: inputs.last_name,
+            email: inputs.email,
+            password: inputs.password,
+            city: inputs.city,
+            postal_code: parseInt(inputs.postal_code),
+            phone_number: inputs.phone_number,
+            gender: inputs.gender
+          }),
         };
-        const response = await fetch(url, options);
+        const response = await fetch(`${process.env.BACKEND_URL}api/users`, options);
         if(!response.ok){
-          console.log(response.status, response.statusText);
-          return response.statusText;
+          return false;
         };
         const data = await response.json();
-        console.log(data);
-        return data
+        return true
       },
-
-       
+    
       addTrainer: async (inputs) => {
         const options = {
           method: 'POST',
@@ -167,13 +168,11 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
         const response = await fetch(`${process.env.BACKEND_URL}api/trainers`, options);
         if(!response.ok){
-          console.log(response.status, response.statusText);
           return false;
         };
         const data = await response.json();
         return true
       },
-
 
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
@@ -206,7 +205,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ currentUser: JSON.parse(account) });
 				  getActions().setLogged(true)
       },
-
 
       postTrainerClasses: async (inputs) => {
         const token = localStorage.getItem("accessToken");

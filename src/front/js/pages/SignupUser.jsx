@@ -4,10 +4,15 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import { useNavigate } from 'react-router-dom';
+
 
 function SignupUser() {
     const { store, actions } = useContext(Context)
+    const { addUser } = actions
+    const navigate = useNavigate()
     const [validated, setValidated] = useState(false);
+    const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
         name: '',
         last_name: '',
@@ -19,38 +24,30 @@ function SignupUser() {
         gender: 'Male'
     })
 
-    let newUser = {}
-
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.stopPropagation();
-            setValidated(true);
         } else {
-            setValidated(false);
-            newUser = {
-                name: inputs.name,
-                last_name: inputs.last_name,
-                email: inputs.email,
-                password: inputs.password,
-                city: inputs.city,
-                postal_code: parseInt(inputs.postal_code),
-                phone_number: inputs.phone_number,
-                gender: inputs.gender === '' ? 'Male' : inputs.gender
+            setValidated(true);
+            const validateLog = await addUser(inputs);
+            if (!validateLog) {
+                setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
+            } else {
+                setInputs({
+                    name: '',
+                    last_name: '',
+                    email: '',
+                    password: '',
+                    city: '',
+                    postal_code: '',
+                    phone_number: '',
+                    gender: 'Male'
+                });
+                setLoginError(null)
+                navigate("/")
             }
-            console.log(newUser)
-            actions.addUser(newUser);
-            setInputs({
-                name: '',
-                last_name: '',
-                email: '',
-                password: '',
-                city: '',
-                postal_code: '',
-                phone_number: '',
-                gender: 'Male'
-            });
         }
     };
 
@@ -93,10 +90,9 @@ function SignupUser() {
                 <Form.Group as={Col} md="4" controlId="gender">
                     <Form.Label>Gender</Form.Label>
                     <Form.Select
-                        id='gender'
                         onChange={changeInput}
                         name='gender'
-                        value={inputs.gender || ""}
+                        value={inputs.gender}
                         required>
                         <option value='Male'>Male</option>
                         <option value='Female'>Female</option>
@@ -172,6 +168,7 @@ function SignupUser() {
                         Please provide a postal code.
                     </Form.Control.Feedback>
                 </Form.Group>
+                {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Row>
             <Button type="submit">Sign up</Button>
         </Form>

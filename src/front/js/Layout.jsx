@@ -7,8 +7,6 @@ import { BackendURL } from "./component/BackendURL.jsx";
 import { MyNavbar } from "./component/Navbar.jsx";
 import { Footer } from "./component/Footer.jsx";
 // Import custom pages
-import { Home } from "./pages/Home.jsx";
-import { Demo } from "./pages/Demo.jsx";
 import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
 import { InvalidToken } from "./pages/InvalidToken.jsx";
 import { CreateClass } from "./pages/CreateClass.jsx";

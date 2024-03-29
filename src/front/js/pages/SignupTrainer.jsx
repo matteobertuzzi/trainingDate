@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useNavigate } from 'react-router-dom';
 
+
 function SignupTrainer() {
     const { store, actions } = useContext(Context)
     const [validated, setValidated] = useState(false);
@@ -55,7 +56,7 @@ function SignupTrainer() {
                     bank_iban: ''
                 })
                 setLoginError(null)
-                navigate = ("/")
+                navigate("/")
             }
         }
     };
