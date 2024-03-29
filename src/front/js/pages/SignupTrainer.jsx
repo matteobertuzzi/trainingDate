@@ -4,10 +4,14 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import { useNavigate } from 'react-router-dom';
 
 function SignupTrainer() {
     const { store, actions } = useContext(Context)
     const [validated, setValidated] = useState(false);
+    const navigate = useNavigate()
+    const { addTrainer } = actions
+    const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
         name: '',
         last_name: '',
@@ -24,48 +28,35 @@ function SignupTrainer() {
         bank_iban: ''
     })
 
-    let newTrainer = {}
-
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.stopPropagation();
-            setValidated(true);
         } else {
-            setValidated(false);
-            newTrainer = {
-                name: inputs.name,
-                last_name: inputs.last_name,
-                email: inputs.email,
-                password: inputs.password,
-                city: inputs.city,
-                postal_code: parseInt(inputs.postal_code),
-                phone_number: inputs.phone_number,
-                gender: inputs.gender === '' ? 'Male' : inputs.gender,
-                website_url: inputs.website_url,
-                instagram_url: inputs.instagram_url,
-                facebook_url: inputs.facebook_url,
-                x_url: inputs.x_url,
-                bank_iban: inputs.bank_iban
+            setValidated(true)
+            const validateLog = await addTrainer(inputs);
+            if (!validateLog) {
+                setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
+            } else {
+                setInputs({
+                    name: '',
+                    last_name: '',
+                    email: '',
+                    password: '',
+                    city: '',
+                    postal_code: '',
+                    phone_number: '',
+                    gender: 'Male',
+                    website_url: '',
+                    instagram_url: '',
+                    facebook_url: '',
+                    x_url: '',
+                    bank_iban: ''
+                })
+                setLoginError(null)
+                navigate = ("/")
             }
-            console.log(newTrainer)
-            actions.addTrainer(newTrainer);
-            setInputs({
-                name: '',
-                last_name: '',
-                email: '',
-                password: '',
-                city: '',
-                postal_code: '',
-                phone_number: '',
-                gender: 'Male',
-                website_url: '',
-                instagram_url: '',
-                facebook_url: '',
-                x_url: '',
-                bank_iban: ''
-            })
         }
     };
 
@@ -112,7 +103,6 @@ function SignupTrainer() {
                 <Form.Group as={Col} md="4" controlId="gender">
                     <Form.Label>Gender</Form.Label>
                     <Form.Select
-                        id='gender'
                         onChange={changeInput}
                         name='gender'
                         value={inputs.gender}
@@ -121,6 +111,9 @@ function SignupTrainer() {
                         <option value='Female'>Female</option>
                         <option value='Not Specified'>Not Specified</option>
                     </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                        Please select a gender.
+                    </Form.Control.Feedback>
                 </Form.Group>
             </Row>
             <Row className="mb-3">
@@ -236,6 +229,7 @@ function SignupTrainer() {
                         name='x_url'
                     />
                 </Form.Group>
+                {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Row>
             <Button type="submit">Sign up</Button>
         </Form>

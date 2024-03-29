@@ -2,16 +2,44 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
-      demo: [{ title: "FIRST", background: "white", initial: "white" },
-      { title: "SECOND", background: "white", initial: "white" }],
+      demo: [{title: "FIRST", background: "white", initial: "white"},
+             {title: "SECOND", background: "white", initial: "white"}],
+      currentUser: {},
       allClasses: [],
       currentUser: { id: 1 },
       logged: false,
+      specializations: [],
+      trainersClasses: [],
+      allClasses: [],
       userClasses: [],
-      specializations: []
     },
 
     actions: {
+
+      setLogged: (value) =>{
+				if (!value) {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("availableUser");
+                }
+				setStore({ logged: value });	  
+			},
+
+			setUser: (value) => {
+				setStore({ currentUser: value})
+			},
+
+      setTrainersClases: (value) => {
+        setStore({trainersClasses: value})
+				setStore({ user: value})
+			},
+        
+      getAllClasses: async ()=>{
+        const url = `${process.env.BACKEND_URL}api/classes`
+        const response = await fetch(url)
+        if (!response.ok) {
+          console.error(`Error fetching classes. HTTP Status ${response.status}`)
+          return null
+
       setLogged: (value) => {
         if (!value) {
           localStorage.removeItem("accessToken");
@@ -37,6 +65,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ allClasses: data.results })
           console.log(getStore().allClasses)
           localStorage.setItem('allClasses', JSON.stringify(data.results))
+
         }
       },
       getSpecializations: async () => {
@@ -57,7 +86,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.setItem('specializations', JSON.stringify(specializations))
         }
       },
-
       loginUser: async (inputs, user_type) => {
         const options = {
           method: 'POST',
@@ -69,15 +97,16 @@ const getState = ({ getStore, getActions, setStore }) => {
             password: inputs.password,
           }),
         };
-        const response = await fetch(`${process.env.BACKEND_URL}/api/login/${user_type}`, options)
+        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
+        setStore({ currentUser:  data.results });
+        localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
-        setStore({ currentUser: data.results });
+        getActions().setLogged(true)
         return true
       },
-
-      getAvailableAccount: async () => {
+        getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
           console.error("No access token found");
@@ -162,55 +191,108 @@ const getState = ({ getStore, getActions, setStore }) => {
         console.log(data);
         return data
       },
-      addTrainer: async (newTrainer) => {
-        const url = process.env.BACKEND_URL + '/api/trainers'
+     addTrainer: async (inputs) => {
         const options = {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
           },
-          body: JSON.stringify(newTrainer),
+          body: JSON.stringify({
+            name: inputs.name,
+            last_name: inputs.last_name,
+            email: inputs.email,
+            password: inputs.password,
+            city: inputs.city,
+            postal_code: parseInt(inputs.postal_code),
+            phone_number: inputs.phone_number,
+            gender: inputs.gender,
+            website_url: inputs.website_url,
+            instagram_url: inputs.instagram_url,
+            facebook_url: inputs.facebook_url,
+            x_url: inputs.x_url,
+            bank_iban: inputs.bank_iban
+        }),
         };
-        const response = await fetch(url, options);
-        if (!response.ok) {
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers`, options);
+        if(!response.ok){
           console.log(response.status, response.statusText);
-          return response.statusText;
+          return false;
         };
         const data = await response.json();
-        console.log(data);
-        return data
+        return true
       },
 
-      // Use getActions to call a function within a fuction
-      exampleFunction: () => { getActions().changeColor(0, "green"); },
-      getMessage: async () => {
-        try {
-          // Fetching data from the backend
-          const url = process.env.BACKEND_URL + "/api/hello";
-          const options = {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-          const response = await fetch(url, options)
-          const data = await response.json()
-          setStore({ message: data.message })
-          return data;  // Don't forget to return something, that is how the async resolves
-        } catch (error) {
-          console.log("Error loading message from backend", error)
+
+      getAvailableAccount: async () => {
+        const token = localStorage.getItem("accessToken");
+        const account = localStorage.getItem("availableAccount");
+        if (!token) {
+            console.error("No access token found");
+            localStorage.removeItem("availableAccount")
+            return null;
         }
+    
+        const options = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+    
+        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+        if (!response.ok) {
+            if (response.status === 401) {
+                console.error("Access token is not valid. Removed from local storage.");
+                localStorage.removeItem("accessToken")
+                localStorage.removeItem("availableAccount")
+            } else {
+                console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+            }
+        }
+      
+          const data = await response.json();
+          console.log(JSON.parse(account))
+          setStore({ currentUser: JSON.parse(account) });
+				  getActions().setLogged(true)
       },
-      changeColor: (index, color) => {
-        const store = getStore();  // Get the store
-        // We have to loop the entire demo array to look for the respective index and change its color
-        const demo = store.demo.map((element, i) => {
-          if (i === index) element.background = color;
-          return element;
-        });
-        setStore({ demo: demo });  // Reset the global store
-      }
-    }
-  };
-};
+
+
+      postTrainerClasses: async (inputs) => {
+        const token = localStorage.getItem("accessToken");
+        const availableAccountString = localStorage.getItem("availableAccount");
+        const availableAccount = JSON.parse(availableAccountString);
+        const trainerId = availableAccount.trainer.id;
+        if (!token) {
+            console.error("No access token found");
+            return null;
+        }
+
+        const options = {
+            method: "POST",
+            headers: {
+               "Content-Type": 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                city: inputs.city,
+                postal_code: inputs.postal_code,
+                street_name: inputs.street_name,
+                street_number: inputs.street_number,
+                additional_info: inputs.additional_info,
+                capacity: inputs.capacity,
+                start_date: inputs.start_date,
+                end_date: inputs.end_date,
+                price: inputs.price,
+                training_level: inputs.training_level,
+                training_type: inputs.training_type,
+            }),
+        };
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options);
+        if (!response.ok) return response.status; 
+        const data = await response.json();
+        console.log(data)
+        setStore({ trainersClasses: data.class })
+      }}
+}
+}
 
 export default getState;
