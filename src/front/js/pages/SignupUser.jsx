@@ -65,7 +65,7 @@ function SignupUser() {
                         required
                         type="text"
                         placeholder="First name"
-                        value={inputs.name || ""}
+                        value={inputs.name}
                         onChange={changeInput}
                         name='name'
                     />
@@ -79,7 +79,7 @@ function SignupUser() {
                         required
                         type="text"
                         placeholder="Last name"
-                        value={inputs.last_name || ""}
+                        value={inputs.last_name}
                         onChange={changeInput}
                         name='last_name'
                     />
@@ -106,7 +106,7 @@ function SignupUser() {
                     <Form.Control
                         type="email"
                         placeholder="Email"
-                        value={inputs.email || ""}
+                        value={inputs.email}
                         onChange={changeInput}
                         name='email'
                         required />
@@ -119,7 +119,7 @@ function SignupUser() {
                     <Form.Control
                         type="password"
                         placeholder="Password"
-                        value={inputs.password || ""}
+                        value={inputs.password}
                         onChange={changeInput}
                         name='password'
                         required />
@@ -132,7 +132,7 @@ function SignupUser() {
                     <Form.Control
                         type="number"
                         placeholder="Phone number"
-                        value={inputs.phone_number || ""}
+                        value={inputs.phone_number}
                         onChange={changeInput}
                         name='phone_number'
                         required />
@@ -147,7 +147,7 @@ function SignupUser() {
                     <Form.Control
                         type="text"
                         placeholder="City"
-                        value={inputs.city || ""}
+                        value={inputs.city}
                         onChange={changeInput}
                         name='city'
                         required />
@@ -160,7 +160,7 @@ function SignupUser() {
                     <Form.Control
                         type="number"
                         placeholder="Postal code"
-                        value={inputs.postal_code || ""}
+                        value={inputs.postal_code}
                         onChange={changeInput}
                         name='postal_code'
                         required />

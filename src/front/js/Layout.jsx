@@ -15,6 +15,7 @@ import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
 import SignupTrainer from "./pages/SignupTrainer.jsx";
 import SignupUser from "./pages/SignupUser.jsx";
+import { AddTrainerSpecialization } from "./pages/AddTrainerSpecialization.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -37,6 +38,7 @@ const Layout = () => {
                         <Route element={<TrainerProfile />} path='/profile/trainer' />
                         <Route element={<SignupTrainer />} path='/signup/trainer' />
                         <Route element={<SignupUser />} path='/signup/user' />
+                        <Route element={<AddTrainerSpecialization />} path='trainer/:trainerId/add/specialization'/>
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
