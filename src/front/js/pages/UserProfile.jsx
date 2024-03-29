@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
+import EditUserProfile from '../component/EditUserProfile.jsx';
 
 
 const UserProfile = () => {
@@ -64,6 +65,9 @@ const UserProfile = () => {
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
+                            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                                <EditUserProfile user={user} />
+                            </div>
                         </Col>
                     </>
                     :

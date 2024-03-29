@@ -16,8 +16,7 @@ import { SessionEnd } from "./pages/SessionEnd.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
-import SignupTrainer from "./pages/SignupTrainer.jsx";
-import SignupUser from "./pages/SignupUser.jsx";
+import Signup from "./pages/Signup.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -40,8 +39,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
                         <Route element={<UserProfile />} path='/user/:id/profile' />
-                        <Route element={<SignupTrainer />} path='/signup/trainer' />
-                        <Route element={<SignupUser />} path='/signup/user' />
+                        <Route element={<Signup />} path='/signup' />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

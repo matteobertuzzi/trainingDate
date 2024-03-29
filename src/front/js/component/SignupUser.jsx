@@ -1,16 +1,16 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { useNavigate } from 'react-router-dom';
 
-function SignupTrainer() {
+function SignupUser() {
     const { store, actions } = useContext(Context)
     const [validated, setValidated] = useState(false);
     const navigate = useNavigate()
-    const { addTrainer } = actions
+    const { addUser } = actions
     const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
         name: '',
@@ -20,12 +20,7 @@ function SignupTrainer() {
         city: '',
         postal_code: '',
         phone_number: '',
-        gender: 'Male',
-        website_url: '',
-        instagram_url: '',
-        facebook_url: '',
-        x_url: '',
-        bank_iban: ''
+        gender: 'Male'
     })
 
     const handleSubmit = async (event) => {
@@ -34,8 +29,8 @@ function SignupTrainer() {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            setValidated(true)
-            const validateLog = await addTrainer(inputs);
+            setValidated(true);
+            const validateLog = await addUser(inputs);
             if (!validateLog) {
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
             } else {
@@ -47,22 +42,16 @@ function SignupTrainer() {
                     city: '',
                     postal_code: '',
                     phone_number: '',
-                    gender: 'Male',
-                    website_url: '',
-                    instagram_url: '',
-                    facebook_url: '',
-                    x_url: '',
-                    bank_iban: ''
-                })
+                    gender: 'Male'
+                });
                 setLoginError(null)
-                navigate = ("/")
+                navigate("/")
             }
-        }
-    };
+        };
+    }
 
-    const changeInput = (event) => {
-        event.persist();
-        const { name, value } = event.target;
+    const changeInput = (e) => {
+        const { name, value } = e.target;
         setInputs({
             ...inputs,
             [name]: value
@@ -78,7 +67,7 @@ function SignupTrainer() {
                         required
                         type="text"
                         placeholder="First name"
-                        value={inputs.name}
+                        value={inputs.name || ""}
                         onChange={changeInput}
                         name='name'
                     />
@@ -92,7 +81,7 @@ function SignupTrainer() {
                         required
                         type="text"
                         placeholder="Last name"
-                        value={inputs.last_name}
+                        value={inputs.last_name || ""}
                         onChange={changeInput}
                         name='last_name'
                     />
@@ -103,17 +92,15 @@ function SignupTrainer() {
                 <Form.Group as={Col} md="4" controlId="gender">
                     <Form.Label>Gender</Form.Label>
                     <Form.Select
+                        id='gender'
                         onChange={changeInput}
                         name='gender'
-                        value={inputs.gender}
+                        value={inputs.gender || ""}
                         required>
                         <option value='Male'>Male</option>
                         <option value='Female'>Female</option>
                         <option value='Not Specified'>Not Specified</option>
                     </Form.Select>
-                    <Form.Control.Feedback type="invalid">
-                        Please select a gender.
-                    </Form.Control.Feedback>
                 </Form.Group>
             </Row>
             <Row className="mb-3">
@@ -122,7 +109,7 @@ function SignupTrainer() {
                     <Form.Control
                         type="email"
                         placeholder="Email"
-                        value={inputs.email}
+                        value={inputs.email || ""}
                         onChange={changeInput}
                         name='email'
                         required />
@@ -135,7 +122,7 @@ function SignupTrainer() {
                     <Form.Control
                         type="password"
                         placeholder="Password"
-                        value={inputs.password}
+                        value={inputs.password || ""}
                         onChange={changeInput}
                         name='password'
                         required />
@@ -148,7 +135,7 @@ function SignupTrainer() {
                     <Form.Control
                         type="number"
                         placeholder="Phone number"
-                        value={inputs.phone_number}
+                        value={inputs.phone_number || ""}
                         onChange={changeInput}
                         name='phone_number'
                         required />
@@ -158,25 +145,25 @@ function SignupTrainer() {
                 </Form.Group>
             </Row>
             <Row className="mb-3">
-                <Form.Group as={Col} md="4" controlId="city">
+                <Form.Group as={Col} md="6" controlId="city">
                     <Form.Label>City</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="City"
-                        value={inputs.city}
+                        value={inputs.city || ""}
                         onChange={changeInput}
                         name='city'
                         required />
                     <Form.Control.Feedback type="invalid">
-                        Please provide city.
+                        Please provide a city.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="4" controlId="postal-code">
+                <Form.Group as={Col} md="6" controlId="postal-code">
                     <Form.Label>Postal code</Form.Label>
                     <Form.Control
                         type="number"
                         placeholder="Postal code"
-                        value={inputs.postal_code}
+                        value={inputs.postal_code || ""}
                         onChange={changeInput}
                         name='postal_code'
                         required />
@@ -184,58 +171,10 @@ function SignupTrainer() {
                         Please provide a postal code.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="4" controlId="bank_iban">
-                    <Form.Label>IBAN</Form.Label>
-                    <Form.Control
-                        type="number"
-                        placeholder="Bank IBAN"
-                        value={inputs.bank_iban}
-                        onChange={changeInput}
-                        name='bank_iban'
-                        required />
-                    <Form.Control.Feedback type="invalid">
-                        Please provide a valid IBAN.
-                    </Form.Control.Feedback>
-                </Form.Group>
-            </Row>
-            <Row className="mb-3">
-                <Form.Group as={Col} md="4" controlId="website_url">
-                    <Form.Label>Website url</Form.Label>
-                    <Form.Control
-                        type="url"
-                        placeholder="Website url"
-                        value={inputs.website_url}
-                        onChange={changeInput}
-                        name='website_url'
-                    />
-                </Form.Group>
-                <Form.Group as={Col} md="4" controlId="instagram_url">
-                    <Form.Label>Instagram URL</Form.Label>
-                    <Form.Control
-                        type="url"
-                        placeholder="Instagram url"
-                        value={inputs.instagram_url}
-                        onChange={changeInput}
-                        name='instagram_url'
-                    />
-                </Form.Group>
-                <Form.Group as={Col} md="4" controlId="x_url">
-                    <Form.Label>Twitter URL</Form.Label>
-                    <Form.Control
-                        type="url"
-                        placeholder="Twitter url"
-                        value={inputs.x_url}
-                        onChange={changeInput}
-                        name='x_url'
-                    />
-                </Form.Group>
-                {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Row>
             <Button type="submit">Sign up</Button>
         </Form>
     );
 }
 
-export default SignupTrainer;
-
-
+export default SignupUser;

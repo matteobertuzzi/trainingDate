@@ -2,8 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
-      demo: [{title: "FIRST", background: "white", initial: "white"},
-             {title: "SECOND", background: "white", initial: "white"}],
+      demo: [{ title: "FIRST", background: "white", initial: "white" },
+      { title: "SECOND", background: "white", initial: "white" }],
       currentUser: {},
       allClasses: [],
       currentUser: { id: 1 },
@@ -16,30 +16,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 
     actions: {
 
-      setLogged: (value) =>{
-				if (!value) {
-                    localStorage.removeItem("accessToken");
-                    localStorage.removeItem("availableUser");
-                }
-				setStore({ logged: value });	  
-			},
+      setLogged: (value) => {
+        if (!value) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("availableUser");
+        }
+        setStore({ logged: value });
+      },
 
-			setUser: (value) => {
-				setStore({ currentUser: value})
-			},
+      setUser: (value) => {
+        setStore({ currentUser: value })
+      },
 
       setTrainersClases: (value) => {
-        setStore({trainersClasses: value})
-				setStore({ user: value})
-			},
-        
-      getAllClasses: async ()=>{
-        const url = `${process.env.BACKEND_URL}api/classes`
-        const response = await fetch(url)
-        if (!response.ok) {
-          console.error(`Error fetching classes. HTTP Status ${response.status}`)
-          return null
-
+        setStore({ trainersClasses: value })
+        setStore({ user: value })
+      },
       setLogged: (value) => {
         if (!value) {
           localStorage.removeItem("accessToken");
@@ -97,16 +89,16 @@ const getState = ({ getStore, getActions, setStore }) => {
             password: inputs.password,
           }),
         };
-        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
+        const response = await fetch(`${process.env.BACKEND_URL}/api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
-        setStore({ currentUser:  data.results });
+        setStore({ currentUser: data.results });
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
         return true
       },
-        getAvailableAccount: async () => {
+      getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
           console.error("No access token found");
@@ -172,15 +164,23 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.setItem('userClasses', JSON.stringify(classDetails))
         }
       },
-      addUser: async (newUser) => {
-        console.log(newUser)
+      addUser: async (inputs) => {
         const url = process.env.BACKEND_URL + '/api/users'
         const options = {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
           },
-          body: JSON.stringify(newUser),
+          body: JSON.stringify({
+            name: inputs.name,
+            last_name: inputs.last_name,
+            email: inputs.email,
+            password: inputs.password,
+            city: inputs.city,
+            postal_code: inputs.postal_code,
+            phone_number: inputs.phone_number,
+            gender: inputs.gender
+          }),
         };
         const response = await fetch(url, options);
         if (!response.ok) {
@@ -191,7 +191,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         console.log(data);
         return data
       },
-     addTrainer: async (inputs) => {
+      addTrainer: async (inputs) => {
         const options = {
           method: 'POST',
           headers: {
@@ -211,15 +211,15 @@ const getState = ({ getStore, getActions, setStore }) => {
             facebook_url: inputs.facebook_url,
             x_url: inputs.x_url,
             bank_iban: inputs.bank_iban
-        }),
+          }),
         };
         const response = await fetch(`${process.env.BACKEND_URL}api/trainers`, options);
-        if(!response.ok){
+        if (!response.ok) {
           console.log(response.status, response.statusText);
           return false;
         };
         const data = await response.json();
-        return true
+        return data
       },
 
 
@@ -227,32 +227,32 @@ const getState = ({ getStore, getActions, setStore }) => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
         if (!token) {
-            console.error("No access token found");
-            localStorage.removeItem("availableAccount")
-            return null;
+          console.error("No access token found");
+          localStorage.removeItem("availableAccount")
+          return null;
         }
-    
+
         const options = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         };
-    
+
         const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
         if (!response.ok) {
-            if (response.status === 401) {
-                console.error("Access token is not valid. Removed from local storage.");
-                localStorage.removeItem("accessToken")
-                localStorage.removeItem("availableAccount")
-            } else {
-                console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
-            }
+          if (response.status === 401) {
+            console.error("Access token is not valid. Removed from local storage.");
+            localStorage.removeItem("accessToken")
+            localStorage.removeItem("availableAccount")
+          } else {
+            console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+          }
         }
-      
-          const data = await response.json();
-          console.log(JSON.parse(account))
-          setStore({ currentUser: JSON.parse(account) });
-				  getActions().setLogged(true)
+
+        const data = await response.json();
+        console.log(JSON.parse(account))
+        setStore({ currentUser: JSON.parse(account) });
+        getActions().setLogged(true)
       },
 
 
@@ -262,37 +262,38 @@ const getState = ({ getStore, getActions, setStore }) => {
         const availableAccount = JSON.parse(availableAccountString);
         const trainerId = availableAccount.trainer.id;
         if (!token) {
-            console.error("No access token found");
-            return null;
+          console.error("No access token found");
+          return null;
         }
 
         const options = {
-            method: "POST",
-            headers: {
-               "Content-Type": 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                city: inputs.city,
-                postal_code: inputs.postal_code,
-                street_name: inputs.street_name,
-                street_number: inputs.street_number,
-                additional_info: inputs.additional_info,
-                capacity: inputs.capacity,
-                start_date: inputs.start_date,
-                end_date: inputs.end_date,
-                price: inputs.price,
-                training_level: inputs.training_level,
-                training_type: inputs.training_type,
-            }),
+          method: "POST",
+          headers: {
+            "Content-Type": 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            city: inputs.city,
+            postal_code: inputs.postal_code,
+            street_name: inputs.street_name,
+            street_number: inputs.street_number,
+            additional_info: inputs.additional_info,
+            capacity: inputs.capacity,
+            start_date: inputs.start_date,
+            end_date: inputs.end_date,
+            price: inputs.price,
+            training_level: inputs.training_level,
+            training_type: inputs.training_type,
+          }),
         };
         const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options);
-        if (!response.ok) return response.status; 
+        if (!response.ok) return response.status;
         const data = await response.json();
         console.log(data)
         setStore({ trainersClasses: data.class })
-      }}
-}
+      }
+    }
+  }
 }
 
 export default getState;
