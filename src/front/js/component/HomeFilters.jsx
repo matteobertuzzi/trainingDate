@@ -9,6 +9,7 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
     const specializations = store.specializations;
 
     const handleFormSubmit = (event) => {
+        console.log("Form submitted");
         event.preventDefault();
         onFilterSubmit(filters);
         onFilterChange({

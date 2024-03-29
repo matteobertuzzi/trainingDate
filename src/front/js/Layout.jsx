@@ -12,6 +12,7 @@ import { Demo } from "./pages/Demo.jsx";
 import { Single } from "./pages/Single.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
+import UserProfile from "./pages/UserProfile.jsx";
 import SignupTrainer from "./pages/SignupTrainer.jsx";
 import SignupUser from "./pages/SignupUser.jsx";
 
@@ -33,7 +34,8 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Homepage />} path='/homepage' />
-                        <Route element={<TrainerProfile />} path='/profile/trainer' />
+                        <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
+                        <Route element={<UserProfile />} path='/user/:id/profile' />
                         <Route element={<SignupTrainer />} path='/signup/trainer' />
                         <Route element={<SignupUser />} path='/signup/user' />
                         <Route element={<h1>Not found!</h1>} />

@@ -2,59 +2,71 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
-      demo: [{title: "FIRST", background: "white", initial: "white"},
-             {title: "SECOND", background: "white", initial: "white"}],
+      demo: [{ title: "FIRST", background: "white", initial: "white" },
+      { title: "SECOND", background: "white", initial: "white" }],
       allClasses: [],
-      currentUser: {id:1},
+      currentUser: { id: 1 },
       logged: false,
       userClasses: [],
       specializations: []
     },
 
     actions: {
-      setLogged: (value) =>{
-				if (!value) {
-                    localStorage.removeItem("accessToken");
-                }
-				setStore({ logged: value });	  
-			},
-
-			setUser: (value) => {
-				setStore({ user: value})
-			},
-      getAllClasses: async ()=>{
-        const url = `${process.env.BACKEND_URL}/api/classes`
-        const response = await fetch(url)
-        if (!response.ok) {
-          console.error(`Error fetching classes. HTTP Status ${response.status}`)
-          return null
+      setLogged: (value) => {
+        if (!value) {
+          localStorage.removeItem("accessToken");
         }
-        const data = await response.json()
-        setStore({allClasses: data.results})
-        console.log(getStore().allClasses)
-      },
-      getSpecializations: async ()=>{
-        const url = `${process.env.BACKEND_URL}/api/specializations`
-        const response = await fetch(url)
-        if (!response.ok) {
-          console.error(`Error fetching specializations. HTTP Status ${response.status}`)
-          return null
-        }
-        const data = await response.json()
-        const specializations = data.specializations
-        setStore({specializations: specializations})
-        console.log(getStore().specializations)
+        setStore({ logged: value });
       },
 
-      loginUser: async(inputs, user_type) => {
+      setUser: (value) => {
+        setStore({ user: value })
+      },
+      getAllClasses: async () => {
+        const classesInLocalStorage = localStorage.getItem('allClasses')
+        if (classesInLocalStorage) {
+          setStore({ allClasses: JSON.parse(classesInLocalStorage) })
+        } else {
+          const url = `${process.env.BACKEND_URL}/api/classes`
+          const response = await fetch(url)
+          if (!response.ok) {
+            console.error(`Error fetching classes. HTTP Status ${response.status}`)
+            return null
+          }
+          const data = await response.json()
+          setStore({ allClasses: data.results })
+          console.log(getStore().allClasses)
+          localStorage.setItem('allClasses', JSON.stringify(data.results))
+        }
+      },
+      getSpecializations: async () => {
+        const specializationsInLocalStorage = localStorage.getItem('specializations')
+        if (specializationsInLocalStorage) {
+          setStore({ specializations: JSON.parse(specializationsInLocalStorage) })
+        } else {
+          const url = `${process.env.BACKEND_URL}/api/specializations`
+          const response = await fetch(url)
+          if (!response.ok) {
+            console.error(`Error fetching specializations. HTTP Status ${response.status}`)
+            return null
+          }
+          const data = await response.json()
+          const specializations = data.specializations
+          setStore({ specializations: specializations })
+          console.log(getStore().specializations)
+          localStorage.setItem('specializations', JSON.stringify(specializations))
+        }
+      },
+
+      loginUser: async (inputs, user_type) => {
         const options = {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              email: inputs.email,
-              password: inputs.password,
+            email: inputs.email,
+            password: inputs.password,
           }),
         };
         const response = await fetch(`${process.env.BACKEND_URL}/api/login/${user_type}`, options)
@@ -66,67 +78,72 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       getAvailableAccount: async () => {
-				const token = localStorage.getItem("accessToken");
-				if (!token) {
-					console.error("No access token found");
-					return null;
-				}
-				const options = {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				};
-				const response = await fetch(`${process.env.BACKEND_URL}/api/current_available_account`, options);
-				if (!response.ok) {
-					console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
-					return null;
-				}
-				const data = await response.json();
-        console.log(data)
-				setStore({ currentUser : data.account})
-				getActions().setLogged(true)
-			},
-      getUserClasses: async () => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
-          console.error("No access token proivded!");
+          console.error("No access token found");
           return null;
         }
         const options = {
-          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
           },
         };
-        const userId = getStore().currentUser.id
-        const url = process.env.BACKEND_URL + `/api/users/${userId}/classes`
-        const response = await fetch(url, options)
+        const response = await fetch(`${process.env.BACKEND_URL}/api/current_available_account`, options);
         if (!response.ok) {
-          console.error(`Error fetching user classes. HTTP Status ${response.status}`)
-          return null
+          console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+          return null;
         }
         const data = await response.json();
-        const userClassInfo = data.result;
-        setStore({userClasses: data.class})
-        let userClassesId = []
-        let classDetails = []
-        for (const item of userClassInfo) {
-          const classId = item.class;
-          userClassesId.push(classId);
-          console.log(userClassesId);
-          const classUrl = process.env.BACKEND_URL + `/api/classes/${classId}`;
-          const resp = await fetch(classUrl);
-          if (!resp.ok) {
-            console.error(`Error fetching classes. HTTP Status ${resp.status}`);
+        console.log(data)
+        setStore({ currentUser: data.account })
+        getActions().setLogged(true)
+      },
+      getUserClasses: async () => {
+        const userClassesInLocalStorage = localStorage.getItem('userClasses')
+        if (userClassesInLocalStorage) {
+          setStore({ userClasses: JSON.parse(userClassesInLocalStorage) })
+        } else {
+          const token = localStorage.getItem("accessToken");
+          if (!token) {
+            console.error("No access token proivded!");
             return null;
           }
-          const resData = await resp.json(); // Use resp instead of response
-          classDetails.push(resData.results);
+          const options = {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
+          const userId = getStore().currentUser.id
+          const url = process.env.BACKEND_URL + `/api/users/${userId}/classes`
+          const response = await fetch(url, options)
+          if (!response.ok) {
+            console.error(`Error fetching user classes. HTTP Status ${response.status}`)
+            return null
+          }
+          const data = await response.json();
+          const userClassInfo = data.result;
+          let userClassesId = []
+          let classDetails = []
+          for (const item of userClassInfo) {
+            const classId = item.class;
+            userClassesId.push(classId);
+            console.log(userClassesId);
+            const classUrl = process.env.BACKEND_URL + `/api/classes/${classId}`;
+            const resp = await fetch(classUrl);
+            if (!resp.ok) {
+              console.error(`Error fetching classes. HTTP Status ${resp.status}`);
+              return null;
+            }
+            const resData = await resp.json(); // Use resp instead of response
+            classDetails.push(resData.results);
+          }
+          setStore({ userClasses: classDetails })
+          console.log(getStore().userClasses);
+          localStorage.setItem('userClasses', JSON.stringify(classDetails))
         }
-        setStore({userClasses: classDetails})
-        console.log(getStore().userClasses);
       },
-      addUser: async (newUser)=>{
+      addUser: async (newUser) => {
         console.log(newUser)
         const url = process.env.BACKEND_URL + '/api/users'
         const options = {
@@ -137,7 +154,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           body: JSON.stringify(newUser),
         };
         const response = await fetch(url, options);
-        if(!response.ok){
+        if (!response.ok) {
           console.log(response.status, response.statusText);
           return response.statusText;
         };
@@ -146,7 +163,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         return data
       },
       addTrainer: async (newTrainer) => {
-        const url= process.env.BACKEND_URL + '/api/trainers'
+        const url = process.env.BACKEND_URL + '/api/trainers'
         const options = {
           method: 'POST',
           headers: {
@@ -155,7 +172,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           body: JSON.stringify(newTrainer),
         };
         const response = await fetch(url, options);
-        if(!response.ok){
+        if (!response.ok) {
           console.log(response.status, response.statusText);
           return response.statusText;
         };

@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 
 
 const UserProfile = () => {
+    const { id } = useParams();
     const { store, actions } = useContext(Context);
     const [user, setUser] = useState(null)
     let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
     let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
 
     async function fetchUser() {
-        const id = store.currentUser.id
+        const userId = id
         const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token provided!");
@@ -23,7 +25,7 @@ const UserProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `/api/users/${id}`
+        const url = process.env.BACKEND_URL + `/api/users/${userId}`
         const response = await fetch(url, options)
         if (!response.ok) {
             console.error(`Error fetching user data. HTTP Status ${response.status}`)
