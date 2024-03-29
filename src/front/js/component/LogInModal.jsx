@@ -112,8 +112,8 @@ export const LogInModal = ({ show, onHide }) => {
                     </Row>
                     {loginError && <div className="text-danger mt-2">{loginError}</div>}
                 </Form>
-                <Link className="mb-2" to={"/"}>Olvidaste tu contraseña?</Link>
-                <Link to={"/"}>Regístrate</Link>
+                <span className="mb-2">Olvidaste tu contraseña?</span>
+                <Link to={"/signup/trainer"}>Regístrate</Link>
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSubmit} variant="success">Log In</Button>

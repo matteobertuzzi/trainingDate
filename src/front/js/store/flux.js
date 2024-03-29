@@ -72,7 +72,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
-        setStore({ currentUser:  JSON.stringify(data.results) });
+        setStore({ currentUser:  data.results });
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
@@ -143,23 +143,35 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
        
-      addTrainer: async (newTrainer) => {
-        const url= process.env.BACKEND_URL + 'api/trainers'
+      addTrainer: async (inputs) => {
         const options = {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
           },
-          body: JSON.stringify(newTrainer),
+          body: JSON.stringify({
+            name: inputs.name,
+            last_name: inputs.last_name,
+            email: inputs.email,
+            password: inputs.password,
+            city: inputs.city,
+            postal_code: parseInt(inputs.postal_code),
+            phone_number: inputs.phone_number,
+            gender: inputs.gender,
+            website_url: inputs.website_url,
+            instagram_url: inputs.instagram_url,
+            facebook_url: inputs.facebook_url,
+            x_url: inputs.x_url,
+            bank_iban: inputs.bank_iban
+        }),
         };
-        const response = await fetch(url, options);
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers`, options);
         if(!response.ok){
           console.log(response.status, response.statusText);
-          return response.statusText;
+          return false;
         };
         const data = await response.json();
-        console.log(data);
-        return data
+        return true
       },
 
 

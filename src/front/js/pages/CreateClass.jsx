@@ -58,7 +58,7 @@ export const CreateClass = () => {
         if (!postClass) {
             setLoginError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {
-            /*setInputs({
+            setInputs({
                 city: "",
                 postal_code: "",
                 street_name: "",
@@ -70,7 +70,7 @@ export const CreateClass = () => {
                 price: "",
                 training_level: "",
                 training_type: "",
-            });*/
+            });
             setLoginError(null);
             alert("¡Clase grabada con éxito!");
         }

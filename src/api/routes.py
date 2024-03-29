@@ -150,7 +150,7 @@ def confirm_email(token):
             db.session.delete(trainer)
         db.session.commit()
         response_body["message"] = 'The token has expired!'
-        return redirect(f"{process.env.FRONT_URL}/invalid")
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     except BadSignature:
         user = Users.query.filter_by(email=email).first()
         trainer = Trainers.query.filter_by(email=email).first()
@@ -160,7 +160,7 @@ def confirm_email(token):
             db.session.delete(trainer)
         db.session.commit()
         response_body["message"] = 'Invalid token!'
-        return redirect(f"{process.env.FRONT_URL}/invalid")
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     user = Users.query.filter_by(email=email).first()
     trainer = Trainers.query.filter_by(email=email).first()
     if not user and not trainer:
@@ -174,7 +174,7 @@ def confirm_email(token):
         db.session.add(user)
         db.session.commit()
         response_body["message"] = "User registration successful."
-        return redirect(f"{process.env.FRONT_URL}/confirmation")
+        return redirect(f"{os.environ['FRONT_URL']}confirmation")
     elif trainer:
         if trainer.is_active:
             response_body["message"] = "Trainer account already confirmed."
@@ -183,7 +183,7 @@ def confirm_email(token):
         db.session.add(trainer)
         db.session.commit()
         response_body["message"] = "Trainer registration successful."
-        return redirect(f"{process.env.FRONT_URL}/confirmation")
+        return redirect(f"{os.environ['FRONT_URL']}confirmation")
 
 
 # Crear un usuario y enviar correo para la confirma de la registracion
@@ -355,7 +355,7 @@ def handle_signup_trainer():
     db.session.add(new_trainer)
     db.session.commit()
     token = s.dumps(new_trainer.email, salt='email-confirm')
-    confirm_url = f"{process.env.BACKEND_URL}api/confirm/{token}"
+    confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>

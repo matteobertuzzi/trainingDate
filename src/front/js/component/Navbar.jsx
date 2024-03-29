@@ -1,7 +1,6 @@
 import React from "react";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import { LogInModal } from "./LogInModal.jsx";
 import { useState } from 'react';
@@ -9,7 +8,6 @@ import { useContext } from "react";
 import { Context } from "../store/appContext";
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 
