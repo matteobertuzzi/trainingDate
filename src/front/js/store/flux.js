@@ -221,8 +221,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         return data
       },
-
-
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
@@ -265,7 +263,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("No access token found");
           return null;
         }
-
         const options = {
           method: "POST",
           headers: {
@@ -291,6 +288,38 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         console.log(data)
         setStore({ trainersClasses: data.class })
+      },
+
+      updateUser: async (id, inputs) => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+        const url = `${process.env.BACKEND_URL}/api/users/${id}`
+        const options = {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: inputs.name,
+            last_name: inputs.last_name,
+            city: inputs.city,
+            postal_code: inputs.postal_code,
+            phone_number: inputs.phone_number,
+            gender: inputs.gender
+          }),
+        };
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          console.error(`Error updating user id: ${id}. HTTP Status ${response.status}`);
+          return null
+        }
+        const data = await response.json()
+        console.log(data)
+        return data
       }
     }
   }

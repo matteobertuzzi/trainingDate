@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from '../store/appContext';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 function EditUserProfile({ user }) {
+    const { store, actions } = useContext(Context);
+    const { updateUser } = actions
     const [show, setShow] = useState(false);
     const [inputs, setInputs] = useState({
         name: user.name,
@@ -20,7 +23,8 @@ function EditUserProfile({ user }) {
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log(inputs)
-        handleClose(); // Close modal after form submission
+        updateUser(user.id, inputs)
+        handleClose();
     };
 
     const changeInputs = (e) => {
