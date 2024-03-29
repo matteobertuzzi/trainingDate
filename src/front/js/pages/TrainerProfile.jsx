@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
+import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
 
 
 const TrainerProfile = () => {
@@ -66,6 +67,9 @@ const TrainerProfile = () => {
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
+                            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                                <EditTrainerProfile trainer={trainer} />
+                            </div>
                         </Col>
                     </>
                     :

@@ -304,17 +304,48 @@ const getState = ({ getStore, getActions, setStore }) => {
             Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
-            name: inputs.name,
-            last_name: inputs.last_name,
             city: inputs.city,
             postal_code: inputs.postal_code,
             phone_number: inputs.phone_number,
-            gender: inputs.gender
           }),
         };
         const response = await fetch(url, options);
         if (!response.ok) {
           console.error(`Error updating user id: ${id}. HTTP Status ${response.status}`);
+          return null
+        }
+        const data = await response.json()
+        console.log(data)
+        return data
+      },
+
+      updateTrainer: async (id, inputs) => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+        const url = `${process.env.BACKEND_URL}/api/trainers/${id}`
+        const options = {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            city: inputs.city,
+            postal_code: inputs.postal_code,
+            phone_number: inputs.phone_number,
+            website_url: inputs.website_url,
+            instagram_url: inputs.instagram_url,
+            facebook_url: inputs.facebook_url,
+            x_url: inputs.x_url,
+            bank_iban: inputs.bank_iban
+          }),
+        };
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          console.error(`Error updating trainer id: ${id}. HTTP Status ${response.status}`);
           return null
         }
         const data = await response.json()
