@@ -38,8 +38,8 @@ const Layout = () => {
                         <Route element={<TrainerProfile />} path='/profile/trainer' />
                         <Route element={<SignupTrainer />} path='/signup/trainer' />
                         <Route element={<SignupUser />} path='/signup/user' />
-                        <Route element={<AddTrainerSpecialization />} path='trainer/:trainerId/add/specialization'/>
-                        <Route element={<h1>Not found!</h1>} />
+                        <Route element={<AddTrainerSpecialization />} path='/trainer/:trainerId/add/specialization' />
+                        <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />
                 </ScrollToTop>

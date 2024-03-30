@@ -463,7 +463,8 @@ def handle_signup_admin():
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_admin = Administrators(name=data['name'], 
                                email=data['email'].lower(), 
-                               password=hashed_password)
+                               password=hashed_password, 
+                               is_active=True)
     db.session.add(new_admin)
     db.session.commit()
     access_token = create_access_token(identity={"admin": new_admin.email,
