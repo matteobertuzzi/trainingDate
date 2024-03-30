@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-function EditTrainerProfile({ trainer }) {
+function EditTrainerProfile({ trainer, onChangeSubmit }) {
     const { store, actions } = useContext(Context);
     const { updateTrainer } = actions
     const [show, setShow] = useState(false);
@@ -27,6 +27,7 @@ function EditTrainerProfile({ trainer }) {
         console.log(inputs)
         updateTrainer(trainer.id, inputs)
         handleClose();
+        onChangeSubmit();
     };
 
     const changeInputs = (e) => {

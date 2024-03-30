@@ -68,7 +68,7 @@ const TrainerProfile = () => {
                                 </Card.Body>
                             </Card>
                             <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                <EditTrainerProfile trainer={trainer} />
+                                <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer}/>
                             </div>
                         </Col>
                     </>

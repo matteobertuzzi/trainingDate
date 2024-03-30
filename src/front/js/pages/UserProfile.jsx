@@ -66,7 +66,7 @@ const UserProfile = () => {
                                 </Card.Body>
                             </Card>
                             <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                <EditUserProfile user={user} />
+                                <EditUserProfile user={user} onChangeSubmit={fetchUser} />
                             </div>
                         </Col>
                     </>

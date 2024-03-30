@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-function EditUserProfile({ user }) {
+function EditUserProfile({ user, onChangeSubmit }) {
     const { store, actions } = useContext(Context);
     const { updateUser } = actions
     const [show, setShow] = useState(false);
@@ -19,8 +19,9 @@ function EditUserProfile({ user }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(inputs)
-        updateUser(user.id, inputs)
+        console.log(inputs);
+        updateUser(user.id, inputs);
+        onChangeSubmit();
         handleClose();
     };
 

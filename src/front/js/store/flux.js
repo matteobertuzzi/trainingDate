@@ -6,7 +6,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       { title: "SECOND", background: "white", initial: "white" }],
       currentUser: {},
       allClasses: [],
-      currentUser: { id: 1 },
       logged: false,
       specializations: [],
       trainersClasses: [],
@@ -119,7 +118,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ currentUser: data.account })
         getActions().setLogged(true)
       },
-      getUserClasses: async () => {
+      getUserClasses: async (id) => {
         const userClassesInLocalStorage = localStorage.getItem('userClasses')
         if (userClassesInLocalStorage) {
           setStore({ userClasses: JSON.parse(userClassesInLocalStorage) })
@@ -135,8 +134,7 @@ const getState = ({ getStore, getActions, setStore }) => {
               Authorization: `Bearer ${token}`,
             },
           };
-          const userId = getStore().currentUser.id
-          const url = process.env.BACKEND_URL + `/api/users/${userId}/classes`
+          const url = process.env.BACKEND_URL + `/api/users/${id}/classes`
           const response = await fetch(url, options)
           if (!response.ok) {
             console.error(`Error fetching user classes. HTTP Status ${response.status}`)
