@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -8,6 +9,9 @@ import Row from 'react-bootstrap/Row';
 function SignupUser() {
     const { store, actions } = useContext(Context)
     const [validated, setValidated] = useState(false);
+    const navigate = useNavigate()
+    const { addUser } = actions
+    const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
         name: '',
         last_name: '',
@@ -19,44 +23,39 @@ function SignupUser() {
         gender: 'Male'
     })
 
-    let newUser = {}
-
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.stopPropagation();
-            setValidated(true);
         } else {
-            setValidated(false);
-            newUser = {
-                name: inputs.name,
-                last_name: inputs.last_name,
-                email: inputs.email,
-                password: inputs.password,
-                city: inputs.city,
-                postal_code: parseInt(inputs.postal_code),
-                phone_number: inputs.phone_number,
-                gender: inputs.gender === '' ? 'Male' : inputs.gender
+            setValidated(true);
+            const validateLog = await addUser(inputs);
+            if (!validateLog) {
+                setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
+            } else {
+                setInputs({
+                    name: '',
+                    last_name: '',
+                    email: '',
+                    password: '',
+                    city: '',
+                    postal_code: '',
+                    phone_number: '',
+                    gender: 'Male'
+                });
+                setLoginError(null)
+                navigate("/")
             }
-            console.log(newUser)
-            actions.addUser(newUser);
-            setInputs({
-                name: '',
-                last_name: '',
-                email: '',
-                password: '',
-                city: '',
-                postal_code: '',
-                phone_number: '',
-                gender: 'Male'
-            });
-        }
-    };
+        };
+    }
 
     const changeInput = (e) => {
-        e.persist();
-        setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
+        const { name, value } = e.target;
+        setInputs({
+            ...inputs,
+            [name]: value
+        })
     }
 
     return (

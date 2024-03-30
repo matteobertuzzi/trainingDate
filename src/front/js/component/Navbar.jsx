@@ -1,7 +1,6 @@
 import React from "react";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import { LogInModal } from "./LogInModal.jsx";
 import { useState } from 'react';
@@ -9,8 +8,7 @@ import { useContext } from "react";
 import { Context } from "../store/appContext";
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 export const MyNavbar = () => {
@@ -31,9 +29,9 @@ export const MyNavbar = () => {
   }
 
   return (
-    <Navbar fixed="top" expand="lg" className="bg-body-primary" data-bs-theme="dark">
+    <Navbar expand="lg" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-between p-2 mx-2">
-        <Navbar.Brand href="#home">Training Date</Navbar.Brand>
+        <Navbar.Brand href="/">Training Date</Navbar.Brand>
         {logged
           ?
           (
