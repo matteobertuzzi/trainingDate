@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -7,14 +7,8 @@ import Loading from './Loading.jsx';
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
-    const currentAccount = localStorage.getItem('availableAccount')
-    currentAccount = JSON.parse(currentAccount)
-    const id = currentAccount.user.id
-
-
     const userClasses = store.userClasses;
-    console.log(userClasses)
-
+    console.log(userClasses);
 
 
     return (

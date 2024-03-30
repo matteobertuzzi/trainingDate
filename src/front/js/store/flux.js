@@ -11,6 +11,11 @@ const getState = ({ getStore, getActions, setStore }) => {
       trainersClasses: [],
       allClasses: [],
       userClasses: [],
+      cart: [],
+      filters: {
+        trainingType: '',
+        trainingLevel: ''
+      }
     },
 
     actions: {
@@ -46,7 +51,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (classesInLocalStorage) {
           setStore({ allClasses: JSON.parse(classesInLocalStorage) })
         } else {
-          const url = `${process.env.BACKEND_URL}/api/classes`
+          const url = `${process.env.BACKEND_URL}api/classes`
           const response = await fetch(url)
           if (!response.ok) {
             console.error(`Error fetching classes. HTTP Status ${response.status}`)
@@ -64,7 +69,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (specializationsInLocalStorage) {
           setStore({ specializations: JSON.parse(specializationsInLocalStorage) })
         } else {
-          const url = `${process.env.BACKEND_URL}/api/specializations`
+          const url = `${process.env.BACKEND_URL}api/specializations`
           const response = await fetch(url)
           if (!response.ok) {
             console.error(`Error fetching specializations. HTTP Status ${response.status}`)
@@ -88,7 +93,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             password: inputs.password,
           }),
         };
-        const response = await fetch(`${process.env.BACKEND_URL}/api/login/${user_type}`, options)
+        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
         setStore({ currentUser: data.results });
@@ -108,7 +113,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             Authorization: `Bearer ${token}`,
           },
         };
-        const response = await fetch(`${process.env.BACKEND_URL}/api/current_available_account`, options);
+        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
         if (!response.ok) {
           console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
           return null;
@@ -118,11 +123,15 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ currentUser: data.account })
         getActions().setLogged(true)
       },
-      getUserClasses: async (id) => {
+      getUserClasses: async () => {
         const userClassesInLocalStorage = localStorage.getItem('userClasses')
         if (userClassesInLocalStorage) {
           setStore({ userClasses: JSON.parse(userClassesInLocalStorage) })
         } else {
+          let currentAccount = localStorage.getItem('availableAccount');
+          currentAccount = JSON.parse(currentAccount);
+          const id = currentAccount.user.id;
+          console.log(id);
           const token = localStorage.getItem("accessToken");
           if (!token) {
             console.error("No access token proivded!");
@@ -134,7 +143,7 @@ const getState = ({ getStore, getActions, setStore }) => {
               Authorization: `Bearer ${token}`,
             },
           };
-          const url = process.env.BACKEND_URL + `/api/users/${id}/classes`
+          const url = process.env.BACKEND_URL + `api/users/${id}/classes`
           const response = await fetch(url, options)
           if (!response.ok) {
             console.error(`Error fetching user classes. HTTP Status ${response.status}`)
@@ -163,7 +172,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       addUser: async (inputs) => {
-        const url = process.env.BACKEND_URL + '/api/users'
+        const url = process.env.BACKEND_URL + 'api/users'
         const options = {
           method: 'POST',
           headers: {
@@ -323,7 +332,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("No access token found!");
           return null;
         }
-        const url = `${process.env.BACKEND_URL}/api/trainers/${id}`
+        const url = `${process.env.BACKEND_URL}api/trainers/${id}`
         const options = {
           method: 'PATCH',
           headers: {
@@ -349,6 +358,21 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json()
         console.log(data)
         return data
+      },
+      updateCart: (newClass) => {
+        const cartClasses = getStore().cart;
+        if (cartClasses.includes(newClass)) {
+          console.error("Class already added to cart!")
+          return null
+        } else {
+          const updatedCart = [...cartClasses, newClass];
+          setStore({ cart: updatedCart });
+          console.log(updatedCart);
+          localStorage.setItem("cart", JSON.stringify(updatedCart));
+        }
+      },
+      updateFilters: (newFilters) => {
+        setStore({ filters: newFilters });
       }
     }
   }

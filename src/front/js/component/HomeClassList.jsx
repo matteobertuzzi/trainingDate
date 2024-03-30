@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -7,12 +7,16 @@ import Loading from './Loading.jsx';
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
-
     const allClasses = store.allClasses;
-    const filteredClasses = allClasses.filter((cls) => {
+    let isLogged = store.logged
+    let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
     });
-    console.log(filteredClasses)
+    console.log(filteredClasses);
+
+    const updateCart = (newClass) => {
+        actions.updateCart(newClass);
+    }
 
     return (
         <>
@@ -25,7 +29,11 @@ const HomeClassList = ({ filters }) => {
                             <Card.Text>
                                 {oneClass.class_details ? oneClass.class_details : 'Training class'}
                             </Card.Text>
-                            <Button variant="primary">Signup for Class</Button>
+                            {isLogged ?
+                                <Button variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
+                                :
+                                <></>
+                            }
                         </Card.Body>
                     </Card>
                 )) :
@@ -39,7 +47,11 @@ const HomeClassList = ({ filters }) => {
                                 <Card.Text>
                                     {oneClass.class_details ? oneClass.class_details : 'Training class'}
                                 </Card.Text>
-                                <Button variant="primary">Signup for Class</Button>
+                                {isLogged ?
+                                    <Button variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
+                                    :
+                                    <></>
+                                }
                             </Card.Body>
                         </Card>
                     ))}

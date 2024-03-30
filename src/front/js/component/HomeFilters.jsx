@@ -73,3 +73,4 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
 }
 
 export default HomeFilters;
+
