@@ -13,8 +13,6 @@ import { CreateClass } from "./pages/CreateClass.jsx";
 import { SessionEnd } from "./pages/SessionEnd.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
-import SignupTrainer from "./pages/SignupTrainer.jsx";
-import SignupUser from "./pages/SignupUser.jsx";
 import { AddTrainerSpecialization } from "./pages/AddTrainerSpecialization.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Signup from "./pages/Signup.jsx";
@@ -38,8 +36,6 @@ const Layout = () => {
                         <Route element={<SessionEnd />} path="/end/session" />
                         <Route element={<InvalidToken />} path="/invalid" />
                         <Route element={<Homepage />} path='/' />
-                        <Route element={<SignupTrainer />} path='/signup/trainer' />
-                        <Route element={<SignupUser />} path='/signup/user' />
                         <Route element={<AddTrainerSpecialization />} path='/trainer/:trainerId/add/specialization' />
                         <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
                         <Route element={<UserProfile />} path='/user/:id/profile' />

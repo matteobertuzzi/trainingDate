@@ -61,7 +61,7 @@ function SignupUser() {
     return (
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Row className="mb-3">
-                <Form.Group as={Col} md="4" controlId="name">
+                <Form.Group as={Col} md="4" controlId="user-name">
                     <Form.Label>First name</Form.Label>
                     <Form.Control
                         required
@@ -75,7 +75,7 @@ function SignupUser() {
                         Please provide first name.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="4" controlId="last-name">
+                <Form.Group as={Col} md="4" controlId="user-last-name">
                     <Form.Label>Last name</Form.Label>
                     <Form.Control
                         required
@@ -89,10 +89,10 @@ function SignupUser() {
                         Please provide last name.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="4" controlId="gender">
+                <Form.Group as={Col} md="4" controlId="user-gender">
                     <Form.Label>Gender</Form.Label>
                     <Form.Select
-                        id='gender'
+                        id='user-gender'
                         onChange={changeInput}
                         name='gender'
                         value={inputs.gender || ""}
@@ -104,7 +104,7 @@ function SignupUser() {
                 </Form.Group>
             </Row>
             <Row className="mb-3">
-                <Form.Group as={Col} md="6" controlId="email">
+                <Form.Group as={Col} md="6" controlId="user-email">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
                         type="email"
@@ -117,7 +117,7 @@ function SignupUser() {
                         Please provide a valid email.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="3" controlId="password">
+                <Form.Group as={Col} md="3" controlId="user-password">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                         type="password"
@@ -130,7 +130,7 @@ function SignupUser() {
                         Please enter password.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="3" controlId="phone-number">
+                <Form.Group as={Col} md="3" controlId="user-phone-number">
                     <Form.Label>Phone number</Form.Label>
                     <Form.Control
                         type="number"
@@ -145,7 +145,7 @@ function SignupUser() {
                 </Form.Group>
             </Row>
             <Row className="mb-3">
-                <Form.Group as={Col} md="6" controlId="city">
+                <Form.Group as={Col} md="6" controlId="user-city">
                     <Form.Label>City</Form.Label>
                     <Form.Control
                         type="text"
@@ -158,7 +158,7 @@ function SignupUser() {
                         Please provide a city.
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="postal-code">
+                <Form.Group as={Col} md="6" controlId="user-postal-code">
                     <Form.Label>Postal code</Form.Label>
                     <Form.Control
                         type="number"

@@ -944,6 +944,7 @@ def handle_user_class(id, class_id):
     response_body["message"] = 'Not allowed!'
     return response_body, 405
 
+
 # Mostrar todas las clases
 @api.route('/classes', methods=['GET'])
 def handle_show_classes():
@@ -968,6 +969,7 @@ def handle_show_single_class(id):
     response_body['message'] = 'Class details.'
     response_body['results'] = single_class.serialize()
     return response_body, 200
+
 
 # Mostrar y crear especializaciones para trainer
 @api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])

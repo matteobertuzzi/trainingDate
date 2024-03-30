@@ -7,14 +7,16 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import CloseButton from 'react-bootstrap/CloseButton';
-import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { useContext } from "react";
 import { useParams } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
+import { DropdownButton } from 'react-bootstrap';
 
 export const AddTrainerSpecialization = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)
-    const { specializations } = actions
+    const { specializations } = store
+    const { postTrainerSpecialization } = actions
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState(null);
     const params = useParams()
@@ -23,7 +25,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
         certification: "",
         specialization: ""
     })
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
@@ -31,6 +33,18 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
         }
 
         setValidated(true);
+        const postSpecialization = await postTrainerSpecialization(inputs);
+        if (!postSpecialization) {
+            setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.')
+        } else {
+            alert('Los datos han sido enviados, despues las verificaciones recibira la confirmacion de su nueva especilidad.')
+            setInputs({
+                certification: "",
+                specialization_id: ""
+            })
+            setError(null);
+            onHide()
+        }
     };
 
     const handleChange = (e) => {
@@ -47,7 +61,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
                 <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit}>
                     <Row className="g-3">
                         <Form.Group as={Col} md="12" controlId="validationSpecialization">
-                            <FloatingLabel controlId="validationSpecialization" label="Email address">
+                            <FloatingLabel controlId="validationSpecialization" label="Especializacion">
                                 <Form.Control
                                     required
                                     type="text"
@@ -61,30 +75,32 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
                                 </Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
-                        <Form.Group controlId="training_type">
-                            <Form.Label >Tipo de entrenamiento:</Form.Label>
-                            <DropdownButton
-                                variant="primary"
-                                title={inputs.specialization ? inputs.specialization.charAt(0).toUpperCase() + inputs.specialization.slice(1) : "Selecciona una especialización"}
-                                id="training_type"
-                                onSelect={(eventKey, event) => handleSelect(eventKey, event)}
+                        <Form.Group as={Col} md="4" controlId="specialization">
+                            <Form.Label>Tipo de entrenamiento:</Form.Label>
+                            <Form.Select
+                                id='specialization'
+                                onChange={handleChange}
+                                name='specialization'
+                                value={inputs.specialization_id}
+                                required
+                                className="w-auto"
                             >
+                                <option value="">Selecciona una especialización</option>
                                 {specializations.map((specialization, index) => (
-                                    <Dropdown.Item key={index} eventKey={specialization.id}>
+                                    <option key={index} value={specialization.id}>
                                         {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}
-                                    </Dropdown.Item>
+                                    </option>
                                 ))}
-                            </DropdownButton>
-                            <Form.Control.Feedback type="invalid">Por favor, elige un tipo de entrenamiento.</Form.Control.Feedback>
+                            </Form.Select>
+                            <Form.Control.Feedback type="invalid">Por favor, elige un tipo de especialización.</Form.Control.Feedback>
                         </Form.Group>
                     </Row>
-                    {error && <div className="text-danger mt-2">{lerror}</div>}
+                    {error && <div className="text-danger mt-2">{error}</div>}
                 </Form>
-                <Link to={"/signup/trainer"}>Regístrate</Link>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleSubmit} variant="success">Log In</Button>
-                <Button variant="danger" onClick={onHide}>Close</Button>
+                <Button onClick={handleSubmit} variant="success">Crear</Button>
+                <Button variant="danger" onClick={onHide}>Cerrar</Button>
             </Modal.Footer>
         </Modal>
     )

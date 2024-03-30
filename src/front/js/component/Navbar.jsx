@@ -65,7 +65,7 @@ export const MyNavbar = () => {
                   className="mw-100"
                 >
                   <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                    <span>Mi Perfil</span>
+                    <Link to={`/trainer/${JSON.parse(currentUser.trainer.id)}/profile`}>Mi Perfil</Link>
                   </NavDropdown.Item>
                   <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
                     <span>Mis Classes</span>

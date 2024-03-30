@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
-import { Container, Row, Col, Card, Image } from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
+import { AddTrainerSpecialization } from './AddTrainerSpecialization.jsx';
 
 
 const TrainerProfile = () => {
+    const [modalShow, setModalShow] = useState(false);
     const { id } = useParams();
     const { store, actions } = useContext(Context);
     const [trainer, setTrainer] = useState(null)
@@ -68,7 +70,9 @@ const TrainerProfile = () => {
                                 </Card.Body>
                             </Card>
                             <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer}/>
+                                <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
+                                <Button onClick={() => setModalShow(true)}>Añadir especializacion</Button>
+                                <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
                             </div>
                         </Col>
                     </>

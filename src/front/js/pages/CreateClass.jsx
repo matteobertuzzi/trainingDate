@@ -19,7 +19,7 @@ export const CreateClass = () => {
     const { postTrainerClasses } = actions
     const params = useParams()
     const { trainerId } = params
-    const [loginError, setLoginError] = useState(null);
+    const [error, setError] = useState(null);
     const [inputs, setInputs] = useState({
         city: "",
         postal_code: "",
@@ -39,10 +39,6 @@ export const CreateClass = () => {
         setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
     };
 
-    const handleSelect = (eventKey, event) => {
-        setInputs((prevState) => ({ ...prevState, training_type: eventKey }));
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -56,7 +52,7 @@ export const CreateClass = () => {
         setValidated(true);
         const postClass = await postTrainerClasses(inputs);
         if (!postClass) {
-            setLoginError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
+            setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {
             setInputs({
                 city: "",
@@ -71,7 +67,7 @@ export const CreateClass = () => {
                 training_level: "",
                 training_type: "",
             });
-            setLoginError(null);
+            setError(null);
             alert("¡Clase grabada con éxito!");
         }
     };
@@ -225,21 +221,24 @@ export const CreateClass = () => {
                             </Form.Group>
                         </Col>
                         <Col md="6">
-                            <Form.Group controlId="training_type">
-                                <Form.Label >Tipo de entrenamiento:</Form.Label>
-                                <DropdownButton
-                                    variant="primary"
-                                    title={inputs.training_type ? inputs.training_type.charAt(0).toUpperCase() + inputs.training_type.slice(1) : "Selecciona una especialización"}
-                                    id="training_type"
-                                    onSelect={(eventKey, event) => handleSelect(eventKey, event)}
+                            <Form.Group as={Col} md="4" controlId="specialization">
+                                <Form.Label>Tipo de entrenamiento:</Form.Label>
+                                <Form.Select
+                                    id='specialization'
+                                    onChange={handleChange}
+                                    name='specialization'
+                                    value={inputs.specialization}
+                                    required
+                                    className="w-auto"
                                 >
+                                    <option value="">Selecciona una especialización</option>
                                     {specializations.map((specialization, index) => (
-                                        <Dropdown.Item key={index} eventKey={specialization.id}>
+                                        <option key={index} value={specialization.id}>
                                             {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}
-                                        </Dropdown.Item>
+                                        </option>
                                     ))}
-                                </DropdownButton>
-                                <Form.Control.Feedback type="invalid">Por favor, elige un tipo de entrenamiento.</Form.Control.Feedback>
+                                </Form.Select>
+                                <Form.Control.Feedback type="invalid">Por favor, elige un tipo de especialización.</Form.Control.Feedback>
                             </Form.Group>
                         </Col>
                     </Row>
@@ -280,7 +279,7 @@ export const CreateClass = () => {
                         </Col>
                     </Row>
                 </fieldset>
-                {loginError && <div className="text-danger mt-2">{loginError}</div>}
+                {error && <div className="text-danger mt-2">{error}</div>}
                 <Button type="submit">Enviar</Button>
             </Form>
         </Container>

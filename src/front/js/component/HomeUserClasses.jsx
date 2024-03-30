@@ -7,19 +7,12 @@ import Loading from './Loading.jsx';
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
-    const currentAccount = localStorage.getItem('availableAccount')
-    currentAccount = JSON.parse(currentAccount)
-    const id = currentAccount.user.id
-
-
-    const userClasses = store.userClasses;
-    console.log(userClasses)
-
+    const { userClasses } = store;
 
 
     return (
         <>
-            {userClasses != '' ?
+            {!userClasses ?
                 userClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
                         <Card.Header>Class Details</Card.Header>
