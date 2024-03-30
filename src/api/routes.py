@@ -227,7 +227,7 @@ def handle_signup_user():
     db.session.add(new_user)
     db.session.commit()
     token = s.dumps(new_user.email, salt='email-confirm')
-    confirm_url = f"{process.env.BACKEND_URL}api/confirm/{token}"
+    confirm_url = f"{os.env.BACKEND_URL}api/confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>

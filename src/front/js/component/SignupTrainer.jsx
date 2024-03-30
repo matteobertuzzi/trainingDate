@@ -238,5 +238,3 @@ function SignupTrainer() {
 }
 
 export default SignupTrainer;
-
-

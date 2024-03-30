@@ -18,7 +18,7 @@ const Homepage = () => {
         setFilters(newFilters);
     };
 
-    const handleFilterSubmit = (event) => {
+    const handleFilterSubmit = (event, filters) => {
         console.log('Filters submitted:', filters);
     };
 

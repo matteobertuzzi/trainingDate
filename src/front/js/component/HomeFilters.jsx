@@ -1,14 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext';
-import { Form, DropdownButton, Dropdown, Button } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
-
 
 const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
     const { store, actions } = useContext(Context);
     const specializations = store.specializations;
 
     const handleFormSubmit = (event) => {
+        console.log("Form submitted");
         event.preventDefault();
         onFilterSubmit(filters);
         onFilterChange({
@@ -22,9 +22,8 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
             ...filters,
             [name]: selectedValue,
         });
-        console.log(filters)
+        console.log(filters);
     };
-
 
     return (
         <>
@@ -41,29 +40,29 @@ const HomeFilters = ({ filters, onFilterChange, onFilterSubmit }) => {
             <Form onSubmit={handleFormSubmit}>
                 <Form.Group controlId="trainingType" className='my-4'>
                     <Form.Label>Training Type</Form.Label>
-                    <DropdownButton
-                        title={filters.trainingType || 'Select training type'}
-                        name='trainingType'
+                    <Form.Select
+                        aria-label="training-type"
                         value={filters.trainingType}
-                        onSelect={(selectedValue) => handleFilters(selectedValue, 'trainingType')}
+                        onChange={(e) => handleFilters(e.target.value, 'trainingType')}
                     >
+                        <option>Select training type</option>
                         {specializations.map((specialization) =>
-                            <Dropdown.Item eventKey={specialization.id}>{specialization.name}</Dropdown.Item>
+                            <option key={specialization.id} value={specialization.id}>{specialization.name}</option>
                         )}
-                    </DropdownButton>
+                    </Form.Select>
                 </Form.Group>
                 <Form.Group controlId="trainingLevel" className='my-4'>
                     <Form.Label>Training Level</Form.Label>
-                    <DropdownButton
-                        title={filters.trainingLevel || 'Select training level'}
-                        name='trainingLevel'
+                    <Form.Select
+                        aria-label="training-level"
                         value={filters.trainingLevel}
-                        onSelect={(selectedValue) => handleFilters(selectedValue, 'trainingLevel')}
+                        onChange={(e) => handleFilters(e.target.value, 'trainingLevel')}
                     >
-                        <Dropdown.Item eventKey="Beginner">Beginner</Dropdown.Item>
-                        <Dropdown.Item eventKey="Intermediate">Intermediate</Dropdown.Item>
-                        <Dropdown.Item eventKey="Advanced">Advanced</Dropdown.Item>
-                    </DropdownButton>
+                        <option>Select training level</option>
+                        <option value='Beginner'>Beginner</option>
+                        <option value='Intermediate'>Intermediate</option>
+                        <option value='Advanced'>Advanced</option>
+                    </Form.Select>
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     Filter classes

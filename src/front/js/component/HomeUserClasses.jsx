@@ -7,11 +7,13 @@ import Loading from './Loading.jsx';
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
+    const currentAccount = localStorage.getItem('availableAccount')
+    currentAccount = JSON.parse(currentAccount)
+    const id = currentAccount.user.id
 
 
     const userClasses = store.userClasses;
     console.log(userClasses)
-
 
 
 

@@ -1,17 +1,16 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { useNavigate } from 'react-router-dom';
-
 
 function SignupUser() {
     const { store, actions } = useContext(Context)
-    const { addUser } = actions
-    const navigate = useNavigate()
     const [validated, setValidated] = useState(false);
+    const navigate = useNavigate()
+    const { addUser } = actions
     const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
         name: '',
@@ -48,12 +47,15 @@ function SignupUser() {
                 setLoginError(null)
                 navigate("/")
             }
-        }
-    };
+        };
+    }
 
     const changeInput = (e) => {
-        e.persist();
-        setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
+        const { name, value } = e.target;
+        setInputs({
+            ...inputs,
+            [name]: value
+        })
     }
 
     return (
@@ -65,7 +67,7 @@ function SignupUser() {
                         required
                         type="text"
                         placeholder="First name"
-                        value={inputs.name}
+                        value={inputs.name || ""}
                         onChange={changeInput}
                         name='name'
                     />
@@ -79,7 +81,7 @@ function SignupUser() {
                         required
                         type="text"
                         placeholder="Last name"
-                        value={inputs.last_name}
+                        value={inputs.last_name || ""}
                         onChange={changeInput}
                         name='last_name'
                     />
@@ -90,9 +92,10 @@ function SignupUser() {
                 <Form.Group as={Col} md="4" controlId="gender">
                     <Form.Label>Gender</Form.Label>
                     <Form.Select
+                        id='gender'
                         onChange={changeInput}
                         name='gender'
-                        value={inputs.gender}
+                        value={inputs.gender || ""}
                         required>
                         <option value='Male'>Male</option>
                         <option value='Female'>Female</option>
@@ -106,7 +109,7 @@ function SignupUser() {
                     <Form.Control
                         type="email"
                         placeholder="Email"
-                        value={inputs.email}
+                        value={inputs.email || ""}
                         onChange={changeInput}
                         name='email'
                         required />
@@ -119,7 +122,7 @@ function SignupUser() {
                     <Form.Control
                         type="password"
                         placeholder="Password"
-                        value={inputs.password}
+                        value={inputs.password || ""}
                         onChange={changeInput}
                         name='password'
                         required />
@@ -132,7 +135,7 @@ function SignupUser() {
                     <Form.Control
                         type="number"
                         placeholder="Phone number"
-                        value={inputs.phone_number}
+                        value={inputs.phone_number || ""}
                         onChange={changeInput}
                         name='phone_number'
                         required />
@@ -147,7 +150,7 @@ function SignupUser() {
                     <Form.Control
                         type="text"
                         placeholder="City"
-                        value={inputs.city}
+                        value={inputs.city || ""}
                         onChange={changeInput}
                         name='city'
                         required />
@@ -160,7 +163,7 @@ function SignupUser() {
                     <Form.Control
                         type="number"
                         placeholder="Postal code"
-                        value={inputs.postal_code}
+                        value={inputs.postal_code || ""}
                         onChange={changeInput}
                         name='postal_code'
                         required />
@@ -168,7 +171,6 @@ function SignupUser() {
                         Please provide a postal code.
                     </Form.Control.Feedback>
                 </Form.Group>
-                {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Row>
             <Button type="submit">Sign up</Button>
         </Form>
