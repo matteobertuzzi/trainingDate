@@ -2,13 +2,15 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import Loading from './Loading.jsx';
+import FilterAlert from './FilterAlert.jsx';
 
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
     const allClasses = store.allClasses;
-    let isLogged = store.logged
+    const newFilters = filters;
+    let isLogged = store.logged;
+    const [showAlert, setShowAlert] = useState(false);
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
     });
@@ -18,8 +20,15 @@ const HomeClassList = ({ filters }) => {
         actions.updateCart(newClass);
     }
 
+    useEffect(() => {
+        if (filteredClasses.length = 0) {
+            isClass = false;
+        }
+    }, [newFilters])
+
     return (
         <>
+            <FilterAlert showAlert={setShowAlert} />
             {filteredClasses.length > 0 ?
                 filteredClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
@@ -38,7 +47,6 @@ const HomeClassList = ({ filters }) => {
                     </Card>
                 )) :
                 <>
-                    <h3>No hay clases por esos filtros. Lista de las clases:</h3>
                     {allClasses.map(oneClass => (
                         <Card key={oneClass.id} className='my-3'>
                             <Card.Header>Class Details</Card.Header>
