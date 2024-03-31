@@ -196,9 +196,10 @@ const getState = ({ getStore, getActions, setStore }) => {
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
+
         if (!token) {
           console.error("No access token found");
-          localStorage.removeItem("availableAccount")
+          localStorage.removeItem("availableAccount");
           return null;
         }
 
@@ -209,19 +210,21 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+
         if (!response.ok) {
           if (response.status === 401) {
-            console.error("Access token is not valid. Removed from local storage.");
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem("availableAccount")
+            console.error("Access token is not valid or expired. Removed from local storage.");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("availableAccount");
           } else {
             console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
           }
+          return null;
         }
 
         const data = await response.json();
         setStore({ currentUser: JSON.parse(account) });
-        getActions().setLogged(true)
+        getActions().setLogged(true);
       },
 
       postTrainerClasses: async (inputs) => {
