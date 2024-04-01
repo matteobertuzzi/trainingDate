@@ -4,7 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
 function FilterAlert(onEmptyFilters) {
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState(true);
 
     const handleShowAlert = () => {
         setShow(true);
@@ -26,7 +26,7 @@ function FilterAlert(onEmptyFilters) {
                 </div>
             </Alert>
 
-            {!show && <Button onClick={handleShowAlert}>Show Alert</Button>}
+            {!show && <Button onClick={() => setShow(true)}>Show Alert</Button>}
         </>
     );
 }
