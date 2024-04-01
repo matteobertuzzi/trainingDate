@@ -171,6 +171,7 @@ function SignupUser() {
                         Please provide a postal code.
                     </Form.Control.Feedback>
                 </Form.Group>
+                {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Row>
             <Button type="submit">Sign up</Button>
         </Form>

@@ -7,9 +7,10 @@ const getState = ({ getStore, getActions, setStore }) => {
       currentUser: {},
       logged: false,
       specializations: [],
-      trainersClasses: [],
+      trainerClasses: [],
       allClasses: [],
       userClasses: [],
+      cart: []
     },
 
     actions: {
@@ -27,9 +28,26 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       setTrainersClases: (value) => {
-        setStore({ trainersClasses: value })
+        setStore({ trainerClasses: value })
         setStore({ user: value })
       },
+
+      addCartItem: (newItem) => {
+				const store = getStore();		
+				if (!store.cart.includes(newItem)) {
+				  const updatedCart = [...store.cart, newItem];
+				  setStore({ cart: updatedCart });
+				  localStorage.setItem('cart', JSON.stringify(updatedCart));
+				} else {
+				  getActions().removeFavorites(newItem, store.cart);
+				}
+			  },	
+
+			removeCartItem: (item, array) => {
+			const updatedCart = array.filter((element) => element !== item);
+			localStorage.setItem('cart', JSON.stringify(updatedCart));
+			setStore({ cart: updatedCart });
+			},
 
       getAllClasses: async () => {
         const classesInLocalStorage = localStorage.getItem('allClasses')
@@ -136,7 +154,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       },*/
 
       addUser: async (inputs) => {
-        const url = process.env.BACKEND_URL + '/api/users'
+        const url = process.env.BACKEND_URL + 'api/users'
         const options = {
           method: 'POST',
           headers: {
@@ -260,7 +278,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!response.ok) return response.status;
         const data = await response.json();
         console.log(data)
-        setStore({ trainersClasses: data.class })
+        setStore({ trainerClasses: data.class })
       },
 
       updateUser: async (id, inputs) => {
