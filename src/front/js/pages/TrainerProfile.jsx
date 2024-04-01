@@ -57,7 +57,7 @@ const TrainerProfile = () => {
                                     <Card.Title>Trainer Information</Card.Title>
                                     <Card.Text>
                                         <strong>Name:</strong> {trainer.name}<br />
-                                        <strong>Last Name:</strong> {trainer.last_name}<br />
+                                        <st            <Row className="justify-content-md-center mt-4">                {trainer ?                    <>                        <Col xs={3}>                            <Image src={trainer.gender != 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid />                        </Col>                        <Col md={9}>    const { id } = useParams();const TrainerProfile = () => {rong>Last Name:</strong> {trainer.last_name}<br />
                                         <strong>Email:</strong> {trainer.email}<br />
                                         <strong>Phone:</strong> {trainer.phone_number}<br />
                                         <strong>IBAN:</strong> {trainer.bank_iban}<br />

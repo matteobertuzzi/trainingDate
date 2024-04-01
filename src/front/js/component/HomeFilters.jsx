@@ -51,7 +51,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                     <Form.Label>Training Type</Form.Label>
                     <Form.Select
                         aria-label="training-type"
-                        value={filters.trainingType}
+                        value={filter.trainingType}
                         onChange={(e) => handleFilters(e.target.value, 'trainingType')}
                     >
                         <option>Select training type</option>
@@ -64,7 +64,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                     <Form.Label>Training Level</Form.Label>
                     <Form.Select
                         aria-label="training-level"
-                        value={filters.trainingLevel}
+                        value={filter.trainingLevel}
                         onChange={(e) => handleFilters(e.target.value, 'trainingLevel')}
                     >
                         <option>Select training level</option>
