@@ -10,6 +10,8 @@ import HomeFilters from '../component/HomeFilters.jsx';
 const Homepage = () => {
     const { store, actions } = useContext(Context);
     let isLogged = store.logged
+    const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
+    const isUser = currentUser && currentUser.role == 'users' ? true : false;
     const [filters, setFilters] = useState({
         trainingLevel: '',
         trainingType: ''
@@ -23,7 +25,7 @@ const Homepage = () => {
 
     return (
         <>
-            {isLogged ?
+            {isLogged && isUser ?
                 <div className='container-fluid'>
                     <div className='row'>
                         <div className='col-lg-3 col-md-3 col-sm-10 d-flex-column justify-content-center' style={{ 'backgroundColor': '#D3D3D3', 'height': '100vh' }}>

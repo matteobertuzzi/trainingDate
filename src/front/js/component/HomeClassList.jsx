@@ -19,7 +19,7 @@ const HomeClassList = ({ filters }) => {
 
     return (
         <>
-            {(filteredClasses.length == 0 && filters.trainingType != '' && filters.trainingLevel != '') ? <FilterAlert showAlert={setShowAlert} /> : <></>}
+            {(filteredClasses.length == 0 && filters.trainingType != '' && filters.trainingLevel != '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
             {filteredClasses.length > 0 ?
                 filteredClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>

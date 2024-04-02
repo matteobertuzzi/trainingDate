@@ -20,14 +20,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
     actions: {
 
-      setLogged: (value) => {
-        if (!value) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("availableUser");
-        }
-        setStore({ logged: value });
-      },
-
       setUser: (value) => {
         setStore({ currentUser: value })
       },
@@ -39,6 +31,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       setLogged: (value) => {
         if (!value) {
           localStorage.removeItem("accessToken");
+          localStorage.removeItem("availableAccount");
+          localStorage.removeItem("userClasses");
         }
         setStore({ logged: value });
       },
@@ -97,6 +91,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!response.ok) return false
         const data = await response.json()
         setStore({ currentUser: data.results });
+        console.log(data.results)
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
@@ -104,25 +99,38 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
+        const account = localStorage.getItem("availableAccount");
+
         if (!token) {
           console.error("No access token found");
+          localStorage.removeItem("availableAccount");
           return null;
         }
+
         const options = {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         };
+
         const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+
         if (!response.ok) {
-          console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+          if (response.status === 401) {
+            console.error("Access token is not valid or expired. Removed from local storage.");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("availableAccount");
+          } else {
+            console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+          }
           return null;
         }
+
         const data = await response.json();
-        console.log(data)
-        setStore({ currentUser: data.account })
-        getActions().setLogged(true)
+        setStore({ currentUser: JSON.parse(account) });
+        getActions().setLogged(true);
       },
+
       getUserClasses: async () => {
         const userClassesInLocalStorage = localStorage.getItem('userClasses')
         if (userClassesInLocalStorage) {
@@ -319,11 +327,14 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(url, options);
         if (!response.ok) {
           console.error(`Error updating user id: ${id}. HTTP Status ${response.status}`);
-          return null
+          return null;
         }
-        const data = await response.json()
-        console.log(data)
-        return data
+        const data = await response.json();
+        const userData = data.user_update;
+        console.log(userData);
+        const user = { role: 'users', user: userData }
+        localStorage.setItem('availableAccount', JSON.stringify(user));
+        return user
       },
 
       updateTrainer: async (id, inputs) => {
@@ -355,9 +366,12 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error(`Error updating trainer id: ${id}. HTTP Status ${response.status}`);
           return null
         }
-        const data = await response.json()
-        console.log(data)
-        return data
+        const data = await response.json();
+        const trainerData = data.trainer_update;
+        console.log(trainerData);
+        const trainer = { role: 'trainers', trainer: trainerData };
+        localStorage.setItem('availableAccount', JSON.stringify(trainer));
+        return trainer;
       },
       updateCart: (newClass) => {
         const cartClasses = getStore().cart;

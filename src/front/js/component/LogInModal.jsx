@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { useContext } from "react";
 import { FaCheckCircle } from "react-icons/fa";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 
 export const LogInModal = ({ show, onHide }) => {
@@ -20,10 +22,15 @@ export const LogInModal = ({ show, onHide }) => {
     const [validated, setValidated] = useState(false)
     const [activeTab, setActiveTab] = useState("");
     const [loginError, setLoginError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const [inputs, setInputs] = useState({
         email: "",
         password: ""
     })
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleTabChange = (key) => {
         setActiveTab(key);
@@ -93,16 +100,23 @@ export const LogInModal = ({ show, onHide }) => {
                                 </Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
-                        <Form.Group as={Col} md="12" controlId="validationPassword">
+                        <Form.Group className="position-relative w-100" as={Col} md="12" controlId="validationSignupPassword">
                             <FloatingLabel controlId="validationSignupPassword" label="Password">
                                 <Form.Control
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     placeholder="Password"
                                     aria-describedby="inputGroupPrepend"
                                     required
                                     value={inputs.password || ""}
                                     onChange={handleChange}
                                     name="password"
+                                    style={{ paddingRight: '40px' }}
+                                />
+                                <FontAwesomeIcon
+                                    icon={showPassword ? faEyeSlash : faEye}
+                                    className="position-absolute end-0 top-50 translate-middle-y"
+                                    style={{ cursor: 'pointer', zIndex: 1, marginRight: '10px' }}
+                                    onClick={togglePasswordVisibility}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     Please insert a correct password.
@@ -113,7 +127,7 @@ export const LogInModal = ({ show, onHide }) => {
                     {loginError && <div className="text-danger mt-2">{loginError}</div>}
                 </Form>
                 <span className="mb-2">Olvidaste tu contraseña?</span>
-                <Link to={"/signup"}>Regístrate</Link>
+                <Link to={"/signup"} onClick={onHide}>Regístrate</Link>
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSubmit} variant="success">Log In</Button>

@@ -636,7 +636,7 @@ def handle_user(id):
             db.session.add(user)
             db.session.commit()
             response_body["message"] = "User Update"
-            response_body["user update"] = user.serialize()
+            response_body["user_update"] = user.serialize()
             return response_body, 200
     response_body['message'] = 'Not allowed!'
     return response_body, 405
@@ -689,7 +689,7 @@ def handle_trainer(id):
             db.session.add(trainer)
             db.session.commit()
             response_body["message"] = "Trainer Update"
-            response_body["trainer update"] = trainer.serialize()
+            response_body["trainer_update"] = trainer.serialize()
             return response_body, 200
     response_body['message'] = 'Not allowed!'
     return response_body, 405

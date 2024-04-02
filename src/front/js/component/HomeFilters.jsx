@@ -53,6 +53,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                         aria-label="training-type"
                         value={filter.trainingType}
                         onChange={(e) => handleFilters(e.target.value, 'trainingType')}
+                        required
                     >
                         <option>Select training type</option>
                         {specializations.map((specialization) =>
@@ -66,6 +67,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                         aria-label="training-level"
                         value={filter.trainingLevel}
                         onChange={(e) => handleFilters(e.target.value, 'trainingLevel')}
+                        required
                     >
                         <option>Select training level</option>
                         <option value='Beginner'>Beginner</option>

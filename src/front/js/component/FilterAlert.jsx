@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
-function FilterAlert(onEmptyFilters) {
+function FilterAlert({ location }) {
     const [show, setShow] = useState(true);
 
     const handleShowAlert = () => {
@@ -15,18 +15,19 @@ function FilterAlert(onEmptyFilters) {
         <>
             <Alert show={show} variant="danger">
                 <Alert.Heading>My Alert</Alert.Heading>
-                <p>
-                    There are no classes for the given filters. Here is a list of all available clases.
-                </p>
+                {location == 'classList' ?
+                    <p>There are no classes for the given filters. Here is a list of all available clases.</p>
+                    :
+                    <p>No booked classes.</p>}
                 <hr />
-                <div className="d-flex justify-content-end">
-                    <Button onClick={() => setShow(false)} variant="outline-success">
-                        Close me
+                <div className="d-flex justify-content-center">
+                    <Button onClick={() => setShow(false)} variant="outline-danger">
+                        Close
                     </Button>
                 </div>
             </Alert>
 
-            {!show && <Button onClick={() => setShow(true)}>Show Alert</Button>}
+            {!show && <Button onClick={() => setShow(true)} variant="outline-danger">Show Alert</Button>}
         </>
     );
 }

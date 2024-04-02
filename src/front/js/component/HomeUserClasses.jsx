@@ -3,12 +3,19 @@ import { Context } from '../store/appContext';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Loading from './Loading.jsx';
+import FilterAlert from './FilterAlert.jsx';
 
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
+    const { getUserClasses } = actions
+    const [showAlert, setShowAlert] = useState(false);
     const userClasses = store.userClasses;
     console.log(userClasses);
+
+    useEffect(() => {
+        getUserClasses();
+    }, [])
 
 
     return (
@@ -22,11 +29,11 @@ const HomeUserClasses = () => {
                             <Card.Text>
                                 {oneClass.class_details ? oneClass.class_details : 'Training class'}
                             </Card.Text>
-                            <Button variant="primary">Signup for Class</Button>
+                            <Button variant="primary">View class</Button>
                         </Card.Body>
                     </Card>
                 )) :
-                <h3>No hay clases próximas.</h3>
+                <FilterAlert location='userClasses' showAlert={setShowAlert} />
             }
         </>
     )
