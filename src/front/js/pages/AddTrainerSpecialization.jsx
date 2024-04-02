@@ -10,8 +10,6 @@ import CloseButton from 'react-bootstrap/CloseButton';
 import { Context } from "../store/appContext";
 import { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { Dropdown } from "react-bootstrap";
-import { DropdownButton } from 'react-bootstrap';
 
 export const AddTrainerSpecialization = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)
@@ -23,7 +21,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
     const { trainerId } = params
     const [inputs, setInputs] = useState({
         certification: "",
-        specialization: ""
+        specialization_id: ""
     })
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -58,29 +56,30 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
                 <CloseButton onClick={onHide}></CloseButton>
             </Modal.Header>
             <Modal.Body className="w-100 d-flex flex-column p-20">
-                <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit}>
+                <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit} enctype="multipart/form-data">
                     <Row className="g-3">
                         <Form.Group as={Col} md="12" controlId="validationSpecialization">
-                            <FloatingLabel controlId="validationSpecialization" label="Especializacion">
+                            <Form.Label>Especialización</Form.Label>
+                            <div className="input-group">
                                 <Form.Control
                                     required
-                                    type="text"
-                                    placeholder="certificacion"
-                                    value={inputs.certification}
+                                    type="file"
                                     onChange={handleChange}
                                     name="certification"
+                                    className="form-control"
+                                    aria-describedby="inputGroupFileAddon"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    Please enter a certification.
+                                    Por favor, selecciona un archivo de certificación.
                                 </Form.Control.Feedback>
-                            </FloatingLabel>
+                            </div>
                         </Form.Group>
                         <Form.Group as={Col} md="4" controlId="specialization">
                             <Form.Label>Tipo de entrenamiento:</Form.Label>
                             <Form.Select
                                 id='specialization'
                                 onChange={handleChange}
-                                name='specialization'
+                                name='specialization_id'
                                 value={inputs.specialization_id}
                                 required
                                 className="w-auto"

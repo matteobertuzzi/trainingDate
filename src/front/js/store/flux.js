@@ -7,6 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       currentUser: {},
       logged: false,
       specializations: [],
+      trainerSpecializations: [],
       trainerClasses: [],
       allClasses: [],
       userClasses: [],
@@ -33,21 +34,21 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       addCartItem: (newItem) => {
-				const store = getStore();		
-				if (!store.cart.includes(newItem)) {
-				  const updatedCart = [...store.cart, newItem];
-				  setStore({ cart: updatedCart });
-				  localStorage.setItem('cart', JSON.stringify(updatedCart));
-				} else {
-				  getActions().removeFavorites(newItem, store.cart);
-				}
-			  },	
+        const store = getStore();
+        if (!store.cart.includes(newItem)) {
+          const updatedCart = [...store.cart, newItem];
+          setStore({ cart: updatedCart });
+          localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+          getActions().removeFavorites(newItem, store.cart);
+        }
+      },
 
-			removeCartItem: (item, array) => {
-			const updatedCart = array.filter((element) => element !== item);
-			localStorage.setItem('cart', JSON.stringify(updatedCart));
-			setStore({ cart: updatedCart });
-			},
+      removeCartItem: (item, array) => {
+        const updatedCart = array.filter((element) => element !== item);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        setStore({ cart: updatedCart });
+      },
 
       getAllClasses: async () => {
         const classesInLocalStorage = localStorage.getItem('allClasses')
@@ -356,12 +357,12 @@ const getState = ({ getStore, getActions, setStore }) => {
         const options = {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
             certification: inputs.certification,
-            specialization_id: inputs.specialization
+            specialization_id: inputs.specialization_id
           }),
         }
         const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/specializations`, options);
@@ -369,6 +370,30 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         console.log(data)
       }
+    },
+
+    postCheckoutSession: async (id, url) => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No access token found!");
+        return null;
+      }
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          class_id: id,
+          success_url: url
+        }),
+      }
+      const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options)
+      if (!response.ok) return response.status, 400
+      const data = await response.json()
+      console.log(data)
+
     }
 
   }

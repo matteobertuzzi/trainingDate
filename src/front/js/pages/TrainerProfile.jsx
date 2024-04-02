@@ -37,7 +37,6 @@ const TrainerProfile = () => {
         const data = await response.json();
         const trainerData = data.trainer;
         setTrainer(trainerData);
-        console.log(trainer);
         return trainer
     };
 

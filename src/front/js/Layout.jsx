@@ -16,6 +16,7 @@ import TrainerProfile from "./pages/TrainerProfile.jsx";
 import { AddTrainerSpecialization } from "./pages/AddTrainerSpecialization.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Signup from "./pages/Signup.jsx";
+import { Cart } from "./pages/Cart.jsx";
 
 
 // Create your first component
@@ -40,6 +41,7 @@ const Layout = () => {
                         <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
                         <Route element={<UserProfile />} path='/user/:id/profile' />
                         <Route element={<Signup />} path='/signup' />
+                        <Route element={<Cart />} path='/cart' />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />

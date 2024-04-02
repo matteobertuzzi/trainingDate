@@ -13,13 +13,61 @@ from flask import render_template
 from datetime import timedelta, datetime
 import secrets
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+import stripe
+import cloudinary.uploader
+import cloudinary
 
 
+cloudinary.config( 
+  cloud_name = "dueqlf3zq", 
+  api_key = "598552498695767", 
+  api_secret = "qIHf-XLeiGUjmuqv-lmsOHrsRso" 
+)
+
+
+# This is your test secret API key.
+stripe.api_key = 'sk_test_51OtD69IbRZFNTqQ9iphvbozKc9s4uHhyjnKD4X7RE0H1tOrI6mZf4T7RjCTnj5XF6Yajr5ocv1Uc8wbtP4N2wcxG00SgIdOEJE'
 api = Blueprint('api', __name__)
 CORS(api) 
 bcrypt = Bcrypt()
 mail = Mail()
 s = URLSafeTimedSerializer('Thisisasecret!')
+
+
+# Ruta para crear una sesión de checkout
+@api.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    response_body = {}
+    data = request.json
+    if not data or 'class_id' not in data or 'success_url' not in data:
+        response_body["message"] = "Missing required parameters"
+        return response_body, 400
+    class_id = data['class_id']
+    user_class = db.session.query(UsersClasses).filter_by(id=class_id).first()
+    if not user_class:
+        response_body["message"] = "Class not found"
+        return response_body, 400
+    line_item = {
+        'price_data': {
+            'currency': 'usd',
+            'unit_amount': user_class.amount,
+            'product_data': {
+                'name': f'Class {user_class.id}',
+            },
+        },
+        'quantity': 1,
+    }
+    session = stripe.checkout.Session.create(success_url='http://google.com',
+                                             cancel_url='http://wikipedia.com',
+                                             payment_method_types=['card'],
+                                             line_items=[line_item],
+                                             mode='payment')
+    if session:
+        response_body["session"] = session
+        return response_body, 200
+    else:
+        response_body["message"] = 'Failed to create checkout session'
+        return response_body, 500
 
 
 @api.route('/forgetpassword/<user_type>', methods=['POST'])
@@ -132,6 +180,31 @@ def handle_users():
         return response_body, 404
     response_body['message'] = 'Users currently registered'
     response_body['results'] = [single_user.serialize() for single_user in users]
+    return response_body, 200
+
+
+# Confirmar especializacion por correo, por parte del admin
+@api.route('/confirm/specialization/<token>', methods=['GET'])
+def confirm_specialization(token):
+    response_body = {}
+    try:
+        specialization_id = s.loads(token, salt='email-confirm', max_age=1800)
+    except SignatureExpired:
+        response_body["message"] = 'El token ha expirado.'
+        return response_body, 400
+    except BadSignature:
+        response_body["message"] = 'Token inválido.'
+        return response_body, 400
+    specialization = TrainersSpecializations.query.get(specialization_id)
+    if not specialization:
+        response_body["message"] = 'Especialización inválida.'
+        return response_body, 404
+    if specialization.status == 'Approved':
+        response_body["message"] = 'La especialización ya ha sido aprobada anteriormente.'
+        return response_body, 400
+    specialization.status = 'Approved'
+    db.session.commit()
+    response_body["message"] = 'Especialización aprobada exitosamente.'
     return response_body, 200
 
 
@@ -637,7 +710,7 @@ def handle_user(id):
             db.session.add(user)
             db.session.commit()
             response_body["message"] = "User Update"
-            response_body["user update"] = user.serialize()
+            response_body["user"] = user.serialize()
             return response_body, 200
     response_body['message'] = 'Not allowed!'
     return response_body, 405
@@ -690,7 +763,7 @@ def handle_trainer(id):
             db.session.add(trainer)
             db.session.commit()
             response_body["message"] = "Trainer Update"
-            response_body["trainer update"] = trainer.serialize()
+            response_body["trainer"] = trainer.serialize()
             return response_body, 200
     response_body['message'] = 'Not allowed!'
     return response_body, 405
@@ -972,52 +1045,56 @@ def handle_show_single_class(id):
 
 
 # Mostrar y crear especializaciones para trainer
-@api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
+@api.route('/trainers/<int:id>/specializations', methods=['POST'])
 @jwt_required()
 def handle_trainer_specializations(id):
     response_body = {}
     current_user = get_jwt_identity()
-    trainer = db.session.query(Trainers).filter_by(id = id).first()
+    trainer = db.session.query(Trainers).filter_by(id=id).first()
     if not trainer:
-        response_body['message'] = f'No trainer with trainer id {str(id)} found!'
-        return response_body,404
+        response_body['message'] = f'No se encontró ningún entrenador con el ID {str(id)}!'
+        return jsonify(response_body), 404
     if (current_user['role'] == 'trainers' and current_user['id'] == id) or (current_user['role'] == 'administrators'):
-        if request.method == 'GET':
-            trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
-            if not trainers_specializations:
-                response_body['message'] = 'No specializations for trainer id: ' + str(id)
-                return response_body, 404
-            response_body['message'] = 'Specializations for trainer ' + str(id)
-            response_body['results'] = [spec.serialize() for spec in trainers_specializations]
-            return response_body,200
         if request.method == 'POST':
-            data = request.json
-            if not data:
-                response_body["message"] = "No data provided"
-                return response_body, 400
-            required_fields = ['certification', 'specialization_id']
-            if not request.json or not all(field in request.json for field in required_fields):
-                response_body["message"] = "Missing required fields in the request."
-                return response_body, 400
-            specialization = db.session.query(Specializations).filter_by(id = data['specialization_id']).first()
+            data = request.form
+            file = request.files.get('certification')
+            if not file:
+                response_body["message"] = "No se ha recibido ninguna imagen de certificación"
+                return jsonify(response_body), 400
+            specialization_id = data.get('specialization_id')
+            if not specialization_id:
+                response_body["message"] = "Falta el ID de especialización en la solicitud."
+                return jsonify(response_body), 400
+            specialization = db.session.query(Specializations).filter_by(id=specialization_id).first()
             if not specialization:
-                response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' does not exist!'
-                return response_body, 404
-            trainer_specialization = db.session.query(TrainersSpecializations).filter_by(specialization_id = data['specialization_id']).first()
+                response_body['message'] = f'La especialización con el ID {specialization_id} no existe!'
+                return jsonify(response_body), 404
+            trainer_specialization = db.session.query(TrainersSpecializations).filter_by(trainer_id=id, specialization_id=specialization_id).first()
             if trainer_specialization:
-                response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' already exist!'
-                return response_body, 404
-            new_trainer_specialization = TrainersSpecializations(certification = data['certification'],
-                                                                 status = "Requested",
-                                                                 specialization_id = data['specialization_id'],  
-                                                                 trainer_id = id)
-            db.session.add(new_trainer_specialization)
-            db.session.commit()
-            response_body['message'] = 'New specialization connected with trainer ' + str(id)
-            response_body['results'] = new_trainer_specialization.serialize()
-            return response_body,201
-    response_body['message'] = 'Not allowed!'
-    return response_body, 405
+                response_body['message'] = f'La especialización con el ID {specialization_id} ya existe!'
+                return jsonify(response_body), 409
+            try:
+                # Subir la imagen a Cloudinary
+                upload_result = cloudinary.uploader.upload(file)
+                # Obtener la URL de la imagen desde Cloudinary
+                certification_url = upload_result['secure_url']
+                new_trainer_specialization = TrainersSpecializations(
+                    status="Requested",
+                    specialization_id=specialization_id,
+                    trainer_id=id,
+                    certification=certification_url
+                )
+                db.session.add(new_trainer_specialization)
+                db.session.commit()
+                response_body['message'] = f'Nueva especialización creada para el entrenador {id}, espere la confirmación'
+                response_body['results'] = new_trainer_specialization.serialize()
+                return jsonify(response_body), 201
+            except Exception as e:
+                response_body['message'] = 'Error al subir la imagen de certificación a Cloudinary'
+                return jsonify(response_body), 500
+    response_body['message'] = '¡No permitido!'
+    return jsonify(response_body), 405
+
 
 
 # Borrar una especializacion de un entrenador
