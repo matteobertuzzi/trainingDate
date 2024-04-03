@@ -4,7 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       message: null,
       demo: [{ title: "FIRST", background: "white", initial: "white" },
       { title: "SECOND", background: "white", initial: "white" }],
-      currentUser: {},
+      currentUser: null,
       logged: false,
       specializations: [],
       trainerSpecializations: [],
@@ -361,7 +361,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         formData.append('certification', inputs.certification);
         formData.append('specialization_id', inputs.specialization_id);
 
-        // Configurar las opciones de la solicitud
         const options = {
           method: 'POST',
           headers: {
@@ -371,21 +370,17 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         try {
-          // Realizar la solicitud POST al servidor
           const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/specializations`, options);
-          // Verificar si la respuesta fue exitosa
           if (!response.ok) {
             console.error("Failed to post specialization:", response.status);
             return false;
           }
-          // Convertir la respuesta a JSON
           const data = await response.json();
           console.log(data);
-          return true; // Indicar que la solicitud fue exitosa
+          return true;
         } catch (error) {
-          // Manejar errores de la solicitud
           console.error("Error posting specialization:", error);
-          return false; // Indicar que ocurrió un error
+          return false;
         }
       },
 
@@ -417,4 +412,4 @@ const getState = ({ getStore, getActions, setStore }) => {
   }
 }
 
-  export default getState;
+export default getState;

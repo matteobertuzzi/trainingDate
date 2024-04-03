@@ -17,7 +17,7 @@ import Loading from '../component/Loading.jsx';
 export const CreateClass = () => {
     const [validated, setValidated] = useState(false);
     const { store, actions } = useContext(Context)
-    const { specializations, currentUser } = store
+    const { specializations, currentUser, trainerClasses } = store
     const { postTrainerClasses } = actions
     const params = useParams()
     const { trainerId } = params

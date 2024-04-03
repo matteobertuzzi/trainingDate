@@ -18,10 +18,10 @@ import cloudinary.uploader
 import cloudinary
 
 
-cloudinary.config( 
-  cloud_name = "dueqlf3zq", 
-  api_key = "598552498695767", 
-  api_secret = "qIHf-XLeiGUjmuqv-lmsOHrsRso" 
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUD_NAME"), 
+    api_key=os.environ.get("API_KEY"), 
+    api_secret=os.environ.get("API_SECRET")
 )
 
 
@@ -201,6 +201,7 @@ def reject_specialization(token):
         response_body["message"] = 'Token inválido.'
         return response_body, 400
     specialization = TrainersSpecializations.query.get(specialization_id)
+    print(specialization.trainer.email)
     if not specialization:
         response_body["message"] = 'Especialización inválida.'
         return response_body, 404 
@@ -212,6 +213,45 @@ def reject_specialization(token):
         return response_body, 400
     specialization.status = 'Rejected'
     db.session.commit()
+    token = s.dumps(specialization.id, salt='email-confirm')
+    subject = 'Specialization Rejected'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                    </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                                <p>La peticion ha sido rechazada</p>
+                        </div>
+                    </body>
+                    </html>
+                    ''' 
+    msg = Message(subject, recipients=[specialization.trainer.email], html=html_content, sender=os.environ.get('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
     response_body["message"] = 'Especialización rechazada por el admin'
     return response_body, 200
 
@@ -246,6 +286,45 @@ def confirm_specialization(token):
         return response_body, 400
     specialization.status = 'Approved'
     db.session.commit()
+    token = s.dumps(specialization.id, salt='email-confirm')
+    subject = 'Specialization Approved'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                    </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                                <p>La peticion ha sido aprobada</p>
+                        </div>
+                    </body>
+                    </html>
+                    ''' 
+    msg = Message(subject, recipients=[specialization.trainer.email], html=html_content, sender=os.environ.get('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
     response_body["message"] = 'Especialización aprobada exitosamente.'
     return response_body, 200
 
@@ -1087,7 +1166,7 @@ def handle_show_single_class(id):
 
 
 # Mostrar y crear especializaciones para trainer
-@api.route('/trainers/<int:id>/specializations', methods=['POST'])
+@api.route('/trainers/<int:id>/specializations', methods=['POST', 'GET'])
 @jwt_required()
 def handle_trainer_specializations(id):
     response_body = {}
@@ -1097,6 +1176,15 @@ def handle_trainer_specializations(id):
         response_body['message'] = f'No se encontró ningún entrenador con el ID {str(id)}!'
         return jsonify(response_body), 404
     if (current_user['role'] == 'trainers' and current_user['id'] == id) or (current_user['role'] == 'administrators'):
+        if request.method == "GET":
+            trainer_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
+            if not trainer_specializations:
+                response_body['message'] = f'No specializations for trainer id: {str(id)}'
+                return response_body, 404
+            serialized_specializations = [spec.serialize() for spec in trainer_specializations]
+            response_body["message"] = "Trainer Specializations"
+            response_body["result"] = serialized_specializations
+            return jsonify(response_body), 200
         if request.method == 'POST':
             data = request.form
             file = request.files.get('certification')
