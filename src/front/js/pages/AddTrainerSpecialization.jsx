@@ -23,17 +23,17 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
         certification: "",
         specialization_id: ""
     })
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.stopPropagation();
         }
-
         setValidated(true);
         const postSpecialization = await postTrainerSpecialization(inputs);
         if (!postSpecialization) {
-            setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.')
+            setError('El entrenador ya tiene esta especialidad confirmada o pendiente de confirmar.')
         } else {
             alert('Los datos han sido enviados, despues las verificaciones recibira la confirmacion de su nueva especilidad.')
             setInputs({
@@ -46,8 +46,18 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
     };
 
     const handleChange = (e) => {
-        e.persist();
-        setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
+        const { name, value, files } = e.target;
+        if (name === 'specialization_id') {
+            setInputs((prevState) => ({
+                ...prevState,
+                [name]: value
+            }));
+        } else if (name === 'certification') {
+            setInputs((prevState) => ({
+                ...prevState,
+                certification: files[0]
+            }));
+        }
     };
 
     return (
@@ -60,19 +70,17 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
                     <Row className="g-3">
                         <Form.Group as={Col} md="12" controlId="validationSpecialization">
                             <Form.Label>Especialización</Form.Label>
-                            <div className="input-group">
-                                <Form.Control
-                                    required
-                                    type="file"
-                                    onChange={handleChange}
-                                    name="certification"
-                                    className="form-control"
-                                    aria-describedby="inputGroupFileAddon"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Por favor, selecciona un archivo de certificación.
-                                </Form.Control.Feedback>
-                            </div>
+                            <Form.Control
+                                required
+                                type="file"
+                                onChange={handleChange}
+                                name="certification"
+                                className="form-control"
+                                aria-describedby="inputGroupFileAddon"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Por favor, selecciona un archivo de certificación.
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group as={Col} md="4" controlId="specialization">
                             <Form.Label>Tipo de entrenamiento:</Form.Label>

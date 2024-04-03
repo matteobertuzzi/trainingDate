@@ -350,6 +350,47 @@ const getState = ({ getStore, getActions, setStore }) => {
         const availableAccountString = localStorage.getItem("availableAccount");
         const availableAccount = JSON.parse(availableAccountString);
         const trainerId = availableAccount.trainer.id;
+
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+
+        // Crear un nuevo objeto FormData
+        const formData = new FormData();
+        formData.append('certification', inputs.certification);
+        formData.append('specialization_id', inputs.specialization_id);
+
+        // Configurar las opciones de la solicitud
+        const options = {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData // Pasar formData directamente como cuerpo de la solicitud
+        };
+
+        try {
+          // Realizar la solicitud POST al servidor
+          const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/specializations`, options);
+          // Verificar si la respuesta fue exitosa
+          if (!response.ok) {
+            console.error("Failed to post specialization:", response.status);
+            return false;
+          }
+          // Convertir la respuesta a JSON
+          const data = await response.json();
+          console.log(data);
+          return true; // Indicar que la solicitud fue exitosa
+        } catch (error) {
+          // Manejar errores de la solicitud
+          console.error("Error posting specialization:", error);
+          return false; // Indicar que ocurrió un error
+        }
+      },
+
+      postCheckoutSession: async (id, url) => {
+        const token = localStorage.getItem("accessToken");
         if (!token) {
           console.error("No access token found!");
           return null;
@@ -357,46 +398,23 @@ const getState = ({ getStore, getActions, setStore }) => {
         const options = {
           method: 'POST',
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
-            certification: inputs.certification,
-            specialization_id: inputs.specialization_id
+            class_id: id,
+            success_url: url
           }),
         }
-        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/specializations`, options);
-        if (!response.ok) return false
-        const data = await response.json();
+        const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options)
+        if (!response.ok) return response.status, 400
+        const data = await response.json()
         console.log(data)
-      }
-    },
 
-    postCheckoutSession: async (id, url) => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No access token found!");
-        return null;
       }
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          class_id: id,
-          success_url: url
-        }),
-      }
-      const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options)
-      if (!response.ok) return response.status, 400
-      const data = await response.json()
-      console.log(data)
 
     }
-
   }
 }
 
-export default getState;
+  export default getState;
