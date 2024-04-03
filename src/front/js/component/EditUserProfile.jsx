@@ -23,6 +23,9 @@ function EditUserProfile({ user, onChangeSubmit }) {
         updateUser(user.id, inputs);
         onChangeSubmit();
         handleClose();
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000)
     };
 
     const changeInputs = (e) => {

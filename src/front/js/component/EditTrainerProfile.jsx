@@ -28,6 +28,9 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
         updateTrainer(trainer.id, inputs)
         handleClose();
         onChangeSubmit();
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000)
     };
 
     const changeInputs = (e) => {

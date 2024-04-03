@@ -25,8 +25,8 @@ const injectContext = (PassedComponent) => {
 
     useEffect(() => {
       state.actions.getAvailableAccount();
-      state.actions.getSpecializations()  
-      state.actions.getAllClasses(); 
+      state.actions.getSpecializations()
+      state.actions.getAllClasses();
     }, []);
     return (
       <Context.Provider value={state}>
@@ -34,7 +34,7 @@ const injectContext = (PassedComponent) => {
       </Context.Provider>
     );
   };
-  
+
   return StoreWrapper;
 };
 
