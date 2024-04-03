@@ -6,17 +6,17 @@ import Loading from '../component/Loading.jsx';
 import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
 import { AddTrainerSpecialization } from './AddTrainerSpecialization.jsx';
 
-
 const TrainerProfile = () => {
     const [modalShow, setModalShow] = useState(false);
     const { id } = useParams();
     const { store, actions } = useContext(Context);
-    const [trainer, setTrainer] = useState(null)
-    let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
-    let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
+    const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
+    const trainer = currentUser.trainer;
+    let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg';
+    let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png';
 
     async function fetchTrainer() {
-        const trainerId = id
+        const trainerId = id;
         const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token provided!");
@@ -28,29 +28,28 @@ const TrainerProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `/api/trainers/${trainerId}`
-        const response = await fetch(url, options)
+        const url = process.env.BACKEND_URL + `api/trainers/${trainerId}`;
+        const response = await fetch(url, options);
         if (!response.ok) {
-            console.error(`Error fetching trainer data. HTTP Status ${response.status}`)
-            return null
+            console.error(`Error fetching trainer data. HTTP Status ${response.status}`);
+            return null;
         }
         const data = await response.json();
         const trainerData = data.trainer;
-        setTrainer(trainerData);
-        return trainer
-    };
+        console.log(trainerData);
+        return trainerData;
 
     useEffect(() => {
         fetchTrainer();
-    }, [])
+    }, []);
 
     return (
         <Container>
             <Row className="justify-content-md-center mt-4">
-                {trainer ?
+                {trainer ? (
                     <>
                         <Col xs={3}>
-                            <Image src={trainer.gender != 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid />
+                            <Image src={trainer.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid />
                         </Col>
                         <Col md={9}>
                             <Card>
@@ -75,9 +74,9 @@ const TrainerProfile = () => {
                             </div>
                         </Col>
                     </>
-                    :
+                ) : (
                     <Loading />
-                }
+                )}
             </Row>
         </Container>
     );

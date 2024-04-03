@@ -26,6 +26,7 @@ const injectContext = (PassedComponent) => {
     useEffect(() => {
       state.actions.getAvailableAccount();
       state.actions.getSpecializations()
+      state.actions.getAllClasses();
     }, []);
 
     return (

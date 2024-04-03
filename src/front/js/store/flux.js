@@ -12,17 +12,13 @@ const getState = ({ getStore, getActions, setStore }) => {
       allClasses: [],
       userClasses: [],
       cart: []
+      filters: {
+        trainingType: '',
+        trainingLevel: ''
+      }
     },
 
     actions: {
-
-      setLogged: (value) => {
-        if (!value) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("availableUser");
-        }
-        setStore({ logged: value });
-      },
 
       setUser: (value) => {
         setStore({ currentUser: value })
@@ -41,6 +37,12 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.setItem('cart', JSON.stringify(updatedCart));
         } else {
           getActions().removeFavorites(newItem, store.cart);
+
+      setLogged: (value) => {
+        if (!value) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("availableAccount");
+          localStorage.removeItem("userClasses");
         }
       },
 
@@ -103,17 +105,56 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!response.ok) return false
         const data = await response.json()
         setStore({ currentUser: data.results });
+        console.log(data.results)
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
         return true
       },
 
-      /* getUserClasses: async (id) => {
+      getAvailableAccount: async () => {
+        const token = localStorage.getItem("accessToken");
+        const account = localStorage.getItem("availableAccount");
+
+        if (!token) {
+          console.error("No access token found");
+          localStorage.removeItem("availableAccount");
+          return null;
+        }
+
+        const options = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            console.error("Access token is not valid or expired. Removed from local storage.");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("availableAccount");
+          } else {
+            console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+          }
+          return null;
+        }
+
+        const data = await response.json();
+        setStore({ currentUser: JSON.parse(account) });
+        getActions().setLogged(true);
+      },
+
+      getUserClasses: async () => {
         const userClassesInLocalStorage = localStorage.getItem('userClasses')
         if (userClassesInLocalStorage) {
           setStore({ userClasses: JSON.parse(userClassesInLocalStorage) })
         } else {
+          let currentAccount = localStorage.getItem('availableAccount');
+          currentAccount = JSON.parse(currentAccount);
+          const id = currentAccount.user.id;
+          console.log(id);
           const token = localStorage.getItem("accessToken");
           if (!token) {
             console.error("No access token proivded!");
@@ -307,11 +348,14 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(url, options);
         if (!response.ok) {
           console.error(`Error updating user id: ${id}. HTTP Status ${response.status}`);
-          return null
+          return null;
         }
-        const data = await response.json()
-        console.log(data)
-        return data
+        const data = await response.json();
+        const userData = data.user_update;
+        console.log(userData);
+        const user = { role: 'users', user: userData }
+        localStorage.setItem('availableAccount', JSON.stringify(user));
+        return user
       },
 
       updateTrainer: async (id, inputs) => {
@@ -320,7 +364,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("No access token found!");
           return null;
         }
-        const url = `${process.env.BACKEND_URL}/api/trainers/${id}`
+        const url = `${process.env.BACKEND_URL}api/trainers/${id}`
         const options = {
           method: 'PATCH',
           headers: {
@@ -343,8 +387,37 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error(`Error updating trainer id: ${id}. HTTP Status ${response.status}`);
           return null
         }
-        const data = await response.json()
-        console.log(data)
+        const data = await response.json();
+        const trainerData = data.trainer_update;
+        console.log(trainerData);
+        const trainer = { role: 'trainers', trainer: trainerData };
+        localStorage.setItem('availableAccount', JSON.stringify(trainer));
+        return trainer;
+      },
+      updateCart: (newClass) => {
+        const cartClasses = getStore().cart;
+        if (cartClasses.includes(newClass)) {
+          console.error("Class already added to cart!")
+          return null
+        } else {
+          const updatedCart = [...cartClasses, newClass];
+          setStore({ cart: updatedCart });
+          console.log(updatedCart);
+          localStorage.setItem("cart", JSON.stringify(updatedCart));
+        }
+      },
+      updateFilters: (newFilters) => {
+        setStore({ filters: newFilters });
+      },
+
+      searchGym: async (city) => {
+        const url = `${process.env.BACKEND_URL}/api/gyms/${city}`
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error(`Error processing request. HTTP error code ${response.status}`)
+          return null
+        }
+        const data = await response.json();
         return data
       },
 
@@ -415,4 +488,4 @@ const getState = ({ getStore, getActions, setStore }) => {
   }
 }
 
-export default getState;
+  export default getState;

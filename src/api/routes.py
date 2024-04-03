@@ -16,6 +16,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 import stripe
 import cloudinary.uploader
 import cloudinary
+import googlemaps
 
 
 cloudinary.config(
@@ -830,7 +831,7 @@ def handle_user(id):
             db.session.add(user)
             db.session.commit()
             response_body["message"] = "User Update"
-            response_body["user"] = user.serialize()
+            response_body["user_update"] = user.serialize()
             return response_body, 200
     response_body['message'] = 'Not allowed!'
     return response_body, 405
@@ -883,7 +884,7 @@ def handle_trainer(id):
             db.session.add(trainer)
             db.session.commit()
             response_body["message"] = "Trainer Update"
-            response_body["trainer"] = trainer.serialize()
+            response_body["trainer_update"] = trainer.serialize()
             return response_body, 200
     response_body['message'] = 'Not allowed!'
     return response_body, 405
@@ -1392,3 +1393,21 @@ def handle_specialization(id):
         db.session.commit()
         response_body['message'] = f'Specialization with id: {str(id)}, successfully deleted'
         return response_body, 200
+
+@api.route('/gyms/<string:city>', methods=['GET'])
+def find_gyms_near_location(city):
+    gmaps = googlemaps.Client(key=os.getenv('GOOGLE_API_KEY'))
+    geocode_result = gmaps.geocode(city)
+    if not geocode_result:
+        print("Location not found")
+        return
+    location = geocode_result[0]['geometry']['location']
+    lat = location['lat']
+    lng = location['lng']
+
+    places_result = gmaps.places_nearby(location=(lat, lng), radius=5000, type='gym')
+    if not places_result['results']:
+        print("No gyms found near the location")
+        return
+    gyms = [(place['name'], place['vicinity']) for place in places_result['results']]
+    return gyms
