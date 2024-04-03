@@ -219,6 +219,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!token) {
           console.error("No access token found");
           localStorage.removeItem("availableAccount");
+          getActions().setLogged(false)
           return null;
         }
 
@@ -235,8 +236,10 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Access token is not valid or expired. Removed from local storage.");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("availableAccount");
+            getActions().setLogged(false)
           } else {
             console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+            getActions().setLogged(false)
           }
           return null;
         }

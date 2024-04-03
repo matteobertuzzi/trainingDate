@@ -201,7 +201,6 @@ def reject_specialization(token):
         response_body["message"] = 'Token inválido.'
         return response_body, 400
     specialization = TrainersSpecializations.query.get(specialization_id)
-    print(specialization.trainer.email)
     if not specialization:
         response_body["message"] = 'Especialización inválida.'
         return response_body, 404 
