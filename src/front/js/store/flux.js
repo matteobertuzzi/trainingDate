@@ -387,9 +387,19 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
       updateFilters: (newFilters) => {
         setStore({ filters: newFilters });
+      },
+
+      searchGym: async (city) => {
+        const url = `${process.env.BACKEND_URL}/api/gyms/${city}`
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error(`Error processing request. HTTP error code ${response.status}`)
+          return null
+        }
+        const data = await response.json();
+        return data
       }
     }
   }
-}
 
-export default getState;
+  export default getState;

@@ -34,6 +34,11 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
         onFilterSubmit(event, filter)
     }
 
+    const searchGym = (event) => {
+        event.preventDefault();
+        actions.searchGym(event.target.value)
+    }
+
     return (
         <>
             <InputGroup className="my-5 px-3">
@@ -41,6 +46,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                     placeholder="Search city"
                     aria-label="Search city"
                     aria-describedby="search-city"
+                    onSubmit={searchGym}
                 />
                 <Button variant="outline-secondary" id="search-city">
                     <i className="fa-solid fa-magnifying-glass"></i>
