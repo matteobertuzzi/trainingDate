@@ -1148,6 +1148,7 @@ def handle_trainer_specializations(id):
                             display: flex;
                             flex-direction: column;
                             align-items: center;
+                            justify-content: center;
                             max-width: 600px;
                             margin: auto;
                             padding: 20px;
@@ -1178,12 +1179,33 @@ def handle_trainer_specializations(id):
                         .button-reject:hover {{
                             background-color: #c82333;
                         }}
+                        .cert-container {{
+                            margin-top: 10px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                        }}
+                        .cert-link {{
+                            background-color: #007bff;
+                            color: #fff;
+                            padding: 8px 16px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            transition: background-color 0.3s ease;
+                        }}
+                        .cert-link:hover {{
+                            background-color: #0056b3;
+                        }}
                     </style>
                     </head>
                     <body>
                         <div class="container">
                             <div class="message">
                                 <p>Please approve or reject the specialization</p>
+                                <div class="cert-container">
+                                    <a class="cert-link" href="{certification_url}" target="_blank">Ver certificado</a>
+                                </div>
                             </div>
                             <div class="action">
                                 <a class="button-confirm" href="{confirm_url}" target="_blank">Click here to confirm!</a>
@@ -1199,6 +1221,8 @@ def handle_trainer_specializations(id):
                 response_body['results'] = new_trainer_specialization.serialize()
                 return jsonify(response_body), 201
             except Exception as e:
+                db.session.delete(new_trainer_specialization)
+                db.session.commit()
                 response_body['message'] = 'Error al subir la imagen de certificación a Cloudinary'
                 return jsonify(response_body), 500
     response_body['message'] = '¡No permitido!'
