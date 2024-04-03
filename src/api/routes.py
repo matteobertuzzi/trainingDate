@@ -13,14 +13,62 @@ from flask import render_template
 from datetime import timedelta, datetime
 import secrets
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+import stripe
+import cloudinary.uploader
+import cloudinary
 import googlemaps
 
 
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUD_NAME"), 
+    api_key=os.environ.get("API_KEY"), 
+    api_secret=os.environ.get("API_SECRET")
+)
+
+
+# This is your test secret API key.
+stripe.api_key = 'sk_test_51OtD69IbRZFNTqQ9iphvbozKc9s4uHhyjnKD4X7RE0H1tOrI6mZf4T7RjCTnj5XF6Yajr5ocv1Uc8wbtP4N2wcxG00SgIdOEJE'
 api = Blueprint('api', __name__)
 CORS(api) 
 bcrypt = Bcrypt()
 mail = Mail()
 s = URLSafeTimedSerializer('Thisisasecret!')
+
+
+# Ruta para crear una sesión de checkout
+@api.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    response_body = {}
+    data = request.json
+    if not data or 'class_id' not in data or 'success_url' not in data:
+        response_body["message"] = "Missing required parameters"
+        return response_body, 400
+    class_id = data['class_id']
+    user_class = db.session.query(UsersClasses).filter_by(id=class_id).first()
+    if not user_class:
+        response_body["message"] = "Class not found"
+        return response_body, 400
+    line_item = {
+        'price_data': {
+            'currency': 'usd',
+            'unit_amount': user_class.amount,
+            'product_data': {
+                'name': f'Class {user_class.id}',
+            },
+        },
+        'quantity': 1,
+    }
+    session = stripe.checkout.Session.create(success_url='http://google.com',
+                                             cancel_url='http://wikipedia.com',
+                                             payment_method_types=['card'],
+                                             line_items=[line_item],
+                                             mode='payment')
+    if session:
+        response_body["session"] = session
+        return response_body, 200
+    else:
+        response_body["message"] = 'Failed to create checkout session'
+        return response_body, 500
 
 
 @api.route('/forgetpassword/<user_type>', methods=['POST'])
@@ -135,6 +183,151 @@ def handle_users():
     response_body['results'] = [single_user.serialize() for single_user in users]
     return response_body, 200
 
+# Rechazar especializacion por correo, por parte del admin
+@api.route('/reject/specialization/<token>', methods=['GET'])
+def reject_specialization(token):
+    response_body = {}
+    try:
+        specialization_id = s.loads(token, salt='email-confirm', max_age=1800)
+    except SignatureExpired:
+        specialization = TrainersSpecializations.query.get(specialization_id)
+        if specialization:
+            db.session.delete(specialization)
+        response_body["message"] = 'El token ha expirado.'
+        return response_body, 400
+    except BadSignature:
+        specialization = TrainersSpecializations.query.get(specialization_id)
+        if specialization:
+            db.session.delete(specialization)
+        response_body["message"] = 'Token inválido.'
+        return response_body, 400
+    specialization = TrainersSpecializations.query.get(specialization_id)
+    if not specialization:
+        response_body["message"] = 'Especialización inválida.'
+        return response_body, 404 
+    if specialization.status == 'Approved':
+        response_body["message"] = 'La especialización ya ha sido aprobada anteriormente.'
+        return response_body, 400
+    if specialization.status == 'Rejected':
+        response_body["message"] = 'La especialización ya ha sido rechazada anteriormente.'
+        return response_body, 400
+    specialization.status = 'Rejected'
+    db.session.commit()
+    token = s.dumps(specialization.id, salt='email-confirm')
+    subject = 'Specialization Rejected'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                    </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                                <p>La peticion ha sido rechazada</p>
+                        </div>
+                    </body>
+                    </html>
+                    ''' 
+    msg = Message(subject, recipients=[specialization.trainer.email], html=html_content, sender=os.environ.get('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = 'Especialización rechazada por el admin'
+    return response_body, 200
+
+
+# Confirmar especializacion por correo, por parte del admin
+@api.route('/confirm/specialization/<token>', methods=['GET'])
+def confirm_specialization(token):
+    response_body = {}
+    try:
+        specialization_id = s.loads(token, salt='email-confirm', max_age=1800)
+    except SignatureExpired:
+        specialization = TrainersSpecializations.query.get(specialization_id)
+        if specialization:
+            db.session.delete(specialization)
+        response_body["message"] = 'El token ha expirado.'
+        return response_body, 400
+    except BadSignature:
+        specialization = TrainersSpecializations.query.get(specialization_id)
+        if specialization:
+            db.session.delete(specialization)
+        response_body["message"] = 'Token inválido.'
+        return response_body, 400
+    specialization = TrainersSpecializations.query.get(specialization_id)
+    if not specialization:
+        response_body["message"] = 'Especialización inválida.'
+        return response_body, 404 
+    if specialization.status == 'Approved':
+        response_body["message"] = 'La especialización ya ha sido aprobada anteriormente.'
+        return response_body, 400
+    if specialization.status == 'Rejected':
+        response_body["message"] = 'La especialización ya ha sido rechazada anteriormente.'
+        return response_body, 400
+    specialization.status = 'Approved'
+    db.session.commit()
+    token = s.dumps(specialization.id, salt='email-confirm')
+    subject = 'Specialization Approved'
+    html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                    </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                                <p>La peticion ha sido aprobada</p>
+                        </div>
+                    </body>
+                    </html>
+                    ''' 
+    msg = Message(subject, recipients=[specialization.trainer.email], html=html_content, sender=os.environ.get('MAIL_DEFAULT_SENDER'))
+    mail.send(msg)
+    response_body["message"] = 'Especialización aprobada exitosamente.'
+    return response_body, 200
+
 
 # Confirmacion registracion con token
 @api.route('/confirm/<token>', methods=['GET'])
@@ -228,7 +421,7 @@ def handle_signup_user():
     db.session.add(new_user)
     db.session.commit()
     token = s.dumps(new_user.email, salt='email-confirm')
-    confirm_url = f"{os.env.BACKEND_URL}api/confirm/{token}"
+    confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -464,7 +657,8 @@ def handle_signup_admin():
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_admin = Administrators(name=data['name'], 
                                email=data['email'].lower(), 
-                               password=hashed_password)
+                               password=hashed_password, 
+                               is_active=True)
     db.session.add(new_admin)
     db.session.commit()
     access_token = create_access_token(identity={"admin": new_admin.email,
@@ -944,6 +1138,7 @@ def handle_user_class(id, class_id):
     response_body["message"] = 'Not allowed!'
     return response_body, 405
 
+
 # Mostrar todas las clases
 @api.route('/classes', methods=['GET'])
 def handle_show_classes():
@@ -969,53 +1164,158 @@ def handle_show_single_class(id):
     response_body['results'] = single_class.serialize()
     return response_body, 200
 
+
 # Mostrar y crear especializaciones para trainer
-@api.route('/trainers/<int:id>/specializations', methods=['GET','POST'])
+@api.route('/trainers/<int:id>/specializations', methods=['POST', 'GET'])
 @jwt_required()
 def handle_trainer_specializations(id):
     response_body = {}
     current_user = get_jwt_identity()
-    trainer = db.session.query(Trainers).filter_by(id = id).first()
+    trainer = db.session.query(Trainers).filter_by(id=id).first()
     if not trainer:
-        response_body['message'] = f'No trainer with trainer id {str(id)} found!'
-        return response_body,404
+        response_body['message'] = f'No se encontró ningún entrenador con el ID {str(id)}!'
+        return jsonify(response_body), 404
     if (current_user['role'] == 'trainers' and current_user['id'] == id) or (current_user['role'] == 'administrators'):
-        if request.method == 'GET':
-            trainers_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
-            if not trainers_specializations:
-                response_body['message'] = 'No specializations for trainer id: ' + str(id)
+        if request.method == "GET":
+            trainer_specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id = id).all()
+            if not trainer_specializations:
+                response_body['message'] = f'No specializations for trainer id: {str(id)}'
                 return response_body, 404
-            response_body['message'] = 'Specializations for trainer ' + str(id)
-            response_body['results'] = [spec.serialize() for spec in trainers_specializations]
-            return response_body,200
+            serialized_specializations = [spec.serialize() for spec in trainer_specializations]
+            response_body["message"] = "Trainer Specializations"
+            response_body["result"] = serialized_specializations
+            return jsonify(response_body), 200
         if request.method == 'POST':
-            data = request.json
-            if not data:
-                response_body["message"] = "No data provided"
-                return response_body, 400
-            required_fields = ['certification', 'specialization_id']
-            if not request.json or not all(field in request.json for field in required_fields):
-                response_body["message"] = "Missing required fields in the request."
-                return response_body, 400
-            specialization = db.session.query(Specializations).filter_by(id = data['specialization_id']).first()
+            data = request.form
+            file = request.files.get('certification')
+            if not file:
+                response_body["message"] = "No se ha recibido ninguna imagen de certificación"
+                return jsonify(response_body), 400
+            specialization_id = data.get('specialization_id')
+            if not specialization_id:
+                response_body["message"] = "Falta el ID de especialización en la solicitud."
+                return jsonify(response_body), 400
+            specialization = db.session.query(Specializations).filter_by(id=specialization_id).first()
             if not specialization:
-                response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' does not exist!'
-                return response_body, 404
-            trainer_specialization = db.session.query(TrainersSpecializations).filter_by(specialization_id = data['specialization_id']).first()
+                response_body['message'] = f'La especialización con el ID {specialization_id} no existe!'
+                return jsonify(response_body), 404
+            trainer_specialization = db.session.query(TrainersSpecializations).filter_by(trainer_id=id, specialization_id=specialization_id).first()
             if trainer_specialization:
-                response_body['message'] = 'Specialization with id ' + data['specialization_id'] + ' already exist!'
-                return response_body, 404
-            new_trainer_specialization = TrainersSpecializations(certification = data['certification'],
-                                                                 status = "Requested",
-                                                                 specialization_id = data['specialization_id'],  
-                                                                 trainer_id = id)
-            db.session.add(new_trainer_specialization)
-            db.session.commit()
-            response_body['message'] = 'New specialization connected with trainer ' + str(id)
-            response_body['results'] = new_trainer_specialization.serialize()
-            return response_body,201
-    response_body['message'] = 'Not allowed!'
-    return response_body, 405
+                response_body['message'] = f'La especialización con el ID {specialization_id} ya existe!'
+                return jsonify(response_body), 409
+            try:
+                # Subir la imagen a Cloudinary
+                upload_result = cloudinary.uploader.upload(file)
+                # Obtener la URL de la imagen desde Cloudinary
+                certification_url = upload_result['secure_url']
+                new_trainer_specialization = TrainersSpecializations(status="Requested",
+                                                                     specialization_id=specialization_id,
+                                                                     trainer_id=id,
+                                                                     certification=certification_url)
+                db.session.add(new_trainer_specialization)
+                db.session.commit()
+                token = s.dumps(new_trainer_specialization.id, salt='email-confirm')
+                reject_url = f"{os.environ['BACKEND_URL']}api/reject/specialization/{token}"
+                confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/specialization/{token}"
+                subject = 'Confirm Specialization'
+                html_content = f'''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Confirmation</title>
+                        <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                        }}
+                        .container {{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            max-width: 600px;
+                            margin: auto;
+                            padding: 20px;
+                            background-color: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }}
+                        .message {{
+                            margin-bottom: 20px;
+                        }}
+                        .button-confirm,
+                        .button-reject {{
+                            display: inline-block;
+                            padding: 12px 24px;
+                            background-color: #007bff;
+                            color: #fff;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: background-color 0.3s ease;
+                            margin-right: 10px;
+                        }}
+                        .button-confirm:hover {{
+                            background-color: #0056b3;
+                        }}
+                        .button-reject {{
+                            background-color: #dc3545;
+                        }}
+                        .button-reject:hover {{
+                            background-color: #c82333;
+                        }}
+                        .cert-container {{
+                            margin-top: 10px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                        }}
+                        .cert-link {{
+                            background-color: #007bff;
+                            color: #fff;
+                            padding: 8px 16px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            transition: background-color 0.3s ease;
+                        }}
+                        .cert-link:hover {{
+                            background-color: #0056b3;
+                        }}
+                    </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="message">
+                                <p>Please approve or reject the specialization</p>
+                                <div class="cert-container">
+                                    <a class="cert-link" href="{certification_url}" target="_blank">Ver certificado</a>
+                                </div>
+                            </div>
+                            <div class="action">
+                                <a class="button-confirm" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                                <a class="button-reject" href="{reject_url}" target="_blank">Click here to reject!</a>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    '''
+                msg = Message(subject, recipients=[trainer.email], html=html_content, sender=os.getenv('MAIL_DEFAULT_SENDER'))
+                mail.send(msg)
+                response_body['message'] = f'Nueva especialización creada para el entrenador {id}, espere la confirmación'
+                response_body['results'] = new_trainer_specialization.serialize()
+                return jsonify(response_body), 201
+            except Exception as e:
+                db.session.delete(new_trainer_specialization)
+                db.session.commit()
+                response_body['message'] = 'Error al subir la imagen de certificación a Cloudinary'
+                return jsonify(response_body), 500
+    response_body['message'] = '¡No permitido!'
+    return jsonify(response_body), 405
+
 
 
 # Borrar una especializacion de un entrenador

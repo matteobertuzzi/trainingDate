@@ -10,11 +10,13 @@ import Nav from 'react-bootstrap/Nav';
 import { Context } from "../store/appContext";
 import { useContext } from "react";
 import { FaCheckCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 
 export const ConfirmationSignUp = () => {
   const { actions } = useContext(Context)
   const { loginUser, setLogged } = actions
+  const navigate = useNavigate()
   const [validated, setValidated] = useState(false)
   const [activeTab, setActiveTab] = useState("");
   const [loginError, setLoginError] = useState(null);
@@ -51,7 +53,7 @@ export const ConfirmationSignUp = () => {
         });
         setLoginError(null)
         setActiveTab("")
-        onHide();
+        navigate("/")
       }
     }
   };

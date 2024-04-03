@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
-import { Container, Row, Col, Card, Image } from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
+import { AddTrainerSpecialization } from './AddTrainerSpecialization.jsx';
 
 const TrainerProfile = () => {
+    const [modalShow, setModalShow] = useState(false);
     const { id } = useParams();
     const { store, actions } = useContext(Context);
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
@@ -26,7 +28,7 @@ const TrainerProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `/api/trainers/${trainerId}`;
+        const url = process.env.BACKEND_URL + `api/trainers/${trainerId}`;
         const response = await fetch(url, options);
         if (!response.ok) {
             console.error(`Error fetching trainer data. HTTP Status ${response.status}`);
@@ -36,7 +38,6 @@ const TrainerProfile = () => {
         const trainerData = data.trainer;
         console.log(trainerData);
         return trainerData;
-    }
 
     useEffect(() => {
         fetchTrainer();
@@ -68,6 +69,8 @@ const TrainerProfile = () => {
                             </Card>
                             <div style={{ marginTop: '20px', textAlign: 'center' }}>
                                 <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
+                                <Button onClick={() => setModalShow(true)}>Añadir especializacion</Button>
+                                <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
                             </div>
                         </Col>
                     </>

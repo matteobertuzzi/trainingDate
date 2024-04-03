@@ -28,6 +28,7 @@ const injectContext = (PassedComponent) => {
       state.actions.getSpecializations()
       state.actions.getAllClasses();
     }, []);
+
     return (
       <Context.Provider value={state}>
         <PassedComponent {...props} />

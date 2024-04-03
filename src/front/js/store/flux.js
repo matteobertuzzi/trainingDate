@@ -4,14 +4,14 @@ const getState = ({ getStore, getActions, setStore }) => {
       message: null,
       demo: [{ title: "FIRST", background: "white", initial: "white" },
       { title: "SECOND", background: "white", initial: "white" }],
-      currentUser: {},
-      allClasses: [],
+      currentUser: null,
       logged: false,
       specializations: [],
-      trainersClasses: [],
+      trainerSpecializations: [],
+      trainerClasses: [],
       allClasses: [],
       userClasses: [],
-      cart: [],
+      cart: []
       filters: {
         trainingType: '',
         trainingLevel: ''
@@ -25,21 +25,33 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       setTrainersClases: (value) => {
-        setStore({ trainersClasses: value })
+        setStore({ trainerClasses: value })
         setStore({ user: value })
       },
+
+      addCartItem: (newItem) => {
+        const store = getStore();
+        if (!store.cart.includes(newItem)) {
+          const updatedCart = [...store.cart, newItem];
+          setStore({ cart: updatedCart });
+          localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+          getActions().removeFavorites(newItem, store.cart);
+
       setLogged: (value) => {
         if (!value) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("availableAccount");
           localStorage.removeItem("userClasses");
         }
-        setStore({ logged: value });
       },
 
-      setUser: (value) => {
-        setStore({ user: value })
+      removeCartItem: (item, array) => {
+        const updatedCart = array.filter((element) => element !== item);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        setStore({ cart: updatedCart });
       },
+
       getAllClasses: async () => {
         const classesInLocalStorage = localStorage.getItem('allClasses')
         if (classesInLocalStorage) {
@@ -58,6 +70,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
         }
       },
+
       getSpecializations: async () => {
         const specializationsInLocalStorage = localStorage.getItem('specializations')
         if (specializationsInLocalStorage) {
@@ -76,6 +89,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.setItem('specializations', JSON.stringify(specializations))
         }
       },
+
       loginUser: async (inputs, user_type) => {
         const options = {
           method: 'POST',
@@ -97,6 +111,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         getActions().setLogged(true)
         return true
       },
+
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
@@ -165,7 +180,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             const classId = item.class;
             userClassesId.push(classId);
             console.log(userClassesId);
-            const classUrl = process.env.BACKEND_URL + `/api/classes/${classId}`;
+            const classUrl = process.env.BACKEND_URL + `api/classes/${classId}`;
             const resp = await fetch(classUrl);
             if (!resp.ok) {
               console.error(`Error fetching classes. HTTP Status ${resp.status}`);
@@ -178,7 +193,8 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.log(getStore().userClasses);
           localStorage.setItem('userClasses', JSON.stringify(classDetails))
         }
-      },
+      },*/
+
       addUser: async (inputs) => {
         const url = process.env.BACKEND_URL + 'api/users'
         const options = {
@@ -203,9 +219,9 @@ const getState = ({ getStore, getActions, setStore }) => {
           return response.statusText;
         };
         const data = await response.json();
-        console.log(data);
-        return data
+        return true
       },
+
       addTrainer: async (inputs) => {
         const options = {
           method: 'POST',
@@ -236,12 +252,15 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         return data
       },
+
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
+
         if (!token) {
           console.error("No access token found");
-          localStorage.removeItem("availableAccount")
+          localStorage.removeItem("availableAccount");
+          getActions().setLogged(false)
           return null;
         }
 
@@ -252,22 +271,24 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+
         if (!response.ok) {
           if (response.status === 401) {
-            console.error("Access token is not valid. Removed from local storage.");
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem("availableAccount")
+            console.error("Access token is not valid or expired. Removed from local storage.");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("availableAccount");
+            getActions().setLogged(false)
           } else {
             console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
+            getActions().setLogged(false)
           }
+          return null;
         }
 
         const data = await response.json();
-        console.log(JSON.parse(account))
         setStore({ currentUser: JSON.parse(account) });
-        getActions().setLogged(true)
+        getActions().setLogged(true);
       },
-
 
       postTrainerClasses: async (inputs) => {
         const token = localStorage.getItem("accessToken");
@@ -302,7 +323,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!response.ok) return response.status;
         const data = await response.json();
         console.log(data)
-        setStore({ trainersClasses: data.class })
+        setStore({ trainerClasses: data.class })
       },
 
       updateUser: async (id, inputs) => {
@@ -398,7 +419,71 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const data = await response.json();
         return data
+      },
+
+      postTrainerSpecialization: async (inputs) => {
+        const token = localStorage.getItem("accessToken");
+        const availableAccountString = localStorage.getItem("availableAccount");
+        const availableAccount = JSON.parse(availableAccountString);
+        const trainerId = availableAccount.trainer.id;
+
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+
+        // Crear un nuevo objeto FormData
+        const formData = new FormData();
+        formData.append('certification', inputs.certification);
+        formData.append('specialization_id', inputs.specialization_id);
+
+        const options = {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData // Pasar formData directamente como cuerpo de la solicitud
+        };
+
+        try {
+          const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/specializations`, options);
+          if (!response.ok) {
+            console.error("Failed to post specialization:", response.status);
+            return false;
+          }
+          const data = await response.json();
+          console.log(data);
+          return true;
+        } catch (error) {
+          console.error("Error posting specialization:", error);
+          return false;
+        }
+      },
+
+      postCheckoutSession: async (id, url) => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            class_id: id,
+            success_url: url
+          }),
+        }
+        const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options)
+        if (!response.ok) return response.status, 400
+        const data = await response.json()
+        console.log(data)
+
       }
+
     }
   }
 }
