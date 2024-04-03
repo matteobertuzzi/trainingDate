@@ -38,6 +38,7 @@ const TrainerProfile = () => {
         const trainerData = data.trainer;
         console.log(trainerData);
         return trainerData;
+    }
 
     useEffect(() => {
         fetchTrainer();
@@ -80,6 +81,7 @@ const TrainerProfile = () => {
             </Row>
         </Container>
     );
-};
+}
 
 export default TrainerProfile;
+

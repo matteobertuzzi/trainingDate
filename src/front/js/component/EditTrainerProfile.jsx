@@ -30,7 +30,7 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
         onChangeSubmit();
         setTimeout(() => {
             window.location.reload();
-        }, 1000)
+        }, 1500)
     };
 
     const changeInputs = (e) => {

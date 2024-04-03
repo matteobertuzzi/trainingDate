@@ -183,6 +183,7 @@ def handle_users():
     response_body['results'] = [single_user.serialize() for single_user in users]
     return response_body, 200
 
+
 # Rechazar especializacion por correo, por parte del admin
 @api.route('/reject/specialization/<token>', methods=['GET'])
 def reject_specialization(token):
@@ -747,7 +748,7 @@ def handle_login(user_type):
                                                      "role": user_type,
                                                      "id": user.id})
         response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {"user": user.serialize(), 
+        response_body['results'] = {"user": user.serialize(),
                                     "role": user_type}
         response_body['access_token'] = access_token
         return response_body, 200
@@ -763,11 +764,16 @@ def handle_login(user_type):
         if not bcrypt.check_password_hash(trainer.password, password):
             response_body['message'] = f'Wrong password for email {trainer.email}'
             return response_body, 401
+        specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id=trainer.id, status="Approved").all() 
+        if not specializations:
+            response_body['message'] = f'No specializations available'
+            return response_body, 400
         access_token = create_access_token(identity={"trainer": trainer.email,
                                                      "role": user_type,
                                                      "id": trainer.id})
         response_body['message'] = 'Successfully logged in!'
-        response_body['results'] = {"trainer": trainer.serialize(), 
+        response_body['results'] = {"trainer": trainer.serialize(),
+                                    "specializations": [spec.serialize() for spec in specializations], 
                                     "role": user_type}
         response_body['access_token'] = access_token
         return response_body, 200
@@ -1393,6 +1399,7 @@ def handle_specialization(id):
         db.session.commit()
         response_body['message'] = f'Specialization with id: {str(id)}, successfully deleted'
         return response_body, 200
+
 
 @api.route('/gyms/<string:city>', methods=['GET'])
 def find_gyms_near_location(city):

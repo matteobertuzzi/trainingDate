@@ -11,7 +11,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       trainerClasses: [],
       allClasses: [],
       userClasses: [],
-      cart: []
+      cart: [],
       filters: {
         trainingType: '',
         trainingLevel: ''
@@ -37,12 +37,16 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.setItem('cart', JSON.stringify(updatedCart));
         } else {
           getActions().removeFavorites(newItem, store.cart);
+        }
+      },
 
       setLogged: (value) => {
         if (!value) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("availableAccount");
           localStorage.removeItem("userClasses");
+        } else {
+          setStore({ logged: value })
         }
       },
 
@@ -104,8 +108,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
+        console.log(data)
         setStore({ currentUser: data.results });
-        console.log(data.results)
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
@@ -193,7 +197,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.log(getStore().userClasses);
           localStorage.setItem('userClasses', JSON.stringify(classDetails))
         }
-      },*/
+      },
 
       addUser: async (inputs) => {
         const url = process.env.BACKEND_URL + 'api/users'
@@ -394,6 +398,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         localStorage.setItem('availableAccount', JSON.stringify(trainer));
         return trainer;
       },
+
       updateCart: (newClass) => {
         const cartClasses = getStore().cart;
         if (cartClasses.includes(newClass)) {
@@ -406,6 +411,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.setItem("cart", JSON.stringify(updatedCart));
         }
       },
+
       updateFilters: (newFilters) => {
         setStore({ filters: newFilters });
       },
@@ -483,9 +489,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         console.log(data)
 
       }
-
     }
   }
 }
 
-  export default getState;
+export default getState;

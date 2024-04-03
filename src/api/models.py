@@ -120,7 +120,7 @@ class TrainersClasses(db.Model):
         price = db.Column(db.Integer, unique=False, nullable=False)
         training_level = db.Column(db.Enum("Beginner", "Intermediate", "Advanced", name="training_level"), unique=False)
         training_type = db.Column(db.Integer, db.ForeignKey("specializations.id"))
-        specialization = db.relationship("Specializations", foreign_keys=[training_type])
+        C = db.relationship("Specializations", foreign_keys=[training_type])
         trainer_id = db.Column(db.Integer, db.ForeignKey("trainers.id"))
         trainer = db.relationship('Trainers', backref=db.backref('classes', lazy=True)) 
 

@@ -17,7 +17,7 @@ import Loading from '../component/Loading.jsx';
 export const CreateClass = () => {
     const [validated, setValidated] = useState(false);
     const { store, actions } = useContext(Context)
-    const { specializations, currentUser, trainerClasses } = store
+    const { specializations, currentUser } = store
     const { postTrainerClasses } = actions
     const params = useParams()
     const { trainerId } = params
@@ -157,8 +157,8 @@ export const CreateClass = () => {
                                     <Form.Label>Tipo de entrenamiento:</Form.Label>
                                     <Form.Select id='specialization' onChange={handleChange} name='specialization' value={inputs.specialization} required className="w-auto">
                                         <option value="">Selecciona una especialización</option>
-                                        {specializations.map((specialization, index) => (
-                                            <option key={index} value={specialization.id}>{specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}</option>
+                                        {currentUser.specializations.map((specialization, index) => (
+                                            <option key={index} value={specialization.id}>{specialization.id}</option>
                                         ))}
                                     </Form.Select>
                                     <Form.Control.Feedback type="invalid">Por favor, elige un tipo de especialización.</Form.Control.Feedback>
