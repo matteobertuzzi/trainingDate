@@ -62,7 +62,7 @@ export const CreateClass = () => {
         } else {
             setError(null);
             alert("¡Clase grabada con éxito!");
-            navigate(`/trainers/${trainerId}/profile`)
+            navigate(`/trainer/${currentUser.trainer.id}/profile`)
         }
     };
 
@@ -166,14 +166,14 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="class_name">
                                     <Form.Label>Nombre de la clase:</Form.Label>
-                                    <Form.Control required type="text" placeholder="Nombre clase" value={inputs.class_name || ""} onChange={handleChange} name="class_name" />
+                                    <Form.Control type="text" placeholder="Nombre clase" value={inputs.class_name || ""} onChange={handleChange} name="class_name" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige un nombre de clase válido.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6">
                                 <Form.Group controlId="class_details">
                                     <Form.Label>Detalles clase:</Form.Label>
-                                    <Form.Control required type="text" placeholder="Detalles" value={inputs.class_details || ""} onChange={handleChange} name="class_details" />
+                                    <Form.Control type="text" placeholder="Detalles" value={inputs.class_details || ""} onChange={handleChange} name="class_details" />
                                     <Form.Control.Feedback type="invalid">Por favor, ingresa detalles válidos para la clase.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>

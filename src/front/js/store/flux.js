@@ -326,11 +326,11 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options);
         if (!response.ok) {
           console.log(response)
-          return response.status;
+          return false;
         }
         const data = await response.json();
-        console.log(data)
         setStore({ trainerClasses: data.class })
+        return true
       },
 
       updateUser: async (id, inputs) => {

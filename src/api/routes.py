@@ -1035,15 +1035,15 @@ def handle_trainer_classes(id):
                                                 class_name = data.get("class_name"),
                                                 class_details = data.get("class_details"),
                                                 city=data["city"], 
-                                                postal_code=data["postal_code"],
+                                                postal_code=int(data["postal_code"]),
                                                 street_name=data["street_name"],
-                                                street_number=data["street_number"],
+                                                street_number=int(data["street_number"]),
                                                 additional_info=data.get("additional_info"),
                                                 capacity=data["capacity"], 
                                                 start_date=data["start_date"],
                                                 end_date=data["end_date"],
-                                                price=data["price"],
-                                                training_type=data["training_type"],
+                                                price=float(data["price"]),
+                                                training_type=int(data["training_type"]),
                                                 training_level=data["training_level"])
             db.session.add(new_trainer_class)
             db.session.commit()
