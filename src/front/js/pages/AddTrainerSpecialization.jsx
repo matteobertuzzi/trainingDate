@@ -66,7 +66,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
                 <CloseButton onClick={onHide}></CloseButton>
             </Modal.Header>
             <Modal.Body className="w-100 d-flex flex-column p-20">
-                <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit} enctype="multipart/form-data">
+                <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit} encType="multipart/form-data">
                     <Row className="g-3">
                         <Form.Group as={Col} md="12" controlId="validationSpecialization">
                             <Form.Label>Especialización</Form.Label>

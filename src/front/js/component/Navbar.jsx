@@ -26,8 +26,7 @@ export const MyNavbar = () => {
   };
 
   const handleCreateClass = async () => {
-    navigate(`trainers/${JSON.parse(currentUser.trainer.id)}/create/class`)
-    await getAvailableAccount()
+    navigate(`trainers/${currentUser.trainer.id}/create/class`)
   }
 
   return (
@@ -80,7 +79,7 @@ export const MyNavbar = () => {
                 className="mw-100"
               >
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                  <Link to={`/user/${JSON.parse(currentUser.user.id)}/profile`}>Mi Perfil</Link>
+                  <Link to={`/user/${currentUser.user.id}/profile`}>Mi Perfil</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
                   <span>Mis Classes</span>
@@ -113,8 +112,8 @@ export const MyNavbar = () => {
                 align='end'
                 className="mw-100"
               >
-                <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                  <Link to={`/trainer/${JSON.parse(currentUser.trainer.id)}/profile`}>Mi Perfil</Link>
+                <NavDropdown.Item className="d-flex justify-content-end align-items-center">
+                  <Link to={`/trainer/${currentUser.trainer.id}/profile`}>Mi Perfil</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
                   <span>Mis Classes</span>

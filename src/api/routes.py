@@ -768,13 +768,18 @@ def handle_login(user_type):
         if not specializations:
             response_body['message'] = f'No specializations available'
             return response_body, 400
+        join_query = db.session.query(TrainersSpecializations, Specializations).join(Specializations).filter(TrainersSpecializations.specialization_id == Specializations.id).filter(TrainersSpecializations.trainer_id == trainer.id).filter(TrainersSpecializations.status == "Approved").all()
+        join_query_serializable = []
+        for trainers_specialization, specialization in join_query:
+            join_query_serializable.append({"trainers_specialization": trainers_specialization.serialize(),
+                                            "specialization": specialization.serialize()})
         access_token = create_access_token(identity={"trainer": trainer.email,
                                                      "role": user_type,
                                                      "id": trainer.id})
         response_body['message'] = 'Successfully logged in!'
         response_body['results'] = {"trainer": trainer.serialize(),
-                                    "specializations": [spec.serialize() for spec in specializations], 
-                                    "role": user_type}
+                             "specializations": join_query_serializable, 
+                             "role": user_type}
         response_body['access_token'] = access_token
         return response_body, 200
     elif user_type == 'administrators':
@@ -1043,7 +1048,7 @@ def handle_trainer_classes(id):
             db.session.add(new_trainer_class)
             db.session.commit()
             response_body["message"] = "New class created"
-            response_body["new class"] = new_trainer_class.serialize()
+            response_body["class"] = new_trainer_class.serialize()
             return response_body, 201
         response_body["message"] = 'Not allowed!'
         return response_body, 405
@@ -1321,7 +1326,6 @@ def handle_trainer_specializations(id):
                 return jsonify(response_body), 500
     response_body['message'] = '¡No permitido!'
     return jsonify(response_body), 405
-
 
 
 # Borrar una especializacion de un entrenador

@@ -45,6 +45,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("availableAccount");
           localStorage.removeItem("userClasses");
+          setStore({ currentUser: null })
         } else {
           setStore({ logged: value })
         }
@@ -108,7 +109,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
         if (!response.ok) return false
         const data = await response.json()
-        console.log(data)
         setStore({ currentUser: data.results });
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
@@ -320,11 +320,14 @@ const getState = ({ getStore, getActions, setStore }) => {
             end_date: inputs.end_date,
             price: inputs.price,
             training_level: inputs.training_level,
-            training_type: inputs.training_type,
+            training_type: inputs.training_type
           }),
         };
         const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options);
-        if (!response.ok) return response.status;
+        if (!response.ok) {
+          console.log(response)
+          return response.status;
+        }
         const data = await response.json();
         console.log(data)
         setStore({ trainerClasses: data.class })

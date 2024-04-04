@@ -36,7 +36,6 @@ const TrainerProfile = () => {
         }
         const data = await response.json();
         const trainerData = data.trainer;
-        console.log(trainerData);
         return trainerData;
     }
 
