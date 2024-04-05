@@ -562,7 +562,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           const price = await stripe.prices.create({
             product: product.id,
             unit_amount: amount * 100,
-            unit_amount: amount * 100,
             currency: 'eur'
           });
 
@@ -583,7 +582,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("No se ha configurado la clave secreta de Stripe.");
             return false;
           }
-      
+
           // Obtener todos los precios asociados al producto
           const pricesResponse = await fetch(`https://api.stripe.com/v1/prices?product=${productId}`, {
             method: 'GET',
@@ -591,14 +590,14 @@ const getState = ({ getStore, getActions, setStore }) => {
               'Authorization': `Bearer ${secretKey}`
             }
           });
-      
+
           if (!pricesResponse.ok) {
             console.error(`Error al obtener los precios del producto. Código de estado HTTP: ${pricesResponse.status}`);
             return false;
           }
-      
+
           const pricesData = await pricesResponse.json();
-      
+
           // Eliminar todos los precios asociados al producto
           for (const price of pricesData.data) {
             const deletePriceResponse = await fetch(`https://api.stripe.com/v1/prices/${price.id}`, {
@@ -607,25 +606,25 @@ const getState = ({ getStore, getActions, setStore }) => {
                 'Authorization': `Bearer ${secretKey}`
               }
             });
-      
+
             if (!deletePriceResponse.ok) {
               console.error(`Error al eliminar el precio ${price.id}. Código de estado HTTP: ${deletePriceResponse.status}`);
               return false;
             }
           }
-          
+
           const deleteProductResponse = await fetch(`https://api.stripe.com/v1/products/${productId}`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${secretKey}`
             }
           });
-      
+
           if (!deleteProductResponse.ok) {
             console.error(`Error al eliminar el producto. Código de estado HTTP: ${deleteProductResponse.status}`);
             return false;
           }
-      
+
           console.log('Producto eliminado correctamente');
           return true;
         } catch (error) {
@@ -633,8 +632,8 @@ const getState = ({ getStore, getActions, setStore }) => {
           return false;
         }
       },
-      
-   getGeolocation: async (adr) => {
+
+      getGeolocation: async (adr) => {
         const apiKey = process.env.GOOGLE_API_KEY;
         const address = adr;
 
@@ -658,6 +657,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ currentGeolocation });
         return currentGeolocation;
       }
+
+
     }
   }
 }

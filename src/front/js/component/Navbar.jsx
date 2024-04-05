@@ -116,7 +116,7 @@ export const MyNavbar = () => {
                   <Link to={`/trainer/${currentUser.trainer.id}/profile`}>Mi Perfil</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                  <Link to={`/trainer/${currentUser.trainer.id}/classes`}>Mi Perfil</Link>
+                  <Link to={`/trainer/${currentUser.trainer.id}/classes`}>Mis Classes</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
                   <span onClick={handleCreateClass}>Crear clase</span>
