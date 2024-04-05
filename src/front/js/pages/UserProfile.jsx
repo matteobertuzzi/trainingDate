@@ -6,6 +6,7 @@ import Loading from '../component/Loading.jsx';
 import EditUserProfile from '../component/EditUserProfile.jsx';
 
 
+
 const UserProfile = () => {
     const { id } = useParams();
     const { store, actions } = useContext(Context);
@@ -42,6 +43,10 @@ const UserProfile = () => {
     useEffect(() => {
         fetchUser();
     }, [])
+
+    if (!currentUser || !currentUser.users) {
+        return <Loading />;
+    }
 
     return (
         <Container>

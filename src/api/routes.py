@@ -36,7 +36,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-# Ruta para crear una sesión de checkout
+# Ruta para crear una sesión de checkout con Stripe
 @api.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     response_body = {}
@@ -791,8 +791,8 @@ def handle_login(user_type):
                                                      "id": trainer.id})
         response_body['message'] = 'Successfully logged in!'
         response_body['results'] = {"trainer": trainer.serialize(),
-                             "specializations": join_query_serializable, 
-                             "role": user_type}
+                                    "specializations": join_query_serializable,
+                                    "role": user_type}
         response_body['access_token'] = access_token
         return response_body, 200
     elif user_type == 'administrators':
@@ -1033,7 +1033,7 @@ def handle_trainer_classes(id):
             response_body["message"] = "Trainer has no classes available"
             return response_body, 400
         response_body["message"] = "Trainer classes"
-        response_body["Trainer classes"] = [class_trainer.serialize() for class_trainer in trainer_classes]
+        response_body["classes"] = [class_trainer.serialize() for class_trainer in trainer_classes]
         return response_body, 200
     if request.method == "POST":
         if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):

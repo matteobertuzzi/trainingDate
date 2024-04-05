@@ -113,6 +113,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
+        getActions().getTrainerClasses()
         return true
       },
 
@@ -139,6 +140,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Access token is not valid or expired. Removed from local storage.");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("availableAccount");
+            window.location.href = `${process.env.FRONT_URL}invalid`
           } else {
             console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
           }
@@ -260,38 +262,31 @@ const getState = ({ getStore, getActions, setStore }) => {
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
+        let trainerClasses = localStorage.getItem("trainerClasses");
 
         if (!token) {
           console.error("No access token found");
           localStorage.removeItem("availableAccount");
-          getActions().setLogged(false)
+          localStorage.removeItem("trainerClasses")
+          getActions().setLogged(false);
           return null;
         }
 
-        const options = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
-        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            console.error("Access token is not valid or expired. Removed from local storage.");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("availableAccount");
-            getActions().setLogged(false)
-          } else {
-            console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
-            getActions().setLogged(false)
-          }
-          return null;
+        if (!trainerClasses) {
+          trainerClasses = "[]";
         }
 
-        const data = await response.json();
-        setStore({ currentUser: JSON.parse(account) });
-        getActions().setLogged(true);
+        try {
+          setStore({ currentUser: JSON.parse(account) });
+          setStore({ trainerClasses: JSON.parse(trainerClasses) });
+          getActions().setLogged(true);
+        } catch (error) {
+          console.error("Error parsing stored data:", error);
+          localStorage.removeItem("availableAccount");
+          localStorage.removeItem("trainerClasses");
+          getActions().setLogged(false);
+          return null;
+        }
       },
 
       postTrainerClasses: async (inputs) => {
@@ -301,7 +296,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const trainerId = availableAccount.trainer.id;
         if (!token) {
           console.error("No access token found");
-          return null;
+          return false;
         }
         const options = {
           method: "POST",
@@ -323,16 +318,78 @@ const getState = ({ getStore, getActions, setStore }) => {
             training_type: inputs.training_type
           }),
         };
-        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options);
-        if (!response.ok) {
-          console.log(response)
+        try {
+          const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options);
+          if (!response.ok) {
+            console.error("Failed to create class:", response);
+            return false;
+          }
+          const data = await response.json();
+          const stripe_id = await getActions().postStripeProduct(data.class.id, data.class.training_level, data.class.price);
+
+          // Actualizar estado de trainerClasses en React
+          const updatedClass = {
+            ...data.class,
+            stripe_id: stripe_id
+          };
+
+          setStore({
+            trainerClasses: [
+              ...getStore().trainerClasses,
+              updatedClass
+            ]
+          });
+
+          // Crea o actualiza el local storage
+          const localStorageClasses = localStorage.getItem("trainerClasses");
+          if (!localStorageClasses) {
+            localStorage.setItem("trainerClasses", JSON.stringify([updatedClass]));
+          } else {
+            const parsedClasses = JSON.parse(localStorageClasses);
+            const updatedClasses = [...parsedClasses, updatedClass];
+            localStorage.setItem("trainerClasses", JSON.stringify(updatedClasses));
+          };
+
+          return true;
+        } catch (error) {
+          console.error('Error creating class:', error);
           return false;
         }
-        const data = await response.json();
-        console.log(data)
-        getActions().postStripeProduct(data.class.id, data.class.training_level, data.class.price)
-        setStore({ trainerClasses: data.class })
-        return true
+      },
+
+      getTrainerClasses: async () => {
+        const trainerClassesInLocalStorage = localStorage.getItem('trainerClasses')
+        const token = localStorage.getItem("accessToken");
+        const availableAccountString = localStorage.getItem("availableAccount");
+        const availableAccount = JSON.parse(availableAccountString);
+        const trainerId = availableAccount.trainer.id;
+        if (!trainerId) {
+          console.log("No trainer available")
+          return null
+        }
+        if (!token) {
+          console.error("No access token found");
+          return null;
+        }
+        if (trainerClassesInLocalStorage) {
+          setStore({ trainerClasses: JSON.parse(trainerClassesInLocalStorage) })
+        } else {
+          const options = {
+            headers: {
+              "Content-Type": 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+          const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options)
+          if (!response.ok) {
+            return response.status
+          }
+          const data = await response.json()
+          console.log(data)
+          const classes = data.classes
+          setStore({ trainerClasses: classes })
+          localStorage.setItem('trainerClasses', JSON.stringify(classes))
+        }
       },
 
       updateUser: async (id, inputs) => {
@@ -496,6 +553,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       postStripeProduct: async (id, level, amount) => {
         const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
+        let productId; // Variable para almacenar el ID del producto
+
         try {
           // Crear el producto en Stripe
           const product = await stripe.products.create({
@@ -504,11 +563,12 @@ const getState = ({ getStore, getActions, setStore }) => {
           });
 
           console.log('Producto creado:', product);
+          productId = product.id;
 
           // Crear el precio asociado al producto
           const price = await stripe.prices.create({
             product: product.id,
-            unit_amount: amount * 100, 
+            unit_amount: amount * 100,
             currency: 'eur'
           });
 
@@ -517,25 +577,68 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error('Error al crear el producto o precio en Stripe:', error);
           throw error;
         }
+
+        return productId;
       },
 
+      // TODO: para cancelar un precio necesito del id del precio
       deleteStripeProduct: async (productId) => {
-        const options = {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${process.env.STRIPE_API_KEY}`,
-          },
-        };
+        try {
+          const secretKey = process.env.STRIPE_API_KEY;
+          if (!secretKey) {
+            console.error("No se ha configurado la clave secreta de Stripe.");
+            return false;
+          }
 
-        const response = await fetch(`https://api.stripe.com/v1/products/${productId}`, options);
-        if (!response.ok) {
-          console.error(`Error al eliminar el producto. Código de estado HTTP: ${response.status}`);
+          // Obtener todos los precios asociados al producto
+          const pricesResponse = await fetch(`https://api.stripe.com/v1/prices?product=${productId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${secretKey}`
+            }
+          });
+
+          if (!pricesResponse.ok) {
+            console.error(`Error al obtener los precios del producto. Código de estado HTTP: ${pricesResponse.status}`);
+            return false;
+          }
+
+          const pricesData = await pricesResponse.json();
+
+          // Eliminar todos los precios asociados al producto
+          for (const price of pricesData.data) {
+            const deletePriceResponse = await fetch(`https://api.stripe.com/v1/prices/${price.id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${secretKey}`
+              }
+            });
+
+            if (!deletePriceResponse.ok) {
+              console.error(`Error al eliminar el precio ${price.id}. Código de estado HTTP: ${deletePriceResponse.status}`);
+              return false;
+            }
+          }
+          
+          const deleteProductResponse = await fetch(`https://api.stripe.com/v1/products/${productId}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${secretKey}`
+            }
+          });
+
+          if (!deleteProductResponse.ok) {
+            console.error(`Error al eliminar el producto. Código de estado HTTP: ${deleteProductResponse.status}`);
+            return false;
+          }
+
+          console.log('Producto eliminado correctamente');
+          return true;
+        } catch (error) {
+          console.error('Error al eliminar el producto:', error);
           return false;
         }
-        return true
-        console.log('Producto eliminado correctamente');
-      },
-
+      }
     }
   }
 }

@@ -43,6 +43,10 @@ const TrainerProfile = () => {
         fetchTrainer();
     }, []);
 
+    if (!currentUser || !currentUser.trainer) {
+        return <Loading />;
+    }
+
     return (
         <Container>
             <Row className="justify-content-md-center mt-4">
