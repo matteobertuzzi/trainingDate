@@ -20,7 +20,7 @@ const HomeUserClasses = () => {
 
     return (
         <>
-            {!userClasses ?
+            {userClasses != '' ?
                 userClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
                         <Card.Header>Class Details</Card.Header>

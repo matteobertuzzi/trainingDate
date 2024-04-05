@@ -25,7 +25,7 @@ function EditUserProfile({ user, onChangeSubmit }) {
         handleClose();
         setTimeout(() => {
             window.location.reload();
-        }, 1000)
+        }, 1500)
     };
 
     const changeInputs = (e) => {

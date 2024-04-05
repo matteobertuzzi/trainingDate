@@ -15,6 +15,10 @@ const getState = ({ getStore, getActions, setStore }) => {
       filters: {
         trainingType: '',
         trainingLevel: ''
+      },
+      currentGeolocation: {
+        lat: '',
+        lng: ''
       }
     },
 
@@ -421,17 +425,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ filters: newFilters });
       },
 
-      searchGym: async (city) => {
-        const url = `${process.env.BACKEND_URL}/api/gyms/${city}`
-        const response = await fetch(url);
-        if (!response.ok) {
-          console.error(`Error processing request. HTTP error code ${response.status}`)
-          return null
-        }
-        const data = await response.json();
-        return data
-      },
-
       postTrainerSpecialization: async (inputs) => {
         const token = localStorage.getItem("accessToken");
         const availableAccountString = localStorage.getItem("availableAccount");
@@ -508,7 +501,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           // Crear el precio asociado al producto
           const price = await stripe.prices.create({
             product: product.id,
-            unit_amount: amount * 100, 
+            unit_amount: amount * 100,
             currency: 'eur'
           });
 
@@ -535,6 +528,31 @@ const getState = ({ getStore, getActions, setStore }) => {
         return true
         console.log('Producto eliminado correctamente');
       },
+
+      getGeolocation: async (adr) => {
+        const apiKey = process.env.GOOGLE_API_KEY;
+        const address = adr;
+
+
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error(`Failed to process geolocation request. HTTP error ${response.statusText}`)
+        };
+        const data = await response.json();
+        console.log(data);
+        const location = data.results[0].geometry.location;
+        console.log(location)
+        const lat = location.lat;
+        const lng = location.lng;
+        const currentGeolocation = {
+          lat: lat,
+          lng: lng
+        };
+        setStore({ currentGeolocation });
+        return currentGeolocation;
+      }
 
     }
   }
