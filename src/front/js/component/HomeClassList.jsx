@@ -3,6 +3,7 @@ import { Context } from '../store/appContext';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import FilterAlert from './FilterAlert.jsx';
+import MapModal from './MapModal.jsx';
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
@@ -32,6 +33,7 @@ const HomeClassList = ({ filters }) => {
                             {store.logged &&
                                 <Button variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
                             }
+                            <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                         </Card.Body>
                     </Card>
                 )) :
@@ -47,6 +49,7 @@ const HomeClassList = ({ filters }) => {
                                 {store.logged &&
                                     <Button variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
                                 }
+                                <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                             </Card.Body>
                         </Card>
                     ))}
