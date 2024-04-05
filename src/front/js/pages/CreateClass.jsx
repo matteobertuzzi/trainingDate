@@ -151,11 +151,12 @@ export const CreateClass = () => {
                                 </Form.Group>
                             </Col>
                             <Col md="6">
-                                <Form.Group controlId="specialization">
+                                <Form.Group controlId="training_type">
                                     <Form.Label>Tipo de entrenamiento:</Form.Label>
-                                    <Form.Select id='specialization' onChange={handleChange} name='training_type' value={inputs.specialization} required className="w-auto">
-                                        {currentUser.specializations.map((specialization, index) => (
-                                            <option key={index} value={specialization.trainers_specialization.specialization}>{specialization.specialization.name}</option>
+                                    <Form.Select onChange={handleChange} name='training_type' value={inputs.training_type} required className="w-auto">
+                                        <option value="">Selecciona un tipo de entrenamiento</option>
+                                        {currentUser.specializations.map((specialization) => (
+                                            <option key={specialization.trainers_specialization.specialization} value={specialization.trainers_specialization.specialization}>{specialization.specialization.name}</option>
                                         ))}
                                     </Form.Select>
                                     <Form.Control.Feedback type="invalid">Por favor, elige un tipo de especialización.</Form.Control.Feedback>

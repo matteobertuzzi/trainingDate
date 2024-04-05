@@ -19,20 +19,21 @@ import cloudinary
 import googlemaps
 
 
+# Configuracion Cloudinary
 cloudinary.config(
     cloud_name=os.environ.get("CLOUD_NAME"), 
     api_key=os.environ.get("API_KEY"), 
     api_secret=os.environ.get("API_SECRET")
 )
 
+# Obtiene la clave para el serializador, que sirve para crear token de tiempo limitado
+s = URLSafeTimedSerializer(os.environ.get("URL_SAFE_TIMED_SERIALIZER"))
 
-# This is your test secret API key.
-stripe.api_key = 'sk_test_51OtD69IbRZFNTqQ9iphvbozKc9s4uHhyjnKD4X7RE0H1tOrI6mZf4T7RjCTnj5XF6Yajr5ocv1Uc8wbtP4N2wcxG00SgIdOEJE'
+stripe.api_key = os.environ.get("STRIPE_API_KEY")
 api = Blueprint('api', __name__)
 CORS(api) 
 bcrypt = Bcrypt()
 mail = Mail()
-s = URLSafeTimedSerializer('Thisisasecret!')
 
 
 # Ruta para crear una sesión de checkout
@@ -40,35 +41,38 @@ s = URLSafeTimedSerializer('Thisisasecret!')
 def create_checkout_session():
     response_body = {}
     data = request.json
-    if not data or 'class_id' not in data or 'success_url' not in data:
+    if not data or 'productId' not in data:
         response_body["message"] = "Missing required parameters"
-        return response_body, 400
-    class_id = data['class_id']
-    user_class = db.session.query(UsersClasses).filter_by(id=class_id).first()
-    if not user_class:
-        response_body["message"] = "Class not found"
-        return response_body, 400
-    line_item = {
-        'price_data': {
-            'currency': 'usd',
-            'unit_amount': user_class.amount,
-            'product_data': {
-                'name': f'Class {user_class.id}',
-            },
-        },
-        'quantity': 1,
-    }
-    session = stripe.checkout.Session.create(success_url='http://google.com',
-                                             cancel_url='http://wikipedia.com',
-                                             payment_method_types=['card'],
-                                             line_items=[line_item],
-                                             mode='payment')
-    if session:
-        response_body["session"] = session
-        return response_body, 200
-    else:
-        response_body["message"] = 'Failed to create checkout session'
-        return response_body, 500
+        return jsonify(response_body), 400
+    product_id = data['productId']
+    try:
+        product = stripe.Product.retrieve(product_id)
+        if not product:
+            response_body["message"] = "Product not found"
+            return jsonify(response_body), 400
+        prices = stripe.Price.list(product=product_id, active=True)
+        if not prices.data:
+            response_body["message"] = "No active prices found for the product"
+            return jsonify(response_body), 400
+        price = prices.data[0]
+        session = stripe.checkout.Session.create(line_items=[{'price_data': {'currency': 'usd',
+                                                                             'unit_amount': price.unit_amount ,
+                                                                             'product_data': {
+                                                                                'name': product.name ,},},
+                                                              'quantity': 1,}],
+                                                 mode='payment',
+                                                 success_url='https://www.google.com',
+                                                 cancel_url='https://wikipedia.com',)
+        print(session)
+        response_body["sessionId"] = session.id
+        response_body["sessionUrl"] = session.url
+        return jsonify(response_body), 200
+    except stripe.error.StripeError as e:
+        response_body["message"] = str(e)
+        return jsonify(response_body), 500
+    except Exception as e:
+        response_body["message"] = str(e)
+        return jsonify(response_body), 500
 
 
 @api.route('/forgetpassword/<user_type>', methods=['POST'])
@@ -160,7 +164,7 @@ def handle_current_available_account():
     try:
         current_user = get_jwt_identity()
     except SignatureExpired:
-        return redirect(f"{process.env.FRONT_URL}/end/session") 
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     response_body["message"] = "Welcome, your account is active"
     response_body["results"] = current_user
     return response_body, 200
@@ -489,7 +493,10 @@ def handle_signup_user():
 @jwt_required()
 def handle_trainers():
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -617,7 +624,10 @@ def handle_signup_trainer():
 @jwt_required()
 def handle_admins():
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -677,7 +687,10 @@ def handle_signup_admin():
 @jwt_required()
 def handle_add_specializations():
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -810,7 +823,10 @@ def handle_login(user_type):
 def handle_user(id):
     response_body = {}
     user = Users.query.get(id)
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -853,8 +869,11 @@ def handle_user(id):
 @jwt_required()
 def handle_trainer(id):
     response_body= {}
-    current_user = get_jwt_identity()
     trainer = Trainers.query.get(id)
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     if not trainer:
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -906,7 +925,10 @@ def handle_trainer(id):
 @jwt_required()
 def handle_administrator(id):
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid") 
     administrator = Administrators.query.get(id)
     if not administrator:
         response_body["message"] = "Admin not found"
@@ -944,7 +966,10 @@ def handle_administrator(id):
 def handle_user_classes(id):  
     response_body = {}
     user = Users.query.get(id)
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -994,7 +1019,10 @@ def handle_user_classes(id):
 @jwt_required()
 def handle_trainer_classes(id):
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     trainer = Trainers.query.get(id)
     if not trainer:
         response_body["message"] = "Trainer not found"
@@ -1060,7 +1088,10 @@ def handle_trainer_classes(id):
 def handle_trainer_class(id, class_id): 
     response_body = {}
     trainer = Trainers.query.get(id)
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     if not trainer: 
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -1123,7 +1154,10 @@ def handle_trainer_class(id, class_id):
 def handle_user_class(id, class_id):
     response_body = {}
     user = Users.query.get(id)
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -1181,7 +1215,10 @@ def handle_show_single_class(id):
 @jwt_required()
 def handle_trainer_specializations(id):
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     trainer = db.session.query(Trainers).filter_by(id=id).first()
     if not trainer:
         response_body['message'] = f'No se encontró ningún entrenador con el ID {str(id)}!'
@@ -1333,7 +1370,10 @@ def handle_trainer_specializations(id):
 @jwt_required()
 def handle_trainer_specialization(id, specialization_id):
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     trainer = db.session.query(Trainers).filter_by(id = id).first()
     if not trainer:
         response_body['message'] = f'No trainer with id {str(id)} found!'
@@ -1366,7 +1406,10 @@ def handle_trainer_specialization(id, specialization_id):
 @jwt_required()
 def handle_specialization(id):
     response_body = {}
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
+    except SignatureExpired:
+        return redirect(f"{os.environ['FRONT_URL']}invalid")
     specialization = db.session.query(Specializations).filter_by(id=id).first()
     if not specialization:
         response_body['message'] = f'No specialization found with id: {str(id)}!'

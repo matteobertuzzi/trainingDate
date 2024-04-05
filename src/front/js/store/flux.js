@@ -329,6 +329,8 @@ const getState = ({ getStore, getActions, setStore }) => {
           return false;
         }
         const data = await response.json();
+        console.log(data)
+        getActions().postStripeProduct(data.class.id, data.class.training_level, data.class.price)
         setStore({ trainerClasses: data.class })
         return true
       },
@@ -469,29 +471,71 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
 
-      postCheckoutSession: async (id, url) => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-          console.error("No access token found!");
-          return null;
-        }
+      createCheckoutSession: async (productId) => {
         const options = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${process.env.STRIPE_API_KEY}`
           },
           body: JSON.stringify({
-            class_id: id,
-            success_url: url
+            productId: productId
           }),
-        }
-        const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options)
-        if (!response.ok) return response.status, 400
-        const data = await response.json()
-        console.log(data)
+        };
 
-      }
+        const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to create checkout session');
+        }
+
+        const data = await response.json();
+        window.location.href = data.sessionUrl;
+      },
+
+      postStripeProduct: async (id, level, amount) => {
+        const stripe = require('stripe')(process.env.STRIPE_API_KEY);
+
+        try {
+          // Crear el producto en Stripe
+          const product = await stripe.products.create({
+            name: id,
+            description: level
+          });
+
+          console.log('Producto creado:', product);
+
+          // Crear el precio asociado al producto
+          const price = await stripe.prices.create({
+            product: product.id,
+            unit_amount: amount * 100, 
+            currency: 'eur'
+          });
+
+          console.log('Precio creado:', price);
+        } catch (error) {
+          console.error('Error al crear el producto o precio en Stripe:', error);
+          throw error;
+        }
+      },
+
+      deleteStripeProduct: async (productId) => {
+        const options = {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${process.env.STRIPE_API_KEY}`,
+          },
+        };
+
+        const response = await fetch(`https://api.stripe.com/v1/products/${productId}`, options);
+        if (!response.ok) {
+          console.error(`Error al eliminar el producto. Código de estado HTTP: ${response.status}`);
+          return false;
+        }
+        return true
+        console.log('Producto eliminado correctamente');
+      },
+
     }
   }
 }
