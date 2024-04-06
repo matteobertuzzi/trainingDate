@@ -11,7 +11,7 @@ const HomeUserClasses = () => {
     const { getUserClasses } = actions
     const { currentUser } = store
     const [showAlert, setShowAlert] = useState(false);
-    const userClasses = store.userClasses;
+    const userClasses = store.userClasses.trainer_classes;
 
     if (!currentUser || !currentUser.user) {
         return <Loading />;

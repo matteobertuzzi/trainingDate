@@ -28,10 +28,10 @@ const Homepage = () => {
             {isLogged && isUser ?
                 <div className='container-fluid'>
                     <div className='row'>
-                        <div className='col-lg-3 col-md-3 col-sm-10 d-flex-column justify-content-center' style={{ 'backgroundColor': '#D3D3D3', 'height': '100vh' }}>
-                            <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-10'>
+                        <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
+                    </div>
+                    <div className='row'>
+                        <div className='col-lg-9 col-md-9 col-sm-12'>
                             <HomeClassList filters={filters} />
                         </div>
                         <div className='col-lg-3 col-md-3 col-sm-10' style={{ 'backgroundColor': '#D3D3D3', 'height': '100vh' }}>
@@ -42,10 +42,10 @@ const Homepage = () => {
                 :
                 <div className='container-fluid'>
                     <div className='row'>
-                        <div className='col-lg-3 col-md-3 col-sm-10 d-flex-column justify-content-center' style={{ 'backgroundColor': '#D3D3D3', 'height': '100vh' }}>
-                            <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
-                        </div>
-                        <div className='col-lg-9 col-md-9 col-sm-10'>
+                        <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
+                    </div>
+                    <div className='row'>
+                        <div className='col-lg-10 col-md-10 col-sm-10'>
                             <HomeClassList filters={filters} />
                         </div>
                     </div>

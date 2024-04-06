@@ -83,7 +83,7 @@ export const MyNavbar = () => {
                   <Link to={`/user/${currentUser.user.id}/profile`}>Mi Perfil</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                  <span>Mis Classes</span>
+                  <Link to={`/user/${currentUser.user.id}/classes`}>Mis Classes</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
