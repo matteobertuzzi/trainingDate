@@ -8,7 +8,8 @@ import MapModal from './MapModal.jsx';
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
     const allClasses = store.allClasses;
-    const [showAlert, setShowAlert] = useState(false);
+    const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
+    const isUser = currentUser && currentUser.role === 'users';
 
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
@@ -20,7 +21,7 @@ const HomeClassList = ({ filters }) => {
 
     return (
         <>
-            {(filteredClasses.length == 0 && filters.trainingType != '' && filters.trainingLevel != '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
+            {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
             {filteredClasses.length > 0 ?
                 filteredClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
@@ -30,7 +31,7 @@ const HomeClassList = ({ filters }) => {
                             <Card.Text>
                                 {oneClass.class_details ? oneClass.class_details : 'Training class'}
                             </Card.Text>
-                            {store.logged &&
+                            {isUser && // Render button only if the current user is a user
                                 <Button variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
                             }
                             <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
@@ -46,7 +47,7 @@ const HomeClassList = ({ filters }) => {
                                 <Card.Text>
                                     {oneClass.class_details ? oneClass.class_details : 'Training class'}
                                 </Card.Text>
-                                {store.logged &&
+                                {isUser && // Render button only if the current user is a user
                                     <Button variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
                                 }
                                 <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
