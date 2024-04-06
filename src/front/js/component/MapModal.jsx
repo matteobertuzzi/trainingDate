@@ -4,6 +4,9 @@ import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+// Define libraries as a static variable outside the component
+const libraries = ['places'];
+
 function MapModal({ addressData }) {
     const [show, setShow] = useState(false);
     const { store, actions } = useContext(Context);
@@ -22,7 +25,6 @@ function MapModal({ addressData }) {
         console.log(coordinates)
     }, [])
 
-    const libraries = ['places'];
     const mapContainerStyle = {
         position: 'relative',
         width: '100%',
@@ -37,7 +39,7 @@ function MapModal({ addressData }) {
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.GOOGLE_API_KEY,
-        libraries,
+        libraries, 
     });
 
     if (loadError) {
@@ -47,8 +49,6 @@ function MapModal({ addressData }) {
     if (!isLoaded) {
         return <div>Loading maps</div>;
     }
-
-
 
     return (
         <>
@@ -88,3 +88,4 @@ function MapModal({ addressData }) {
 }
 
 export default MapModal;
+
