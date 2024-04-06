@@ -17,8 +17,8 @@ export const MyNavbar = () => {
   const [loginModalShow, setLoginModalShow] = useState(false);
   const navigate = useNavigate()
   const { store, actions } = useContext(Context)
-  const { logged, currentUser, cart, trainersClasses } = store
-  const { setLogged, setUser, getAvailableAccount, removeCartItem } = actions
+  const { logged, currentUser, cart } = store
+  const { setLogged, setUser, removeCartItem } = actions
 
   const handleLogout = () => {
     setLogged(false);
@@ -27,6 +27,7 @@ export const MyNavbar = () => {
 
   const handleCreateClass = async () => {
     navigate(`trainers/${currentUser.trainer.id}/create/class`)
+    actions.getTrainerClasses()
   }
 
   return (
@@ -101,7 +102,7 @@ export const MyNavbar = () => {
                 menuVariant="dark"
                 align='end'
               >
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                <NavDropdown.Item>Action</NavDropdown.Item>
               </NavDropdown>
             </Nav>
             <Nav>
@@ -115,15 +116,15 @@ export const MyNavbar = () => {
                 <NavDropdown.Item className="d-flex justify-content-end align-items-center">
                   <Link to={`/trainer/${currentUser.trainer.id}/profile`}>Mi Perfil</Link>
                 </NavDropdown.Item>
-                <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
+                <NavDropdown.Item className="d-flex justify-content-end align-items-center" >
                   <Link to={`/trainer/${currentUser.trainer.id}/classes`}>Mis Classes</Link>
                 </NavDropdown.Item>
-                <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
+                <NavDropdown.Item className="d-flex justify-content-end align-items-center">
                   <span onClick={handleCreateClass}>Crear clase</span>
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
-                  <span>LogOut</span>
+                <NavDropdown.Item onClick={handleLogout} className="text-danger d-flex justify-content-end align-items-center gap-2">
+                  <Link to={"/"}>LogOut</Link>
                   <FontAwesomeIcon icon={faRightFromBracket} />
                 </NavDropdown.Item>
               </NavDropdown>

@@ -10,7 +10,7 @@ import EditUserProfile from '../component/EditUserProfile.jsx';
 const UserProfile = () => {
     const { id } = useParams();
     const { store, actions } = useContext(Context);
-    const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
+    const { currentUser } = store
     const user = currentUser.user;
     let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
     let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
@@ -44,7 +44,7 @@ const UserProfile = () => {
         fetchUser();
     }, [])
 
-    if (!currentUser || !currentUser.users) {
+    if (!currentUser || !currentUser.user) {
         return <Loading />;
     }
 

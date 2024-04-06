@@ -162,9 +162,12 @@ def handle_forget_password(user_type):
 def handle_current_available_account():
     response_body = {}
     current_user = get_jwt_identity()
-    response_body["message"] = "Welcome, your account is active"
-    response_body["results"] = current_user
-    return response_body, 200
+    if current_user:
+        response_body["message"] = "Welcome, your account is active"
+        response_body["results"] = current_user
+        return response_body, 200
+    response_body["message"] = "No accound found!"
+    return response_body, 400
 
 
 # Mirar los usuarios registrados
@@ -765,10 +768,6 @@ def handle_login(user_type):
         if not bcrypt.check_password_hash(trainer.password, password):
             response_body['message'] = f'Wrong password for email {trainer.email}'
             return response_body, 401
-        specializations = db.session.query(TrainersSpecializations).filter_by(trainer_id=trainer.id, status="Approved").all() 
-        if not specializations:
-            response_body['message'] = f'No specializations available'
-            return response_body, 400
         join_query = db.session.query(TrainersSpecializations, Specializations).join(Specializations).filter(TrainersSpecializations.specialization_id == Specializations.id).filter(TrainersSpecializations.trainer_id == trainer.id).filter(TrainersSpecializations.status == "Approved").all()
         join_query_serializable = []
         for trainers_specialization, specialization in join_query:
@@ -945,6 +944,7 @@ def handle_administrator(id):
 def handle_user_classes(id):  
     response_body = {}
     current_user = get_jwt_identity()
+    user = db.session.query(Users).filter_by(id=id).first()
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -971,6 +971,7 @@ def handle_user_classes(id):
                 response_body["message"] = "User class already exist"
                 return response_body, 409
             trainer_class = TrainersClasses.query.filter_by(id = data["class_id"]).first()
+            print(trainer_class)
             if not trainer_class:
                 response_body["message"] = "No Trainer class available"
                 return response_body, 404
@@ -983,7 +984,7 @@ def handle_user_classes(id):
             db.session.add(new_class)
             db.session.commit()
             response_body["message"] = "Class added"
-            response_body["class"] = new_class.serialize()
+            response_body["results"] = new_class.serialize()
             return response_body, 201
     response_body["message"] = 'Not allowed!'
     return response_body, 405

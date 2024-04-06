@@ -9,14 +9,17 @@ import FilterAlert from './FilterAlert.jsx';
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
     const { getUserClasses } = actions
+    const { currentUser } = store
     const [showAlert, setShowAlert] = useState(false);
     const userClasses = store.userClasses;
-    console.log(userClasses);
 
-    useEffect(() => {
-        getUserClasses();
-    }, [])
+    if (!currentUser || !currentUser.user) {
+        return <Loading />;
+    }
 
+    if (!userClasses) {
+        return <Loading />;
+    }
 
     return (
         <>

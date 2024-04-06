@@ -62,41 +62,29 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       getAllClasses: async () => {
-        const classesInLocalStorage = localStorage.getItem('allClasses')
-        if (classesInLocalStorage) {
-          setStore({ allClasses: JSON.parse(classesInLocalStorage) })
-        } else {
-          const url = `${process.env.BACKEND_URL}api/classes`
-          const response = await fetch(url)
-          if (!response.ok) {
-            console.error(`Error fetching classes. HTTP Status ${response.status}`)
-            return null
-          }
-          const data = await response.json()
-          setStore({ allClasses: data.results })
-          console.log(getStore().allClasses)
-          localStorage.setItem('allClasses', JSON.stringify(data.results))
-
+        const url = `${process.env.BACKEND_URL}api/classes`
+        const response = await fetch(url)
+        if (!response.ok) {
+          console.error(`Error fetching classes. HTTP Status ${response.status}`)
+          return null
         }
+        const data = await response.json()
+        setStore({ allClasses: data.results })
+        console.log(getStore().allClasses)
+        localStorage.setItem('allClasses', JSON.stringify(data.results))
       },
 
       getSpecializations: async () => {
-        const specializationsInLocalStorage = localStorage.getItem('specializations')
-        if (specializationsInLocalStorage) {
-          setStore({ specializations: JSON.parse(specializationsInLocalStorage) })
-        } else {
-          const url = `${process.env.BACKEND_URL}api/specializations`
-          const response = await fetch(url)
-          if (!response.ok) {
-            console.error(`Error fetching specializations. HTTP Status ${response.status}`)
-            return null
-          }
-          const data = await response.json()
-          const specializations = data.specializations
-          setStore({ specializations: specializations })
-          console.log(getStore().specializations)
-          localStorage.setItem('specializations', JSON.stringify(specializations))
+        const url = `${process.env.BACKEND_URL}api/specializations`
+        const response = await fetch(url)
+        if (!response.ok) {
+          console.error(`Error fetching specializations. HTTP Status ${response.status}`)
+          return null
         }
+        const data = await response.json()
+        const specializations = data.specializations
+        setStore({ specializations: specializations })
+        localStorage.setItem('specializations', JSON.stringify(specializations))
       },
 
       loginUser: async (inputs, user_type) => {
@@ -117,92 +105,43 @@ const getState = ({ getStore, getActions, setStore }) => {
         localStorage.setItem("availableAccount", JSON.stringify(data.results));
         localStorage.setItem("accessToken", data.access_token);
         getActions().setLogged(true)
-        getActions().getTrainerClasses()
+        if (user_type == "trainers") {
+          getActions().getTrainerClasses()
+          localStorage.removeItem("userClasses")
+          setStore({ userClasses: [] });
+        } else if (user_type == "users") {
+          getActions().getUserClasses()
+          localStorage.removeItem("trainerClasses")
+          setStore({ trainerClasses: [] });
+        }
         return true
       },
 
-      getAvailableAccount: async () => {
+      getUserClasses: async () => {
+        let currentAccount = localStorage.getItem('availableAccount');
+        currentAccount = JSON.parse(currentAccount);
+        const id = currentAccount.user.id;
         const token = localStorage.getItem("accessToken");
-        const account = localStorage.getItem("availableAccount");
-
         if (!token) {
-          console.error("No access token found");
-          localStorage.removeItem("availableAccount");
+          console.error("No access token proivded!");
           return null;
         }
-
         const options = {
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
           },
         };
-
-        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
-
+        const url = process.env.BACKEND_URL + `api/users/${id}/classes`
+        const response = await fetch(url, options)
         if (!response.ok) {
-          if (response.status === 401) {
-            console.error("Access token is not valid or expired. Removed from local storage.");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("availableAccount");
-            window.location.href = `${process.env.FRONT_URL}invalid`
-          } else {
-            console.error(`Error fetching protected data. HTTP Status: ${response.status}`);
-          }
-          return null;
+          console.error(`Error fetching user classes. HTTP Status ${response.status}`)
+          return null
         }
-
         const data = await response.json();
-        setStore({ currentUser: JSON.parse(account) });
-        getActions().setLogged(true);
-      },
-
-      getUserClasses: async () => {
-        const userClassesInLocalStorage = localStorage.getItem('userClasses')
-        if (userClassesInLocalStorage) {
-          setStore({ userClasses: JSON.parse(userClassesInLocalStorage) })
-        } else {
-          let currentAccount = localStorage.getItem('availableAccount');
-          currentAccount = JSON.parse(currentAccount);
-          const id = currentAccount.user.id;
-          console.log(id);
-          const token = localStorage.getItem("accessToken");
-          if (!token) {
-            console.error("No access token proivded!");
-            return null;
-          }
-          const options = {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          };
-          const url = process.env.BACKEND_URL + `api/users/${id}/classes`
-          const response = await fetch(url, options)
-          if (!response.ok) {
-            console.error(`Error fetching user classes. HTTP Status ${response.status}`)
-            return null
-          }
-          const data = await response.json();
-          const userClassInfo = data.result;
-          let userClassesId = []
-          let classDetails = []
-          for (const item of userClassInfo) {
-            const classId = item.class;
-            userClassesId.push(classId);
-            console.log(userClassesId);
-            const classUrl = process.env.BACKEND_URL + `api/classes/${classId}`;
-            const resp = await fetch(classUrl);
-            if (!resp.ok) {
-              console.error(`Error fetching classes. HTTP Status ${resp.status}`);
-              return null;
-            }
-            const resData = await resp.json(); // Use resp instead of response
-            classDetails.push(resData.results);
-          }
-          setStore({ userClasses: classDetails })
-          console.log(getStore().userClasses);
-          localStorage.setItem('userClasses', JSON.stringify(classDetails))
-        }
+        console.log(data)
+        setStore({ userClasses: data.results })
+        localStorage.setItem('userClasses', JSON.stringify(data.results))
       },
 
       addUser: async (inputs) => {
@@ -266,30 +205,36 @@ const getState = ({ getStore, getActions, setStore }) => {
       getAvailableAccount: async () => {
         const token = localStorage.getItem("accessToken");
         const account = localStorage.getItem("availableAccount");
-        let trainerClasses = localStorage.getItem("trainerClasses");
 
         if (!token) {
           console.error("No access token found");
           localStorage.removeItem("availableAccount");
-          localStorage.removeItem("trainerClasses")
           getActions().setLogged(false);
           return null;
         }
 
-        if (!trainerClasses) {
-          trainerClasses = "[]";
-        }
+        const options = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
 
-        try {
-          setStore({ currentUser: JSON.parse(account) });
-          setStore({ trainerClasses: JSON.parse(trainerClasses) });
-          getActions().setLogged(true);
-        } catch (error) {
-          console.error("Error parsing stored data:", error);
+        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+
+        if (!response.ok) {
+          localStorage.removeItem("accessToken");
           localStorage.removeItem("availableAccount");
-          localStorage.removeItem("trainerClasses");
           getActions().setLogged(false);
-          return null;
+          return response.status
+        } else {
+          const data = await response.json();
+          setStore({ currentUser: JSON.parse(account) });
+          if (data.results.role == "trainers") {
+            getActions().getTrainerClasses()
+          } else if (data.results.role == "users") {
+            getActions().getUserClasses()
+          }
+          getActions().setLogged(true);
         }
       },
 
@@ -362,7 +307,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       getTrainerClasses: async () => {
-        const trainerClassesInLocalStorage = localStorage.getItem('trainerClasses')
         const token = localStorage.getItem("accessToken");
         const availableAccountString = localStorage.getItem("availableAccount");
         const availableAccount = JSON.parse(availableAccountString);
@@ -375,25 +319,20 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("No access token found");
           return null;
         }
-        if (trainerClassesInLocalStorage) {
-          setStore({ trainerClasses: JSON.parse(trainerClassesInLocalStorage) })
-        } else {
-          const options = {
-            headers: {
-              "Content-Type": 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-          const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options)
-          if (!response.ok) {
-            return response.status
-          }
-          const data = await response.json()
-          console.log(data)
-          const classes = data.classes
-          setStore({ trainerClasses: classes })
-          localStorage.setItem('trainerClasses', JSON.stringify(classes))
+        const options = {
+          headers: {
+            "Content-Type": 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         }
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options)
+        if (!response.ok) {
+          return response.status
+        }
+        const data = await response.json()
+        const classes = data.classes
+        setStore({ trainerClasses: classes })
+        localStorage.setItem('trainerClasses', JSON.stringify(classes))
       },
 
       updateUser: async (id, inputs) => {
