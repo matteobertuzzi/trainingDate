@@ -140,8 +140,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const data = await response.json();
         console.log(data)
-        setStore({ userClasses: data.results })
-        localStorage.setItem('userClasses', JSON.stringify(data.results))
+        setStore({ userClasses: data.result })
+        localStorage.setItem('userClasses', JSON.stringify(data.result))
       },
 
       addUser: async (inputs) => {
