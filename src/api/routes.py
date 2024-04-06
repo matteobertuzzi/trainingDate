@@ -161,10 +161,7 @@ def handle_forget_password(user_type):
 @jwt_required()
 def handle_current_available_account():
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     response_body["message"] = "Welcome, your account is active"
     response_body["results"] = current_user
     return response_body, 200
@@ -272,13 +269,13 @@ def confirm_specialization(token):
         if specialization:
             db.session.delete(specialization)
         response_body["message"] = 'El token ha expirado.'
-        return response_body, 400
+        return response_body, 401
     except BadSignature:
         specialization = TrainersSpecializations.query.get(specialization_id)
         if specialization:
             db.session.delete(specialization)
         response_body["message"] = 'Token inválido.'
-        return response_body, 400
+        return response_body, 401
     specialization = TrainersSpecializations.query.get(specialization_id)
     if not specialization:
         response_body["message"] = 'Especialización inválida.'
@@ -348,8 +345,8 @@ def confirm_email(token):
         elif trainer:
             db.session.delete(trainer)
         db.session.commit()
-        response_body["message"] = 'The token has expired!'
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+        response_body["message"] = "Your session has expired. Please log in again."
+        return response_body, 401
     except BadSignature:
         user = Users.query.filter_by(email=email).first()
         trainer = Trainers.query.filter_by(email=email).first()
@@ -493,10 +490,7 @@ def handle_signup_user():
 @jwt_required()
 def handle_trainers():
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -624,10 +618,7 @@ def handle_signup_trainer():
 @jwt_required()
 def handle_admins():
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -687,10 +678,7 @@ def handle_signup_admin():
 @jwt_required()
 def handle_add_specializations():
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     if not current_user['role'] == 'administrators':
         response_body['message'] = 'Not allowed!'
         return response_body, 405
@@ -823,10 +811,7 @@ def handle_login(user_type):
 def handle_user(id):
     response_body = {}
     user = Users.query.get(id)
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -870,10 +855,7 @@ def handle_user(id):
 def handle_trainer(id):
     response_body= {}
     trainer = Trainers.query.get(id)
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     if not trainer:
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -925,10 +907,7 @@ def handle_trainer(id):
 @jwt_required()
 def handle_administrator(id):
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid") 
+    current_user = get_jwt_identity()
     administrator = Administrators.query.get(id)
     if not administrator:
         response_body["message"] = "Admin not found"
@@ -965,11 +944,7 @@ def handle_administrator(id):
 @jwt_required()
 def handle_user_classes(id):  
     response_body = {}
-    user = Users.query.get(id)
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -1019,10 +994,7 @@ def handle_user_classes(id):
 @jwt_required()
 def handle_trainer_classes(id):
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     trainer = Trainers.query.get(id)
     if not trainer:
         response_body["message"] = "Trainer not found"
@@ -1059,6 +1031,7 @@ def handle_trainer_classes(id):
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
+            # Hacer llamada stripe
             new_trainer_class = TrainersClasses(trainer_id=id,
                                                 class_name = data.get("class_name"),
                                                 class_details = data.get("class_details"),
@@ -1088,10 +1061,7 @@ def handle_trainer_classes(id):
 def handle_trainer_class(id, class_id): 
     response_body = {}
     trainer = Trainers.query.get(id)
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     if not trainer: 
         response_body["message"] = "Trainer not found"
         return response_body, 404
@@ -1154,10 +1124,7 @@ def handle_trainer_class(id, class_id):
 def handle_user_class(id, class_id):
     response_body = {}
     user = Users.query.get(id)
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     if not user:
         response_body["message"] = "User not found"
         return response_body, 404
@@ -1215,10 +1182,7 @@ def handle_show_single_class(id):
 @jwt_required()
 def handle_trainer_specializations(id):
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     trainer = db.session.query(Trainers).filter_by(id=id).first()
     if not trainer:
         response_body['message'] = f'No se encontró ningún entrenador con el ID {str(id)}!'
@@ -1370,10 +1334,7 @@ def handle_trainer_specializations(id):
 @jwt_required()
 def handle_trainer_specialization(id, specialization_id):
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     trainer = db.session.query(Trainers).filter_by(id = id).first()
     if not trainer:
         response_body['message'] = f'No trainer with id {str(id)} found!'
@@ -1406,10 +1367,7 @@ def handle_trainer_specialization(id, specialization_id):
 @jwt_required()
 def handle_specialization(id):
     response_body = {}
-    try:
-        current_user = get_jwt_identity()
-    except SignatureExpired:
-        return redirect(f"{os.environ['FRONT_URL']}invalid")
+    current_user = get_jwt_identity()
     specialization = db.session.query(Specializations).filter_by(id=id).first()
     if not specialization:
         response_body['message'] = f'No specialization found with id: {str(id)}!'
