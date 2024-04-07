@@ -5,6 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import HomeClassList from '../component/HomeClassList.jsx';
 import HomeUserClasses from '../component/HomeUserClasses.jsx';
 import HomeFilters from '../component/HomeFilters.jsx';
+import TrainerHomepage from '../component/TrainerHomepage.jsx';
 
 
 const Homepage = () => {
@@ -12,6 +13,7 @@ const Homepage = () => {
     let isLogged = store.logged
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
     const isUser = currentUser && currentUser.role == 'users' ? true : false;
+    const isTrainer = currentUser && currentUser.role == 'trainers' ? true : false;
     const [filters, setFilters] = useState({
         trainingLevel: '',
         trainingType: ''
@@ -40,19 +42,24 @@ const Homepage = () => {
                     </div>
                 </div>
                 :
-                <div className='container-fluid'>
-                    <div className='row'>
-                        <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
+                (isLogged && isTrainer) ?
+                    <div className='container-fluid'>
+                        <TrainerHomepage />
                     </div>
-                    <div className='row'>
-                        <div className='col-lg-10 col-md-10 col-sm-10'>
-                            <HomeClassList filters={filters} />
+                    :
+                    <div className='container-fluid'>
+                        <div className='row'>
+                            <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
+                        </div>
+                        <div className='row'>
+                            <div className='col-lg-10 col-md-10 col-sm-10'>
+                                <HomeClassList filters={filters} />
+                            </div>
                         </div>
                     </div>
-                </div>
             }
         </>
-    )
+    );
 }
 
 export default Homepage;

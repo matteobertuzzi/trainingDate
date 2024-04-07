@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
-function FilterAlert({ location }) {
+function TrainerAlert({ location }) {
     const [show, setShow] = useState(true);
 
     const handleShowAlert = () => {
@@ -15,10 +15,10 @@ function FilterAlert({ location }) {
         <>
             <Alert show={show} variant="danger">
                 <Alert.Heading>My Alert</Alert.Heading>
-                {location == 'classList' ?
-                    <p>There are no classes for the given filters. Here is a list of all available clases.</p>
+                {location == 'classes' ?
+                    <p>There are no classes. Click the button below to add a new class.</p>
                     :
-                    <p>No booked classes.</p>}
+                    <p>There are no specializations. Click the button below to add a new specialization.</p>}
                 <hr />
             </Alert>
 
@@ -27,4 +27,4 @@ function FilterAlert({ location }) {
     );
 }
 
-export default FilterAlert;
+export default TrainerAlert;

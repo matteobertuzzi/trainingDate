@@ -19,6 +19,7 @@ import Signup from "./pages/Signup.jsx";
 import { Cart } from "./pages/Cart.jsx";
 import { TrainerClasses } from "./pages/TrainerClasses.jsx";
 import { UserClasses } from "./pages/UserClasses.jsx";
+import TrainerHomepage from "./component/TrainerHomepage.jsx";
 
 
 // Create your first component
@@ -46,6 +47,7 @@ const Layout = () => {
                         <Route element={<Cart />} path='/cart' />
                         <Route element={<TrainerClasses />} path='/trainer/:id/classes' />
                         <Route element={<UserClasses />} path='/user/:id/classes' />
+                        <Route element={<TrainerHomepage />} path='/trainer/homepage' />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />
