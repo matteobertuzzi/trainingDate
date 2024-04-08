@@ -45,24 +45,24 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-                Edit trainer profile
+                Modifica tu perfil
             </Button>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Update Trainer</Modal.Title>
+                    <Modal.Title>Modifica tu perfil</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="phone-number">
-                            <Form.Label>Phone number</Form.Label>
+                            <Form.Label>Número de teléfono</Form.Label>
                             <Form.Control type="number" placeholder={trainer.phone_number} name='phone_number' value={inputs.phone_number || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="city">
-                            <Form.Label>City</Form.Label>
+                            <Form.Label>Ciudad</Form.Label>
                             <Form.Control type="text" placeholder={trainer.city} name='city' value={inputs.city || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="postal-code">
-                            <Form.Label>Postal code</Form.Label>
+                            <Form.Label>Código postal</Form.Label>
                             <Form.Control type="number" placeholder={trainer.postal_code} name='postal_code' value={inputs.postal_code || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="bank_iban">
@@ -86,13 +86,13 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                             <Form.Control type="url" placeholder={trainer.x_url} name='x_url' value={inputs.x_url || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Button variant="primary" type="submit" className='my-3'>
-                            Update trainer data
+                        Actualiza tus datos
                         </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Cerrar
                     </Button>
                 </Modal.Footer>
             </Modal>
