@@ -10,7 +10,6 @@ const HomeClassList = ({ filters }) => {
     const { createCheckoutSession, addCartItem, removeCartItem } = actions
     const { currentUser } = store
     const allClasses = store.allClasses;
-    const [showAlert, setShowAlert] = useState(false);
 
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
@@ -18,7 +17,7 @@ const HomeClassList = ({ filters }) => {
 
     return (
         <>
-            {(filteredClasses.length == 0 && filters.trainingType != '' && filters.trainingLevel != '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
+            {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
             {filteredClasses.length > 0 ?
                 filteredClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>

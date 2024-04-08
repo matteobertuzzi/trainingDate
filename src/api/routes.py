@@ -959,11 +959,13 @@ def handle_user_classes(id):
     if (current_user['role'] == 'users' and current_user['id'] == user.id) or (current_user["role"] == "administrators"):
         if request.method == "GET":
             user_classes = UsersClasses.query.filter_by(user_id=id).all()
+            trainer_classes = db.session.query(TrainersClasses).join(UsersClasses, UsersClasses.class_id == TrainersClasses.id).all()
             if not user_classes:
                 response_body["message"] = "No classes available"
                 return response_body, 400
             response_body["message"] = "User classes"
-            response_body["result"] = [class_user.serialize() for class_user in user_classes]
+            response_body["result"] = {"user_classes": [class_user.serialize() for class_user in user_classes],
+                                       "trainer_classes": [class_trainer.serialize() for class_trainer in trainer_classes]}
             return response_body, 200
         if request.method == "POST":
             data = request.json
@@ -991,7 +993,8 @@ def handle_user_classes(id):
             db.session.add(new_class)
             db.session.commit()
             response_body["message"] = "Class added"
-            response_body["results"] = new_class.serialize()
+            response_body["results"] = {"user_class": new_class.serialize(),
+                                        "trainer_class": trainer_class.serialize()}
             return response_body, 201
     response_body["message"] = 'Not allowed!'
     return response_body, 405
