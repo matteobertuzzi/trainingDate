@@ -17,10 +17,10 @@ function EditUserProfile({ user, onChangeSubmit }) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(inputs);
-        updateUser(user.id, inputs);
+        await updateUser(user.id, inputs);
         onChangeSubmit();
         handleClose();
         setTimeout(() => {

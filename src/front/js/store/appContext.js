@@ -26,7 +26,8 @@ const injectContext = (PassedComponent) => {
     useEffect(() => {
       state.actions.getAvailableAccount();
       state.actions.getSpecializations();
-      state.actions.getUserClasses()
+      state.actions.getAllClasses()
+      state.actions.getCartItem()
     }, []);
 
     return (

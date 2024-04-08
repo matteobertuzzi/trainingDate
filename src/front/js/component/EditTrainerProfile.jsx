@@ -22,10 +22,10 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(inputs)
-        updateTrainer(trainer.id, inputs)
+        await updateTrainer(trainer.id, inputs)
         handleClose();
         onChangeSubmit();
         setTimeout(() => {
