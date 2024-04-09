@@ -32,7 +32,7 @@ const HomeClassList = ({ filters }) => {
                                 className="d-block w-100"
                                 src="https://images.ctfassets.net/qw8ps43tg2ux/268NAl3OLkecJzq6PongwH/2c292c8d2a2fa784f0dea363102080de/iss-personal-trainer-duties-salray-and-more-pt-and-client.jpg"
                                 alt={"Class " + oneClass.id}
-                                style={{ borderRadius: '15%' }}
+                                style={{ borderRadius: '10%' }}
                             />
                             <Carousel.Caption>
                                 <h3>{oneClass.class_name ? oneClass.class_name : 'Training class'}</h3>
@@ -54,7 +54,7 @@ const HomeClassList = ({ filters }) => {
                                 className="d-block w-100"
                                 src="https://images.ctfassets.net/qw8ps43tg2ux/268NAl3OLkecJzq6PongwH/2c292c8d2a2fa784f0dea363102080de/iss-personal-trainer-duties-salray-and-more-pt-and-client.jpg"
                                 alt={"Class " + oneClass.id}
-                                style={{ borderRadius: '15%' }}
+                                style={{ borderRadius: '10%' }}
                             />
                             <Carousel.Caption>
                                 <h3>{oneClass.class_name ? oneClass.class_name : 'Training class'}</h3>

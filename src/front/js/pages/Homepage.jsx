@@ -55,26 +55,30 @@ const Homepage = () => {
                         </div>
                         <Row className='mt-5 d-flex justify-content-center'>
                             <Col md={6} lg={6}>
-                                <Card style={{ width: '90%' }}>
+                                <Card style={{ width: '90%', borderRadius: '10px' }}>
                                     <Card.Img variant="top" src="https://hips.hearstapps.com/hmg-prod/images/mh-trainer-2-1533576998.png" />
                                     <Card.Body>
                                         <Card.Title>Entrenador</Card.Title>
                                         <Card.Text>
                                             Darme de alta como entrenador
                                         </Card.Text>
-                                        <Button variant="primary">Registrate</Button>
+                                        <div className='d-flex justify-content-center'>
+                                            <Button variant="primary">Regístrate</Button>
+                                        </div>
                                     </Card.Body>
                                 </Card>
                             </Col>
                             <Col md={6} lg={6}>
-                                <Card style={{ width: '90%' }}>
+                                <Card style={{ width: '90%', borderRadius: '10px' }}>
                                     <Card.Img variant="top" src="https://cvlifestyles.co.uk/wp-content/uploads/2019/02/personal-training.jpg" />
                                     <Card.Body>
                                         <Card.Title>Usuario</Card.Title>
                                         <Card.Text>
                                             Darme de alta como usuario
                                         </Card.Text>
-                                        <Button variant="primary">Registrate</Button>
+                                        <div className='d-flex justify-content-center'>
+                                            <Button variant="primary">Regístrate</Button>
+                                        </div>
                                     </Card.Body>
                                 </Card>
                             </Col>
