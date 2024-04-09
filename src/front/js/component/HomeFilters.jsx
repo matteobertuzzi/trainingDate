@@ -31,13 +31,8 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
         onFilterSubmit(event, filter);
     };
 
-    const searchGym = (event) => {
-        event.preventDefault();
-        actions.searchGym(event.target.value);
-    };
-
     return (
-        <Navbar bg="light" expand="lg" className=" py-2">
+        <Navbar expand="lg" className=" py-2">
             < Navbar.Toggle aria-controls="home-filters" />
             <Navbar.Collapse id="home-filters" className="justify-content-center">
                 <Nav className="align-items-center">

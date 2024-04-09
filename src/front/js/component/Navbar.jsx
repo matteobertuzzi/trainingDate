@@ -31,7 +31,7 @@ export const MyNavbar = () => {
   }
 
   return (
-    <Navbar expand="lg" className="bg-body-primary" data-bs-theme="dark">
+    <Navbar bg='primary' expand="lg" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-between p-2 mx-2">
         <Navbar.Brand href="/">Training Date</Navbar.Brand>
         {logged && currentUser.role === "users" ? (
