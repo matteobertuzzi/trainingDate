@@ -40,35 +40,35 @@ function EditUserProfile({ user, onChangeSubmit }) {
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-                Modifica tu perfil
+                Edit user profile
             </Button>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modifica tu perfil</Modal.Title>
+                    <Modal.Title>Update User</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="phone-number">
-                            <Form.Label>Número de teléfono</Form.Label>
+                            <Form.Label>Phone number</Form.Label>
                             <Form.Control type="number" placeholder={user.phone_number} name='phone_number' value={inputs.phone_number || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="city">
-                            <Form.Label>Ciudad</Form.Label>
+                            <Form.Label>City</Form.Label>
                             <Form.Control type="text" placeholder={user.city} name='city' value={inputs.city || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="postal-code">
-                            <Form.Label>Código postal</Form.Label>
+                            <Form.Label>Postal code</Form.Label>
                             <Form.Control type="number" placeholder={user.postal_code} name='postal_code' value={inputs.postal_code || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Button variant="primary" type="submit" className='my-3'>
-                            Actualiza tus datos
+                            Update user data
                         </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Cerrar
+                        Close
                     </Button>
                 </Modal.Footer>
             </Modal>
