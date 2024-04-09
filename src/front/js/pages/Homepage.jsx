@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
@@ -48,9 +49,6 @@ const Homepage = () => {
                     :
                     <div className='container'>
                         <div className='row'>
-                            <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
-                        </div>
-                        <div className='row'>
                             <HomeClassList filters={filters} />
                         </div>
                         <Row className='mt-5 d-flex justify-content-center'>
@@ -63,7 +61,9 @@ const Homepage = () => {
                                             Darme de alta como entrenador
                                         </Card.Text>
                                         <div className='d-flex justify-content-center'>
-                                            <Button variant="primary">Regístrate</Button>
+                                            <Link to='/signupTrainer'>
+                                                <Button variant="primary">Regístrate</Button>
+                                            </Link>
                                         </div>
                                     </Card.Body>
                                 </Card>
@@ -77,7 +77,9 @@ const Homepage = () => {
                                             Darme de alta como usuario
                                         </Card.Text>
                                         <div className='d-flex justify-content-center'>
-                                            <Button variant="primary">Regístrate</Button>
+                                            <Link to='/signupUser'>
+                                                <Button variant="primary">Regístrate</Button>
+                                            </Link>
                                         </div>
                                     </Card.Body>
                                 </Card>

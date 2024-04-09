@@ -32,11 +32,10 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
     };
 
     return (
-        <Navbar expand="lg" className=" py-2">
-            < Navbar.Toggle aria-controls="home-filters" />
-            <Navbar.Collapse id="home-filters" className="justify-content-center">
-                <Nav className="align-items-center">
-                    <Form onSubmit={handleFormSubmit} className="d-flex">
+        <div className="d-flex justify-content-center">
+            <Navbar expand="lg" className="py-2">
+                <Nav className="align-items-center ">
+                    <Form onSubmit={handleFormSubmit} className="d-flex justify-content-center">
                         <Form.Group controlId="trainingType" className='my-1 mx-2'>
                             <Form.Label className="me-2 mb-0">Training Type</Form.Label>
                             <Form.Select
@@ -77,8 +76,8 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                         </div>
                     </Form>
                 </Nav>
-            </Navbar.Collapse>
-        </Navbar >
+            </Navbar >
+        </div>
     );
 };
 

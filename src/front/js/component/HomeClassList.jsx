@@ -30,7 +30,7 @@ const HomeClassList = ({ filters }) => {
                         <Carousel.Item>
                             <img
                                 className="d-block w-100"
-                                src="https://images.ctfassets.net/qw8ps43tg2ux/268NAl3OLkecJzq6PongwH/2c292c8d2a2fa784f0dea363102080de/iss-personal-trainer-duties-salray-and-more-pt-and-client.jpg"
+                                src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
                                 alt={"Class " + oneClass.id}
                                 style={{ borderRadius: '10%' }}
                             />
@@ -52,7 +52,7 @@ const HomeClassList = ({ filters }) => {
                         <Carousel.Item>
                             <img
                                 className="d-block w-100"
-                                src="https://images.ctfassets.net/qw8ps43tg2ux/268NAl3OLkecJzq6PongwH/2c292c8d2a2fa784f0dea363102080de/iss-personal-trainer-duties-salray-and-more-pt-and-client.jpg"
+                                src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
                                 alt={"Class " + oneClass.id}
                                 style={{ borderRadius: '10%' }}
                             />

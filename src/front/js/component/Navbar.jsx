@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Col from 'react-bootstrap/Col';
 import { LogInModal } from "./LogInModal.jsx";
+import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
 import { useContext } from "react";
 import { Context } from "../store/appContext";
