@@ -34,11 +34,7 @@ export const MyNavbar = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <Navbar bg='primary' expand="lg" className="bg-body-primary" data-bs-theme="dark">
-=======
-    <Navbar key="md" expand="md" className="bg-primary" data-bs-theme="dark">
->>>>>>> cb62cb5aac07e451a1155830d389cfc14b5320b2
+    <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-between p-2 mx-2">
         <Navbar.Brand href="/">Training Date</Navbar.Brand>
         {logged && currentUser.role === "users" ? (

@@ -9,14 +9,11 @@ import Carousel from 'react-bootstrap/Carousel';
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
     const { createCheckoutSession, addCartItem, removeCartItem } = actions
-    const { currentUser } = store
     const allClasses = store.allClasses;
-<<<<<<< HEAD
     const [showAlert, setShowAlert] = useState(false);
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
     const isUser = currentUser && currentUser.role === 'users';
-=======
->>>>>>> cb62cb5aac07e451a1155830d389cfc14b5320b2
+
 
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
@@ -26,7 +23,6 @@ const HomeClassList = ({ filters }) => {
         <>
             {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
             {filteredClasses.length > 0 ?
-<<<<<<< HEAD
                 <Carousel fade style={{ marginTop: '20px' }} >
                     {filteredClasses.map(oneClass => (
                         <Carousel.Item>
@@ -46,54 +42,6 @@ const HomeClassList = ({ filters }) => {
                             </Carousel.Caption>
                         </Carousel.Item>
 
-=======
-                filteredClasses.map(oneClass => (
-                    <Card key={oneClass.id} className='my-3'>
-                        <Card.Header>Class Details</Card.Header>
-                        <Card.Body>
-                            <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
-                            <Card.Text>
-                                {oneClass.class_details ? oneClass.class_details : 'Training class'}
-                            </Card.Text>
-                            {store.logged &&
-                                <Button variant="primary" onClick={() => postUserClass(oneClass.price, oneClass.id)}>Signup for Class</Button>
-                            }
-                            <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
-                        </Card.Body>
-                    </Card>
-                )) :
-                <>
-                    {allClasses.map(oneClass => (
-                        <Card key={oneClass.id} className='my-3'>
-                            <Card.Header>Class Details</Card.Header>
-                            <Card.Body className='d-flex flex-row justify-content-between align-items-center'>
-                                <section className='d-flex flex-column'>
-                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
-                                    <Card.Text>
-                                        {oneClass.class_details ? oneClass.class_details : 'Training class'}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        {oneClass.price}
-                                    </Card.Text>
-                                </section>
-                                {store.logged && (
-                                    <section key={oneClass.id} className='d-flex flex-column gap-2'>
-                                        {store.cart.includes(oneClass.id) ? (
-                                            <div className='d-flex flex-column gap-2'>
-                                                <Button variant="danger" onClick={() => removeCartItem(oneClass.id, store.cart)}>No estoy interesado</Button>
-                                                <Button variant="primary" onClick={() => createCheckoutSession(oneClass.stripe_product_id, oneClass.price)}>Checkout</Button>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <Button variant="primary" onClick={() => addCartItem(oneClass.id)}>Estoy interesado</Button>
-                                            </div>
-                                        )}
-                                        <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
-                                    </section>
-                                )}
-                            </Card.Body>
-                        </Card>
->>>>>>> cb62cb5aac07e451a1155830d389cfc14b5320b2
                     ))}
                 </Carousel >
                 :

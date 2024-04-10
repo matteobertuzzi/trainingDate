@@ -8,17 +8,10 @@ import EditUserProfile from '../component/EditUserProfile.jsx';
 const UserProfile = () => {
     const { id } = useParams();
     const { store, actions } = useContext(Context);
-<<<<<<< HEAD
     const { currentUser } = store;
-    const user = currentUser.user;
+    const user = currentUser && currentUser.user;
     let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg';
     let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png';
-=======
-    const { currentUser } = store
-    const user = currentUser && currentUser.user;
-    let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
-    let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
->>>>>>> cb62cb5aac07e451a1155830d389cfc14b5320b2
 
     async function fetchUser() {
         const userId = id;
@@ -33,13 +26,8 @@ const UserProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-<<<<<<< HEAD
         const url = process.env.BACKEND_URL + `/api/users/${userId}`;
         const response = await fetch(url, options);
-=======
-        const url = process.env.BACKEND_URL + `api/users/${userId}`
-        const response = await fetch(url, options)
->>>>>>> cb62cb5aac07e451a1155830d389cfc14b5320b2
         if (!response.ok) {
             console.error(`Error fetching user data. HTTP Status ${response.status}`);
             return null;
