@@ -17,7 +17,7 @@ const UserProfile = () => {
         const userId = id;
         const token = localStorage.getItem("accessToken");
         if (!token) {
-            console.error("No access token provided!");
+            console.error("¡No se proporcionó el token de acceso!");
             return null;
         }
         const options = {
@@ -29,7 +29,7 @@ const UserProfile = () => {
         const url = process.env.BACKEND_URL + `/api/users/${userId}`;
         const response = await fetch(url, options);
         if (!response.ok) {
-            console.error(`Error fetching user data. HTTP Status ${response.status}`);
+            console.error(`Error al obtener los datos del usuario. Estado HTTP ${response.status}`);
             return null;
         }
         const data = await response.json();
@@ -57,10 +57,10 @@ const UserProfile = () => {
                                 </Col>
                                 <Col xs={12} sm={8}>
                                     <h2 className="mb-4">{user.name} {user.last_name}</h2>
-                                    <p><strong>Email:</strong> {user.email}</p>
-                                    <p><strong>Phone:</strong> {user.phone_number}</p>
-                                    <p><strong>City:</strong> {user.city}</p>
-                                    <p><strong>Postal Code:</strong> {user.postal_code}</p>
+                                    <p><strong>Correo electrónico:</strong> {user.email}</p>
+                                    <p><strong>Teléfono:</strong> {user.phone_number}</p>
+                                    <p><strong>Ciudad:</strong> {user.city}</p>
+                                    <p><strong>Código Postal:</strong> {user.postal_code}</p>
                                     <div className="mt-4">
                                         <EditUserProfile user={user} onChangeSubmit={fetchUser} />
                                     </div>

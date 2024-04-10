@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Context } from '../store/appContext';
 import { Form, Button, Navbar, Nav } from 'react-bootstrap';
 
@@ -32,12 +32,12 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
     };
 
     return (
-        <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-center" style={{ alignItems: 'end !important' }}>
             <Navbar expand="lg" className="py-2">
                 <Nav className="align-items-center ">
                     <Form onSubmit={handleFormSubmit} className="d-flex justify-content-center">
                         <Form.Group controlId="trainingType" className='my-1 mx-2'>
-                            <Form.Label className="me-2 mb-0">Training Type</Form.Label>
+                            <Form.Label className="me-2 mb-0">Tipo de Entrenamiento</Form.Label>
                             <Form.Select
                                 aria-label="training-type"
                                 value={filter.trainingType}
@@ -45,14 +45,14 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                                 required
                                 className="form-select-sm"
                             >
-                                <option>Select training type</option>
+                                <option>Selecciona tipo de entrenamiento</option>
                                 {specializations.map((specialization) =>
                                     <option key={specialization.id} value={specialization.id}>{specialization.name}</option>
                                 )}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group controlId="trainingLevel" className='my-1 mx-2'>
-                            <Form.Label className="me-2 mb-0">Training Level</Form.Label>
+                            <Form.Label className="me-2 mb-0">Nivel de Entrenamiento</Form.Label>
                             <Form.Select
                                 aria-label="training-level"
                                 value={filter.trainingLevel}
@@ -60,18 +60,18 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                                 required
                                 className="form-select-sm"
                             >
-                                <option>Select training level</option>
-                                <option value='Beginner'>Beginner</option>
-                                <option value='Intermediate'>Intermediate</option>
-                                <option value='Advanced'>Advanced</option>
+                                <option>Selecciona nivel de entrenamiento</option>
+                                <option value='Beginner'>Principiante</option>
+                                <option value='Intermediate'>Intermedio</option>
+                                <option value='Advanced'>Avanzado</option>
                             </Form.Select>
                         </Form.Group>
-                        <div className="d-flex align-items-center">
+                        <div className="d-flex align-items-center"> {/* Added align-items-center for vertical centering */}
                             <Button variant="primary" type="submit" className="btn-sm mx-2">
-                                Filter classes
+                                Filtrar clases
                             </Button>
                             <Button variant="danger" type="reset" onClick={handleFilterReset} className='btn-sm mx-2'>
-                                Reset filters
+                                Restablecer filtros
                             </Button>
                         </div>
                     </Form>

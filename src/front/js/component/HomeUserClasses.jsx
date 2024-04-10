@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Loading from './Loading.jsx';
 import FilterAlert from './FilterAlert.jsx';
+import ClassModal from './ClassModal.jsx';
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
@@ -37,13 +38,15 @@ const HomeUserClasses = () => {
                                 {chunk.map(oneClass => (
                                     <div className='col-4' key={oneClass.id}>
                                         <Card className='my-3'>
-                                            <Card.Header>Class Details</Card.Header>
+                                            <Card.Header>Detalles de la Clase</Card.Header>
                                             <Card.Body>
-                                                <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
+                                                <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
                                                 <Card.Text>
-                                                    {oneClass.class_details ? oneClass.class_details : 'Training class'}
+                                                    {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
                                                 </Card.Text>
-                                                <Button variant="primary">View class</Button>
+                                                <div className='d-flex justify-content-center'>
+                                                    <ClassModal userClass={oneClass} />
+                                                </div>
                                             </Card.Body>
                                         </Card>
                                     </div>
@@ -57,13 +60,15 @@ const HomeUserClasses = () => {
                     {userClasses.map(oneClass => (
                         <div className='col-4' key={oneClass.id}>
                             <Card className='my-3'>
-                                <Card.Header>Class Details</Card.Header>
+                                <Card.Header>Detalles de la Clase</Card.Header>
                                 <Card.Body>
-                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
+                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
                                     <Card.Text>
-                                        {oneClass.class_details ? oneClass.class_details : 'Training class'}
+                                        {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
                                     </Card.Text>
-                                    <Button variant="primary">View class</Button>
+                                    <div className='d-flex justify-content-center'>
+                                        <ClassModal userClass={oneClass} />
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </div>

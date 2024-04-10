@@ -8,10 +8,10 @@ import Carousel from 'react-bootstrap/Carousel';
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
-    const { createCheckoutSession, addCartItem, removeCartItem } = actions
+    const { createCheckoutSession, addCartItem, removeCartItem } = actions;
     const allClasses = store.allClasses;
     const [showAlert, setShowAlert] = useState(false);
-    const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
+    const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
     const isUser = currentUser && currentUser.role === 'users';
 
 
@@ -29,14 +29,14 @@ const HomeClassList = ({ filters }) => {
                             <img
                                 className="d-block w-100"
                                 src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
-                                alt={"Class " + oneClass.id}
+                                alt={"Clase " + oneClass.id}
                                 style={{ borderRadius: '10%' }}
                             />
                             <Carousel.Caption>
-                                <h3>{oneClass.class_name ? oneClass.class_name : 'Training class'}</h3>
-                                <p>{oneClass.class_details ? oneClass.class_details : 'Training class'}</p>
+                                <h3>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</h3>
+                                <p>{oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}</p>
                                 {isUser &&
-                                    <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
+                                    <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Inscribirse en la clase</Button>
                                 }
                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                             </Carousel.Caption>
@@ -51,14 +51,14 @@ const HomeClassList = ({ filters }) => {
                             <img
                                 className="d-block w-100"
                                 src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
-                                alt={"Class " + oneClass.id}
+                                alt={"Clase " + oneClass.id}
                                 style={{ borderRadius: '10%' }}
                             />
                             <Carousel.Caption>
-                                <h3>{oneClass.class_name ? oneClass.class_name : 'Training class'}</h3>
-                                <p>{oneClass.class_details ? oneClass.class_details : 'Training class'}</p>
+                                <h3>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</h3>
+                                <p>{oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}</p>
                                 {isUser &&
-                                    <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
+                                    <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Inscribirse en la clase</Button>
                                 }
                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                             </Carousel.Caption>

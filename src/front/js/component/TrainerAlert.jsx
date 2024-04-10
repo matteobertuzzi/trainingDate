@@ -14,15 +14,15 @@ function TrainerAlert({ location }) {
     return (
         <>
             <Alert show={show} variant="danger">
-                <Alert.Heading>My Alert</Alert.Heading>
-                {location == 'classes' ?
-                    <p>There are no classes. Click the button below to add a new class.</p>
+                <Alert.Heading>Alerta</Alert.Heading>
+                {location === 'classes' ?
+                    <p>No hay clases. Haz clic en el botón de abajo para agregar una nueva clase.</p>
                     :
-                    <p>There are no specializations. Click the button below to add a new specialization.</p>}
+                    <p>No hay especializaciones. Haz clic en el botón de abajo para agregar una nueva especialización.</p>}
                 <hr />
             </Alert>
 
-            {!show && <Button onClick={() => setShow(true)} variant="outline-danger">Show Alert</Button>}
+            {!show && <Button onClick={() => setShow(true)} variant="outline-danger">Mostrar Alerta</Button>}
         </>
     );
 }

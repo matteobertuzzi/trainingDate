@@ -5,7 +5,7 @@ import injectContext from "./store/appContext.js";
 import ScrollToTop from "./component/scrollToTop.js";
 import { BackendURL } from "./component/BackendURL.jsx";
 import { MyNavbar } from "./component/Navbar.jsx";
-import { Footer } from "./component/Footer.jsx";
+import Footer from "./component/Footer.jsx";
 // Import custom pages
 import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
 import { InvalidToken } from "./pages/InvalidToken.jsx";
