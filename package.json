@@ -83,6 +83,7 @@
 		"@stripe/react-connect-js": "^3.3.3",
 		"bootstrap": "^5.3.3",
 		"bootstrap-icons": "^1.11.3",
+		"bootswatch": "^5.3.3",
 		"cloudinary": "^2.1.0",
 		"cloudinary-react": "^1.8.1",
 		"prop-types": "^15.6.1",

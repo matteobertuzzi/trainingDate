@@ -4,12 +4,17 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import FilterAlert from './FilterAlert.jsx';
 import MapModal from './MapModal.jsx';
+import Carousel from 'react-bootstrap/Carousel';
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
     const { createCheckoutSession, addCartItem, removeCartItem } = actions
     const { currentUser } = store
     const allClasses = store.allClasses;
+    const [showAlert, setShowAlert] = useState(false);
+    const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
+    const isUser = currentUser && currentUser.role === 'users';
+
 
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
@@ -19,54 +24,48 @@ const HomeClassList = ({ filters }) => {
         <>
             {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
             {filteredClasses.length > 0 ?
-                filteredClasses.map(oneClass => (
-                    <Card key={oneClass.id} className='my-3'>
-                        <Card.Header>Class Details</Card.Header>
-                        <Card.Body>
-                            <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
-                            <Card.Text>
-                                {oneClass.class_details ? oneClass.class_details : 'Training class'}
-                            </Card.Text>
-                            {store.logged &&
-                                <Button variant="primary" onClick={() => postUserClass(oneClass.price, oneClass.id)}>Signup for Class</Button>
-                            }
-                            <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
-                        </Card.Body>
-                    </Card>
-                )) :
-                <>
-                    {allClasses.map(oneClass => (
-                        <Card key={oneClass.id} className='my-3'>
-                            <Card.Header>Class Details</Card.Header>
-                            <Card.Body className='d-flex flex-row justify-content-between align-items-center'>
-                                <section className='d-flex flex-column'>
-                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Training class'}</Card.Title>
-                                    <Card.Text>
-                                        {oneClass.class_details ? oneClass.class_details : 'Training class'}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        {oneClass.price}
-                                    </Card.Text>
-                                </section>
-                                {store.logged && (
-                                    <section key={oneClass.id} className='d-flex flex-column gap-2'>
-                                        {store.cart.includes(oneClass.id) ? (
-                                            <div className='d-flex flex-column gap-2'>
-                                                <Button variant="danger" onClick={() => removeCartItem(oneClass.id, store.cart)}>No estoy interesado</Button>
-                                                <Button variant="primary" onClick={() => createCheckoutSession(oneClass.stripe_product_id, oneClass.price)}>Checkout</Button>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <Button variant="primary" onClick={() => addCartItem(oneClass.id)}>Estoy interesado</Button>
-                                            </div>
-                                        )}
-                                        <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
-                                    </section>
-                                )}
-                            </Card.Body>
-                        </Card>
+                <Carousel fade style={{ marginTop: '20px' }} >
+                    {filteredClasses.map(oneClass => (
+                        <Carousel.Item>
+                            <img
+                                className="d-block w-100"
+                                src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
+                                alt={"Class " + oneClass.id}
+                                style={{ borderRadius: '10%' }}
+                            />
+                            <Carousel.Caption>
+                                <h3>{oneClass.class_name ? oneClass.class_name : 'Training class'}</h3>
+                                <p>{oneClass.class_details ? oneClass.class_details : 'Training class'}</p>
+                                {isUser &&
+                                    <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
+                                }
+                                <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                            </Carousel.Caption>
+                        </Carousel.Item>
+
                     ))}
-                </>
+                </Carousel >
+                :
+                <Carousel fade style={{ marginTop: '20px' }} >
+                    {allClasses.map(oneClass => (
+                        <Carousel.Item>
+                            <img
+                                className="d-block w-100"
+                                src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
+                                alt={"Class " + oneClass.id}
+                                style={{ borderRadius: '10%' }}
+                            />
+                            <Carousel.Caption>
+                                <h3>{oneClass.class_name ? oneClass.class_name : 'Training class'}</h3>
+                                <p>{oneClass.class_details ? oneClass.class_details : 'Training class'}</p>
+                                {isUser &&
+                                    <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Signup for Class</Button>
+                                }
+                                <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                    ))}
+                </Carousel>
             }
         </>
     )
