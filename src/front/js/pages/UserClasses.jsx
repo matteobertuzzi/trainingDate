@@ -12,8 +12,11 @@ export const UserClasses = () => {
     const { id } = useParams();
 
 
-
     if (!currentUser || !currentUser.user) {
+        return <Loading />;
+    }
+
+    if (!userClasses) {
         return <Loading />;
     }
 

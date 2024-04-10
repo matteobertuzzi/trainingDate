@@ -50,12 +50,12 @@ export const MyNavbar = () => {
                 ) : (
                   <>
                     {cart.map((item, index) => (
-                      <React.Fragment key={index}>
-                        <NavDropdown.Item>{item}</NavDropdown.Item>
+                      <div className="d-flex flex-row justify-content-between" key={index}>
+                        <NavDropdown.Item key={index}>{item}</NavDropdown.Item>
                         <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
                           <i className="fa-solid fa-trash"></i>
                         </Button>
-                      </React.Fragment>
+                      </div>
                     ))}
                   </>
                 )}

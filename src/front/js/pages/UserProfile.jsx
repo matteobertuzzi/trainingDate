@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
-import { Container, Row, Col, Card, Image } from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditUserProfile from '../component/EditUserProfile.jsx';
-
 
 
 const UserProfile = () => {
     const { id } = useParams();
     const { store, actions } = useContext(Context);
     const { currentUser } = store
+    const { deleteUser } = actions
     const user = currentUser && currentUser.user;
     let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
     let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
@@ -72,6 +72,7 @@ const UserProfile = () => {
                             </Card>
                             <div style={{ marginTop: '20px', textAlign: 'center' }}>
                                 <EditUserProfile user={user} onChangeSubmit={fetchUser} />
+                                <Button onClick={() => deleteUser(currentUser.user.id)} >Cancelar perfil</Button>
                             </div>
                         </Col>
                     </>

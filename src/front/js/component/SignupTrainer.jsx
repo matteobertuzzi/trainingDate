@@ -39,6 +39,7 @@ function SignupTrainer() {
             const validateLog = await addTrainer(inputs);
             if (!validateLog) {
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
+                
             } else {
                 setInputs({
                     name: '',

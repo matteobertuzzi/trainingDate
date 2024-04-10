@@ -12,6 +12,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       allClasses: [],
       userClasses: [],
       cart: [],
+      clientSecret: [],
       filters: {
         trainingType: '',
         trainingLevel: ''
@@ -79,7 +80,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const data = await response.json()
         setStore({ allClasses: data.results })
-        console.log(getStore().allClasses)
         localStorage.setItem('allClasses', JSON.stringify(data.results))
       },
 
@@ -94,36 +94,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         const specializations = data.specializations
         setStore({ specializations: specializations })
         localStorage.setItem('specializations', JSON.stringify(specializations))
-      },
-
-      loginUser: async (inputs, user_type) => {
-        const options = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: inputs.email,
-            password: inputs.password,
-          }),
-        };
-        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
-        if (!response.ok) return false
-        const data = await response.json()
-        setStore({ currentUser: data.results });
-        localStorage.setItem("availableAccount", JSON.stringify(data.results));
-        localStorage.setItem("accessToken", data.access_token);
-        getActions().setLogged(true)
-        if (user_type == "trainers") {
-          getActions().getTrainerClasses()
-          localStorage.removeItem("userClasses")
-          setStore({ userClasses: [] });
-        } else if (user_type == "users") {
-          getActions().getUserClasses()
-          localStorage.removeItem("trainerClasses")
-          setStore({ trainerClasses: [] });
-        }
-        return true
       },
 
       getUserClasses: async () => {
@@ -148,9 +118,114 @@ const getState = ({ getStore, getActions, setStore }) => {
           return null
         }
         const data = await response.json();
-        console.log(data)
         setStore({ userClasses: data.result })
         localStorage.setItem('userClasses', JSON.stringify(data.result))
+      },
+
+      getTrainerClasses: async () => {
+        const token = localStorage.getItem("accessToken");
+        const availableAccountString = localStorage.getItem("availableAccount");
+        const availableAccount = JSON.parse(availableAccountString);
+        const trainerId = availableAccount.trainer.id;
+        if (!trainerId) {
+          console.log("No trainer available")
+          return null
+        }
+        if (!token) {
+          console.error("No access token found");
+          return null;
+        }
+        const options = {
+          headers: {
+            "Content-Type": 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options)
+        if (!response.ok) {
+          return response.status
+        }
+        const data = await response.json()
+        const classes = data.classes
+        setStore({ trainerClasses: classes })
+        localStorage.setItem('trainerClasses', JSON.stringify(classes))
+      },
+
+      getAvailableAccount: async () => {
+        const token = localStorage.getItem("accessToken");
+        const account = localStorage.getItem("availableAccount");
+        let redirectToHome = false;
+
+        if (!token) {
+          console.error("No access token found");
+          localStorage.removeItem("availableAccount");
+          getActions().setLogged(false);
+          redirectToHome = true;
+          return
+        }
+
+        if (redirectToHome) {
+          window.location.href = `${process.env.FRONT_URL}`;
+          return;
+        }
+
+        const options = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
+
+        if (!response.ok) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("availableAccount");
+          getActions().setLogged(false);
+          window.location.href = `${process.env.FRONT_URL}`
+          return response.status
+        } else {
+          const data = await response.json();
+          setStore({ currentUser: JSON.parse(account) });
+          if (data.results.role == "trainers") {
+            getActions().getTrainerClasses()
+          } else if (data.results.role == "users") {
+            getActions().getUserClasses()
+          }
+          getActions().setLogged(true);
+        }
+      },
+
+      loginUser: async (inputs, user_type) => {
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: inputs.email,
+            password: inputs.password,
+          }),
+        };
+        const response = await fetch(`${process.env.BACKEND_URL}api/login/${user_type}`, options)
+        if (!response.ok) return false
+        const data = await response.json()
+        setStore({ currentUser: data.results });
+        localStorage.setItem("availableAccount", JSON.stringify(data.results));
+        localStorage.setItem("accessToken", data.access_token);
+        getActions().setLogged(true);
+
+        if (user_type == "trainers") {
+          getActions().getTrainerClasses()
+          localStorage.removeItem("userClasses")
+          setStore({ userClasses: [] });
+          window.location.href = `${process.env.FRONT_URL}`
+        } else if (user_type == "users") {
+          getActions().getUserClasses()
+          localStorage.removeItem("trainerClasses")
+          setStore({ trainerClasses: [] });
+          window.location.href = `${process.env.FRONT_URL}`
+        }
+        return true
       },
 
       addUser: async (inputs) => {
@@ -174,7 +249,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(url, options);
         if (!response.ok) {
           console.log(response.status, response.statusText);
-          return response.statusText;
+          return false;
         };
         const data = await response.json();
         return true
@@ -208,51 +283,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           return false;
         };
         const data = await response.json();
-        return data
-      },
-
-      getAvailableAccount: async () => {
-        const token = localStorage.getItem("accessToken");
-        const account = localStorage.getItem("availableAccount");
-        let redirectToHome = false;
-
-        if (!token) {
-          console.error("No access token found");
-          localStorage.removeItem("availableAccount");
-          getActions().setLogged(false);
-          redirectToHome = true;
-          return
-        }
-
-        if (redirectToHome) {
-          window.location.href = `${process.env.FRONT_URL}api/end/session}`;
-          return;
-        }
-
-        const options = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
-        const response = await fetch(`${process.env.BACKEND_URL}api/current_available_account`, options);
-
-        if (!response.ok) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("availableAccount");
-          window.location.href = `${process.env.FRONT_URL}api/end/session}`
-          getActions().setLogged(false);
-          return response.status
-        } else {
-          const data = await response.json();
-          setStore({ currentUser: JSON.parse(account) });
-          if (data.results.role == "trainers") {
-            getActions().getTrainerClasses()
-          } else if (data.results.role == "users") {
-            getActions().getUserClasses()
-          }
-          getActions().setLogged(true);
-        }
+        return true
       },
 
       postTrainerClasses: async (inputs) => {
@@ -291,35 +322,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const data = await response.json();
         return true
-      },
-
-      getTrainerClasses: async () => {
-        const token = localStorage.getItem("accessToken");
-        const availableAccountString = localStorage.getItem("availableAccount");
-        const availableAccount = JSON.parse(availableAccountString);
-        const trainerId = availableAccount.trainer.id;
-        if (!trainerId) {
-          console.log("No trainer available")
-          return null
-        }
-        if (!token) {
-          console.error("No access token found");
-          return null;
-        }
-        const options = {
-          headers: {
-            "Content-Type": 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes`, options)
-        if (!response.ok) {
-          return response.status
-        }
-        const data = await response.json()
-        const classes = data.classes
-        setStore({ trainerClasses: classes })
-        localStorage.setItem('trainerClasses', JSON.stringify(classes))
       },
 
       updateUser: async (id, inputs) => {
@@ -434,35 +436,13 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
 
-      createCheckoutSession: async (productId, price) => {
-        const options = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.STRIPE_API_KEY}`
-          },
-          body: JSON.stringify({
-            productId: productId,
-            price: price * 100
-          }),
-        };
-
-        const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options);
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to create checkout session');
-        }
-
-        const data = await response.json();
-        console.log(data)
-        window.location.href = data.sessionUrl;
-      },
-
       postUserClass: async (amount, classId) => {
         const token = localStorage.getItem("accessToken");
         const availableAccountString = localStorage.getItem("availableAccount");
         const availableAccount = JSON.parse(availableAccountString);
         const userId = availableAccount.user.id;
+        const storageUserClasses = localStorage.getItem("userClasses")
+        const userClasses = JSON.parse(storageUserClasses)
 
         if (!token) {
           console.error("No access token found!");
@@ -479,18 +459,20 @@ const getState = ({ getStore, getActions, setStore }) => {
             class_id: classId
           }),
         };
+
         const response = await fetch(`${process.env.BACKEND_URL}api/users/${userId}/classes`, options)
         if (!response.ok) return response.status
         const data = await response.json()
-        console.log(data)
-        getActions().addCartItem(classId)
-        setStore({ userClasses: data })
+        const updatedUserClasses = { ...userClasses, ...data };
+        setStore({ userClasses: updatedUserClasses });
+        localStorage.setItem('userClasses', JSON.stringify(updatedUserClasses));
       },
 
       deleteUserClass: async (userId, classId) => {
         const token = localStorage.getItem("accessToken");
         const storageAllClasses = localStorage.getItem("allClasses")
         const allClasses = JSON.parse(storageAllClasses)
+        const updatedClasses = allClasses.filter((element) => element.id !== classId);
 
         if (!token) {
           console.error("No access token found!");
@@ -504,7 +486,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            id: userId,
+            user_id: userId,
             class_id: classId
           }),
         };
@@ -512,19 +494,24 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/users/${userId}/classes/${classId}`, options)
         if (!response.ok) return response.status
         const data = await response.json()
-        console.log(data)
-        getActions().removeCartItem(classId, allClasses)
+        localStorage.setItem('userClasses', JSON.stringify(updatedClasses));
+        setStore({ userClasses: updatedClasses });
       },
 
       deleteClass: async (trainerId, classId) => {
         const token = localStorage.getItem("accessToken");
-        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes/${classId}`, {
+        const options = {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-        });
+          body: JSON.stringify({
+            id: trainerId,
+            class_id: classId
+          })
+        }
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes/${classId}`, options)
 
         if (!response.ok) {
           const errorMessage = await response.text();
@@ -544,6 +531,84 @@ const getState = ({ getStore, getActions, setStore }) => {
         } else {
           console.error('No classes found in local storage');
           return false;
+        }
+      },
+
+      deleteUser: async (id) => {
+        const token = localStorage.getItem("accessToken");
+
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+        const options = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+
+        const response = await fetch(`${process.env.BACKEND_URL}api/users/${id}`, options)
+        if (!response.ok) return response.status
+        const data = response.json()
+        console.log(data)
+        setStore({ logged: false })
+        setStore({ currentUser: [] })
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("availableUser")
+        window.location.href = `${process.env.FRONT_URL}`
+      },
+
+      deleteTrainer: async (id) => {
+        const token = localStorage.getItem("accessToken");
+
+        if (!token) {
+          console.error("No access token found!");
+          return null;
+        }
+        const options = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${id}`, options)
+        if (!response.ok) return response.status
+        const data = response.json()
+        console.log(data)
+        setStore({ logged: false })
+        setStore({ currentUser: [] })
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("availableUser")
+        window.location.href = `${process.env.FRONT_URL}`
+      },
+
+      createCheckoutSession: async (productId, customerId) => {
+        try {
+          const options = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${process.env.STRIPE_API_KEY}`
+            },
+            body: JSON.stringify({
+              product_id: productId,
+              stripe_customer_id: customerId
+            }),
+          };
+
+          const response = await fetch(`${process.env.BACKEND_URL}api/create-checkout-session`, options);
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to create checkout session');
+          }
+          const data = await response.json();
+          window.location.href = data.sessionUrl;
+        } catch (error) {
+          throw new Error(error.message || 'Failed to create checkout session');
         }
       },
 

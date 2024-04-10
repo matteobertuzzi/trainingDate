@@ -1,14 +1,8 @@
 """empty message
 
-<<<<<<<< HEAD:migrations/versions/9797b0b74fe4_.py
-Revision ID: 9797b0b74fe4
+Revision ID: 6fce7a711054
 Revises: 
-Create Date: 2024-04-06 12:03:24.755875
-========
-Revision ID: 1a9a5afe88d2
-Revises: 
-Create Date: 2024-04-06 11:47:03.305133
->>>>>>>> 5befd858eb7553af18f361607f160bcec0e65edb:migrations/versions/1a9a5afe88d2_.py
+Create Date: 2024-04-10 14:09:17.153670
 
 """
 from alembic import op
@@ -16,11 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-<<<<<<<< HEAD:migrations/versions/9797b0b74fe4_.py
-revision = '9797b0b74fe4'
-========
-revision = '1a9a5afe88d2'
->>>>>>>> 5befd858eb7553af18f361607f160bcec0e65edb:migrations/versions/1a9a5afe88d2_.py
+revision = '6fce7a711054'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -62,9 +52,11 @@ def upgrade():
     sa.Column('bank_iban', sa.String(length=34), nullable=False),
     sa.Column('vote_user', sa.Integer(), nullable=True),
     sa.Column('sum_value', sa.Integer(), nullable=True),
+    sa.Column('stripe_account_id', sa.String(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('stripe_account_id')
     )
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -76,13 +68,15 @@ def upgrade():
     sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('phone_number', sa.String(length=20), nullable=True),
     sa.Column('gender', sa.Enum('Male', 'Female', 'Not Specified', name='gender'), nullable=False),
+    sa.Column('stripe_customer_id', sa.String(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('stripe_customer_id')
     )
     op.create_table('trainers_classes',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('class_name', sa.String(length=120), nullable=True),
+    sa.Column('class_name', sa.String(length=120), nullable=False),
     sa.Column('class_details', sa.String(length=200), nullable=True),
     sa.Column('city', sa.String(length=120), nullable=False),
     sa.Column('postal_code', sa.Integer(), nullable=False),

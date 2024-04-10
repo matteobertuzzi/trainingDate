@@ -18,7 +18,7 @@ export const CreateClass = () => {
     const navigate = useNavigate()
     const { store, actions } = useContext(Context)
     const { currentUser } = store
-    const { postTrainerClasses, getTrainerClasses } = actions
+    const { postTrainerClasses, getTrainerClasses, getAllClasses } = actions
     const params = useParams()
     const { trainerId } = params
     const [error, setError] = useState(null);
@@ -60,6 +60,7 @@ export const CreateClass = () => {
             setError(null);
             alert("¡Clase grabada con éxito!");
             await getTrainerClasses()
+            await getAllClasses()
             navigate(`/trainer/${currentUser.trainer.id}/profile`)
 
         }

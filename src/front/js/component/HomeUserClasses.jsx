@@ -11,7 +11,7 @@ const HomeUserClasses = () => {
     const { getUserClasses } = actions
     const { currentUser } = store
     const [showAlert, setShowAlert] = useState(false);
-    const userClasses = store.userClasses.trainer_classes;
+    const {userClasses} = store;
 
     if (!currentUser || !currentUser.user) {
         return <Loading />;
@@ -23,7 +23,7 @@ const HomeUserClasses = () => {
 
     return (
         <>
-            {userClasses != '' ?
+            {userClasses.stripe_status == 'Paid' ?
                 userClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
                         <Card.Header>Class Details</Card.Header>

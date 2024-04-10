@@ -14,6 +14,7 @@ class Users(db.Model):
     password = db.Column(db.String(128), nullable=False)
     phone_number = db.Column(db.String(20), unique=False)
     gender = db.Column(db.Enum("Male", "Female", "Not Specified", name="gender"), nullable=False)
+    stripe_customer_id = db.Column(db.String(), unique=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
 
     def __repr__(self):
@@ -28,6 +29,7 @@ class Users(db.Model):
                 'postal_code': self.postal_code,
                 'phone_number': self.phone_number,
                 'gender': self.gender,
+                'stripe_customer_id': self.stripe_customer_id,
                 'is_active': self.is_active}
 
 
@@ -48,6 +50,7 @@ class Trainers(db.Model):
         bank_iban = db.Column(db.String(34), unique=False, nullable=False)
         vote_user = db.Column(db.Integer)
         sum_value = db.Column(db.Integer)
+        stripe_account_id = db.Column(db.String(), unique=True)
         is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=False)
 
         def __repr__(self):
@@ -107,7 +110,7 @@ class Specializations(db.Model):
 class TrainersClasses(db.Model):
         __tablename__= "trainers_classes"
         id = db.Column(db.Integer, primary_key=True)
-        class_name = db.Column(db.String(120), unique=False, nullable=True)
+        class_name = db.Column(db.String(120), unique=False, nullable=False)
         class_details = db.Column(db.String(200), unique=False, nullable=True)
         city = db.Column(db.String(120), unique=False, nullable=False)
         postal_code = db.Column(db.Integer, unique=False, nullable=False)

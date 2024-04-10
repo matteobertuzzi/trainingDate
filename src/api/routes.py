@@ -17,6 +17,7 @@ import stripe
 import cloudinary.uploader
 import cloudinary
 import googlemaps
+import json
 
 
 # Configuracion Cloudinary
@@ -27,13 +28,14 @@ cloudinary.config(
 )
 
 # Obtiene la clave para el serializador, que sirve para crear token de tiempo limitado
-s = URLSafeTimedSerializer(os.environ.get("URL_SAFE_TIMED_SERIALIZER"))
 
+s = URLSafeTimedSerializer(os.environ.get("URL_SAFE_TIMED_SERIALIZER"))
 stripe.api_key = os.environ.get("STRIPE_API_KEY")
 api = Blueprint('api', __name__)
 CORS(api) 
 bcrypt = Bcrypt()
 mail = Mail()
+endpoint_secret=os.environ.get("ENDPOINT_SECRET")
 
 
 # Ruta para crear una sesión de checkout con Stripe
@@ -41,51 +43,136 @@ mail = Mail()
 def create_checkout_session():
     response_body = {}
     data = request.json
-    if not data or 'productId' not in data or 'price' not in data:
+    if not data or 'stripe_customer_id' not in data or 'product_id' not in data:
         response_body["message"] = "Missing required parameters"
         return jsonify(response_body), 400
-    product_id = data['productId']
     try:
-        product = stripe.Product.retrieve(product_id)
-        if not product:
-            response_body["message"] = "Product not found"
-            return jsonify(response_body), 400
-        session = stripe.checkout.Session.create(line_items=[{'price_data': {'currency': 'eur',
-                                                                             'unit_amount': data["price"],
-                                                                             'product': product.id},
+        trainer_class = TrainersClasses.query.filter_by(stripe_product_id=data['product_id']).first()
+        if not trainer_class:
+            response_body["message"] = "Class not found"
+            return jsonify(response_body), 404
+        user = Users.query.filter_by(stripe_customer_id=data["stripe_customer_id"]).first()
+        if not user:
+            response_body["message"] = "User not found"
+            return jsonify(response_body), 404
+        # TODO: Cambiar url de confirmacion y de cancelacion
+        session = stripe.checkout.Session.create(payment_method_types=['card'],
+                                                 line_items=[{'price': trainer_class.stripe_price_id,
                                                               'quantity': 1}],
                                                  mode='payment',
-                                                 payment_method_types=['card'],
+                                                 customer=user.stripe_customer_id,
                                                  success_url=os.environ['FRONT_URL'],
-                                                 cancel_url='https://wikipedia.com')
+                                                 cancel_url='https://google.com',
+                                                 metadata={'class_id': trainer_class.id,
+                                                           'trainer_id': trainer_class.trainer_id,
+                                                           'start_date': trainer_class.start_date,
+                                                           'end_date': trainer_class.end_date,
+                                                           'training_level': trainer_class.training_level,
+                                                           'user': user.id})
         response_body["result"] = session
         response_body["sessionId"] = session.id
         response_body["sessionUrl"] = session.url
-        print(response_body)
         return jsonify(response_body), 200
-    except stripe.error.StripeError as e:
-        response_body["message"] = str(e)
-        return jsonify(response_body), 500
     except Exception as e:
         response_body["message"] = str(e)
         return jsonify(response_body), 500
 
-def update_payment_status(user_id, session_id):
+
+# Manejo de eventos de la respuesta de checkout
+@api.route('/webhook', methods=['POST'])
+def webhook():
+    response_body = {}
+    payload = request.data
     try:
-        payment_status = stripe.checkout.Session.retrieve(session_id).payment_status
-        user_class = UsersClasses.query.filter_by(user_id=user_id).first()
+        event = json.loads(payload)
+    except json.decoder.JSONDecodeError as e:
+        print('⚠️  Error de Webhook al analizar la solicitud básica: ' + str(e))
+        return jsonify(success=False)
+    if endpoint_secret:
+        sig_header = request.headers.get('Stripe-Signature')
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+            )
+        except stripe.error.SignatureVerificationError as e:
+            print('⚠️  Error de verificación de firma del webhook: ' + str(e))
+            return jsonify(success=False)
+    if event and event['type'] == 'payment_intent.succeeded':
+        payment_intent = event['data']['object']
+        class_id = int(payment_intent['metadata']["class_id"])
+        user_id = int(payment_intent['metadata']["user"])
+        print(f"ID de Clase: {class_id}, ID de Usuario: {user_id}")
+        user_class = db.session.query(UsersClasses).filter_by(class_id=class_id, user_id=user_id).first()
         if user_class:
-            if payment_status == "paid":
-                user_class.stripe_status = "Paid"
-            elif payment_status == "unpaid":
-                user_class.stripe_status = "Rejected"
+            user_class.stripe_status = "Paid"
             db.session.commit()
-            return True
-    except Exception as e:
-        print("Error updating payment status:", str(e))
-        return False
+            print(f"Clase de usuario actualizada: {user_class.serialize()}")
+            return jsonify(success=True)
+        response_body["message"] = "No se encontró la clase"
+        return jsonify(response_body), 400
+    elif event['type'] == 'payment_intent.payment_failed':
+        print('El pago ha fallado')   
+        checkout_session_data = event['data']['object']
+        payment_intent_id = checkout_session_data['payment_intent']
+        try: 
+            class_id = checkout_session_data['metadata']["class_id"]
+            if class_id is not None:
+                user_id = checkout_session_data['metadata']["user"]
+                user_class = db.session.query(UsersClasses).filter_by(class_id=class_id, user_id=user_id).first()
+                if user_class:
+                    user_class.stripe_status = "Reject" 
+                    db.session.commit()
+                    print(f"Clase de usuario actualizada: {user_class.serialize()}")
+                    return jsonify(success=True)
+                print("No se encontró la clave 'user_id' en los metadatos")
+            print('No se encontró la clave "class_id" en los metadatos')
+        except Exception as e:
+            print('Error al actualizar el estado de la clase: ' + str(e))
+            return jsonify(success=False)
+    elif event['type'] == 'checkout.session.completed':
+        print('La sesión de checkout ha sido completada')
+        checkout_session_data = event['data']['object']
+        payment_intent_id = checkout_session_data['payment_intent']
+        try:
+            payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+            if payment_intent.status == 'succeeded':
+                print('El PaymentIntent ya ha sido confirmado anteriormente')
+                class_id = checkout_session_data['metadata']["class_id"] # Verificar si la clave existe
+                if class_id is not None:
+                    user_id = checkout_session_data['metadata']["user"]
+                    user_class = db.session.query(UsersClasses).filter_by(class_id=class_id, user_id=user_id).first()
+                    if user_class:
+                        user_class.stripe_status = "Paid"
+                        db.session.commit()
+                        print(f"Clase de usuario actualizada: {user_class.serialize()}")
+                        return jsonify(success=True)
+                        # Aquí se crea la transferencia al IBAN del entrenador
+                    # trainer_id = payment_intent['metadata'].get("trainer_id")
+                    #if trainer_id:
+                     #   trainer = db.session.query(Trainer).get(trainer_id)
+                      #  if trainer:
+                       #     transfer = stripe.Transfer.create(
+                        #        amount=user_class.amount,  # Monto a transferir
+                         #       currency=user_class.currency,  # Moneda
+                          #      destination=trainer.iban,  # IBAN del entrenador
+                           #     description='Pago de clase',  # Descripción opcional
+                            #    metadata={'class_id': class_id, 'user_id': user_id}  # Metadatos adicionales
+                            #)
+                            #print(f"Transferencia creada: {transfer}")
+                            # Aquí puedes manejar la respuesta de Stripe según tus necesidades
+                else:
+                    print('No se encontró la clave "class_id" en los metadatos')
+            else:
+                payment_intent.confirm()
+        except stripe.error.StripeError as e:
+            print('Error al confirmar el PaymentIntent: ' + str(e))
+            return jsonify(success=False)
+    else:
+        print('Tipo de evento no manejado: {}'.format(event['type']))
+    return jsonify(success=True)
 
 
+# TODO
 @api.route('/forgetpassword/<user_type>', methods=['POST'])
 def handle_forget_password(user_type):
     response_body = {}
@@ -377,6 +464,10 @@ def confirm_email(token):
         if user.is_active:
             response_body["message"] = "User account already confirmed."
             return response_body, 400
+        stripe_customer = stripe.Customer.create(name=user.name,
+                                                 email=user.email,
+                                                 phone=user.phone_number)
+        user.stripe_customer_id = stripe_customer.id        
         user.is_active = True
         db.session.add(user)
         db.session.commit()
@@ -385,7 +476,7 @@ def confirm_email(token):
     elif trainer:
         if trainer.is_active:
             response_body["message"] = "Trainer account already confirmed."
-            return response_body, 400
+            return response_body, 400   
         trainer.is_active = True
         db.session.add(trainer)
         db.session.commit()
@@ -828,6 +919,7 @@ def handle_user(id):
             response_body["user"] = user.serialize()
             return response_body, 200
         if request.method == "DELETE":
+            del_stripe_customer =stripe.Customer.delete(user.stripe_customer_id)
             db.session.delete(user)
             db.session.commit()
             response_body["message"] = "User delete"
@@ -959,13 +1051,11 @@ def handle_user_classes(id):
     if (current_user['role'] == 'users' and current_user['id'] == user.id) or (current_user["role"] == "administrators"):
         if request.method == "GET":
             user_classes = UsersClasses.query.filter_by(user_id=id).all()
-            trainer_classes = db.session.query(TrainersClasses).join(UsersClasses, UsersClasses.class_id == TrainersClasses.id).all()
             if not user_classes:
                 response_body["message"] = "No classes available"
                 return response_body, 400
             response_body["message"] = "User classes"
-            response_body["result"] = {"user_classes": [class_user.serialize() for class_user in user_classes],
-                                       "trainer_classes": [class_trainer.serialize() for class_trainer in trainer_classes]}
+            response_body["result"] = [class_user.serialize() for class_user in user_classes]
             return response_body, 200
         if request.method == "POST":
             data = request.json
@@ -993,8 +1083,7 @@ def handle_user_classes(id):
             db.session.add(new_class)
             db.session.commit()
             response_body["message"] = "Class added"
-            response_body["results"] = {"user_class": new_class.serialize(),
-                                        "trainer_class": trainer_class.serialize()}
+            response_body["results"] = new_class.serialize()
             return response_body, 201
     response_body["message"] = 'Not allowed!'
     return response_body, 405
@@ -1043,9 +1132,10 @@ def handle_trainer_classes(id):
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
             try:
-                product = stripe.Product.create(name=data["start_date"],
-                                                description=data["city"])
-                print(product)
+                product = stripe.Product.create(name=data["start_date"])
+                price = stripe.Price.create(currency="eur",
+                                            unit_amount=data["price"],
+                                            product_data={"name": product.id})
                 new_trainer_class = TrainersClasses(trainer_id=id,
                                                     class_name=data.get("class_name"),
                                                     class_details=data.get("class_details"),
@@ -1060,7 +1150,8 @@ def handle_trainer_classes(id):
                                                     price = float(data["price"]),
                                                     training_type=int(data["training_type"]),
                                                     training_level=data["training_level"],
-                                                    stripe_product_id=product.id)
+                                                    stripe_product_id=product.id,
+                                                    stripe_price_id=price.id)
                 db.session.add(new_trainer_class)
                 db.session.commit()
                 response_body["message"] = "New class created"
