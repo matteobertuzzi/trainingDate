@@ -19,7 +19,7 @@ const TrainerProfile = () => {
         const trainerId = id;
         const token = localStorage.getItem("accessToken");
         if (!token) {
-            console.error("No access token provided!");
+            console.error("¡No se proporcionó el token de acceso!");
             return null;
         }
         const options = {
@@ -31,7 +31,7 @@ const TrainerProfile = () => {
         const url = process.env.BACKEND_URL + `api/trainers/${trainerId}`;
         const response = await fetch(url, options);
         if (!response.ok) {
-            console.error(`Error fetching trainer data. HTTP Status ${response.status}`);
+            console.error(`Error al obtener los datos del entrenador. Estado HTTP ${response.status}`);
             return null;
         }
         const data = await response.json();
@@ -49,42 +49,35 @@ const TrainerProfile = () => {
 
     return (
         <Container>
-            <Row className="justify-content-md-center mt-4">
-                {trainer ? (
-                    <>
-                        <Col xs={3}>
-                            <Image src={trainer.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid />
-                        </Col>
-                        <Col md={9}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>Trainer Information</Card.Title>
-                                    <Card.Text>
-                                        <strong>Name:</strong> {trainer.name}<br />
-                                        <strong>Last Name:</strong> {trainer.last_name}<br />
-                                        <strong>Email:</strong> {trainer.email}<br />
-                                        <strong>Phone:</strong> {trainer.phone_number}<br />
-                                        <strong>IBAN:</strong> {trainer.bank_iban}<br />
-                                        <strong>City:</strong> {trainer.city}<br />
-                                        <strong>Postal Code:</strong> {trainer.postal_code}<br />
-                                        <strong>Website URL:</strong> {trainer.website_url}<br />
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                            <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
-                                <Button onClick={() => setModalShow(true)}>Añadir especializacion</Button>
-                                <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
-                            </div>
-                        </Col>
-                    </>
-                ) : (
-                    <Loading />
-                )}
+            <Row className="justify-content-center mt-4">
+                <Col xs={12} md={8}>
+                    <Card className="shadow">
+                        <Card.Body>
+                            <Row>
+                                <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
+                                    <Image src={trainer.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
+                                </Col>
+                                <Col xs={12} sm={8}>
+                                    <h2 className="mb-4">{trainer.name} {trainer.last_name}</h2>
+                                    <p><strong>Correo electrónico:</strong> {trainer.email}</p>
+                                    <p><strong>Teléfono:</strong> {trainer.phone_number}</p>
+                                    <p><strong>IBAN:</strong> {trainer.bank_iban}</p>
+                                    <p><strong>Ciudad:</strong> {trainer.city}</p>
+                                    <p><strong>Código Postal:</strong> {trainer.postal_code}</p>
+                                    <p><strong>URL del sitio web:</strong> {trainer.website_url}</p>
+                                    <div className="mt-4">
+                                        <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
+                                        <Button className="mx-3" onClick={() => setModalShow(true)}>Agregar Especialización</Button>
+                                        <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                </Col>
             </Row>
         </Container>
     );
 }
 
 export default TrainerProfile;
-

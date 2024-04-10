@@ -6,13 +6,13 @@ import Form from 'react-bootstrap/Form';
 
 function EditUserProfile({ user, onChangeSubmit }) {
     const { store, actions } = useContext(Context);
-    const { updateUser } = actions
+    const { updateUser } = actions;
     const [show, setShow] = useState(false);
     const [inputs, setInputs] = useState({
         city: user.city,
         postal_code: user.postal_code,
         phone_number: user.phone_number
-    })
+    });
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -25,7 +25,7 @@ function EditUserProfile({ user, onChangeSubmit }) {
         handleClose();
         setTimeout(() => {
             window.location.reload();
-        }, 1500)
+        }, 1500);
     };
 
     const changeInputs = (e) => {
@@ -33,42 +33,41 @@ function EditUserProfile({ user, onChangeSubmit }) {
         setInputs({
             ...inputs,
             [name]: value,
-        })
-
-    }
+        });
+    };
 
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-                Edit user profile
+                Editar perfil de usuario
             </Button>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Update User</Modal.Title>
+                    <Modal.Title>Actualizar Usuario</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="phone-number">
-                            <Form.Label>Phone number</Form.Label>
+                            <Form.Label>Número de teléfono</Form.Label>
                             <Form.Control type="number" placeholder={user.phone_number} name='phone_number' value={inputs.phone_number || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="city">
-                            <Form.Label>City</Form.Label>
+                            <Form.Label>Ciudad</Form.Label>
                             <Form.Control type="text" placeholder={user.city} name='city' value={inputs.city || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Form.Group controlId="postal-code">
-                            <Form.Label>Postal code</Form.Label>
+                            <Form.Label>Código postal</Form.Label>
                             <Form.Control type="number" placeholder={user.postal_code} name='postal_code' value={inputs.postal_code || ""} onChange={changeInputs} />
                         </Form.Group>
                         <Button variant="primary" type="submit" className='my-3'>
-                            Update user data
+                            Actualizar datos de usuario
                         </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Cerrar
                     </Button>
                 </Modal.Footer>
             </Modal>

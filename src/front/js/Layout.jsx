@@ -5,7 +5,7 @@ import injectContext from "./store/appContext.js";
 import ScrollToTop from "./component/scrollToTop.js";
 import { BackendURL } from "./component/BackendURL.jsx";
 import { MyNavbar } from "./component/Navbar.jsx";
-import { Footer } from "./component/Footer.jsx";
+import Footer from "./component/Footer.jsx";
 // Import custom pages
 import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
 import { InvalidToken } from "./pages/InvalidToken.jsx";
@@ -20,6 +20,8 @@ import { Cart } from "./pages/Cart.jsx";
 import { TrainerClasses } from "./pages/TrainerClasses.jsx";
 import { UserClasses } from "./pages/UserClasses.jsx";
 import TrainerHomepage from "./component/TrainerHomepage.jsx";
+import SignupUser from "./component/SignupUser.jsx";
+import SignupTrainer from "./component/SignupTrainer.jsx";
 
 
 // Create your first component
@@ -44,6 +46,8 @@ const Layout = () => {
                         <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
                         <Route element={<UserProfile />} path='/user/:id/profile' />
                         <Route element={<Signup />} path='/signup' />
+                        <Route element={<SignupUser />} path='/signupUser' />
+                        <Route element={<SignupTrainer />} path='/signupTrainer' />
                         <Route element={<Cart />} path='/cart' />
                         <Route element={<TrainerClasses />} path='/trainer/:id/classes' />
                         <Route element={<UserClasses />} path='/user/:id/classes' />

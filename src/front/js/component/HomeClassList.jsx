@@ -4,14 +4,13 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import FilterAlert from './FilterAlert.jsx';
 import MapModal from './MapModal.jsx';
+import Carousel from 'react-bootstrap/Carousel';
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
     const { createCheckoutSession, getUserClasses, postUserClass, deleteUserClass } = actions
     const { currentUser, userClasses, logged, cart } = store
     const allClasses = store.allClasses;
-    const [showAlert, setShowAlert] = useState(false)
-
 
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
@@ -33,10 +32,8 @@ const HomeClassList = ({ filters }) => {
 
     return (
         <>
-            {filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '' ? (
-                <FilterAlert location='classList' showAlert={setShowAlert} />
-            ) : null}
-            {filteredClasses.length > 0 ? (
+            {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
+            {filteredClasses.length > 0 ?
                 filteredClasses.map(oneClass => (
                     <Card key={oneClass.id} className='my-3'>
                         <Card.Header>Class Details</Card.Header>
@@ -45,14 +42,13 @@ const HomeClassList = ({ filters }) => {
                             <Card.Text>
                                 {oneClass.class_details ? oneClass.class_details : 'Training class'}
                             </Card.Text>
-                            {store.logged && (
+                            {store.logged &&
                                 <Button variant="primary" onClick={() => postUserClass(oneClass.price, oneClass.id)}>Signup for Class</Button>
-                            )}
+                            }
                             <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                         </Card.Body>
                     </Card>
-                ))
-            ) : (
+                )) :
                 <>
                     {allClasses.map(oneClass => (
                         <Card key={oneClass.id} className='my-3'>
@@ -63,51 +59,30 @@ const HomeClassList = ({ filters }) => {
                                     <Card.Text>
                                         {oneClass.class_details ? oneClass.class_details : 'Training class'}
                                     </Card.Text>
+                                    <Card.Text>
+                                        {oneClass.price}
+                                    </Card.Text>
                                 </section>
-                                <section>
-                                    {store.logged ? (
-                                        <section key={oneClass.id} className='d-flex flex-column gap-2'>
-                                            {userClasses && userClasses.some(item => item.class_id === oneClass.id) ? (
-                                                userClasses.map(item => {
-                                                    if (item.class === oneClass.id && item.stripe_status === "Paid") {
-                                                        return (
-                                                            <div key={item.id} className='d-flex flex-column gap-2'>
-                                                                <span key={item.id} style={{ backgroundColor: '#4caf50', color: 'white', padding: '5px 10px', borderRadius: '4px' }}>
-                                                                    Clase ya reservada
-                                                                </span>
-                                                            </div>
-                                                        );
-                                                    } else if (item.class === oneClass.id && (item.stripe_status === "Pending" || item.stripe_status === "Rejected")) {
-                                                        return (
-                                                            <div key={item.id} className='d-flex flex-column gap-2'>
-                                                                <Button variant="primary" onClick={() => handleCheckout(oneClass.stripe_product_id, currentUser.user.id)}>Checkout</Button>
-                                                            </div>
-                                                        );
-                                                    } else if (item.class !== oneClass.id) {
-                                                        return (
-                                                            <div key={item.id}>
-                                                                <Button variant="primary" onClick={() => handleAddCart(oneClass.price, oneClass.id)}>Estoy interesado</Button>
-                                                            </div>
-                                                        );
-                                                    }
-                                                })
-                                            ) : (
-                                                <>
-                                                    <Button variant="danger" onClick={() => handleRemoveCart(currentUser.user.id, oneClass.id,)}>No estoy interesado</Button>
-                                                    <Button variant="primary" onClick={() => handleAddCart(oneClass.price, oneClass.id)}>Estoy interesado</Button>
-                                                </>
-                                            )}
-                                            <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
-                                        </section>
-                                    ) : (
-                                        <p>Loggeate para reservar tus clases</p>
-                                    )}
-                                </section>
+                                {store.logged && (
+                                    <section key={oneClass.id} className='d-flex flex-column gap-2'>
+                                        {store.cart.includes(oneClass.id) ? (
+                                            <div className='d-flex flex-column gap-2'>
+                                                <Button variant="danger" onClick={() => removeCartItem(oneClass.id, store.cart)}>No estoy interesado</Button>
+                                                <Button variant="primary" onClick={() => createCheckoutSession(oneClass.stripe_product_id, oneClass.price)}>Checkout</Button>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <Button variant="primary" onClick={() => addCartItem(oneClass.id)}>Estoy interesado</Button>
+                                            </div>
+                                        )}
+                                        <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                                    </section>
+                                )}
                             </Card.Body>
                         </Card>
                     ))}
                 </>
-            )}
+            }
         </>
     );
 }

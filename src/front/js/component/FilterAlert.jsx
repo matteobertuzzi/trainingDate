@@ -14,15 +14,15 @@ function FilterAlert({ location }) {
     return (
         <>
             <Alert show={show} variant="danger">
-                <Alert.Heading>My Alert</Alert.Heading>
-                {location == 'classList' ?
-                    <p>There are no classes for the given filters. Here is a list of all available clases.</p>
+                <Alert.Heading>Alerta</Alert.Heading>
+                {location === 'classList' ?
+                    <p>No hay clases para los filtros dados. Aquí hay una lista de todas las clases disponibles.</p>
                     :
-                    <p>No booked classes.</p>}
+                    <p>No hay clases reservadas.</p>}
                 <hr />
             </Alert>
 
-            {!show && <Button onClick={() => setShow(true)} variant="outline-danger">Show Alert</Button>}
+            {!show && <Button onClick={() => setShow(true)} variant="outline-danger">Mostrar Alerta</Button>}
         </>
     );
 }

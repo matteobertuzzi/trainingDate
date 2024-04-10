@@ -1051,6 +1051,8 @@ def handle_user_classes(id):
     if (current_user['role'] == 'users' and current_user['id'] == user.id) or (current_user["role"] == "administrators"):
         if request.method == "GET":
             user_classes = UsersClasses.query.filter_by(user_id=id).all()
+            class_ids = [uc.class_id for uc in user_classes]
+            trainer_classes = db.session.query(TrainersClasses).join(UsersClasses, UsersClasses.class_id == TrainersClasses.id).filter(TrainersClasses.id.in_(class_ids)).all()
             if not user_classes:
                 response_body["message"] = "No classes available"
                 return response_body, 400

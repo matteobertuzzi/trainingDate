@@ -12,14 +12,14 @@ const UserProfile = () => {
     const { currentUser } = store
     const { deleteUser } = actions
     const user = currentUser && currentUser.user;
-    let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'
-    let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png'
+    let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg';
+    let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png';
 
     async function fetchUser() {
-        const userId = id
+        const userId = id;
         const token = localStorage.getItem("accessToken");
         if (!token) {
-            console.error("No access token provided!");
+            console.error("¡No se proporcionó el token de acceso!");
             return null;
         }
         const options = {
@@ -28,21 +28,20 @@ const UserProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `api/users/${userId}`
-        const response = await fetch(url, options)
+        const url = process.env.BACKEND_URL + `/api/users/${userId}`;
+        const response = await fetch(url, options);
         if (!response.ok) {
-            console.error(`Error fetching user data. HTTP Status ${response.status}`)
-            return null
+            console.error(`Error al obtener los datos del usuario. Estado HTTP ${response.status}`);
+            return null;
         }
         const data = await response.json();
         const userData = data.user;
-        console.log(userData);
         return userData;
     };
 
     useEffect(() => {
         fetchUser();
-    }, [])
+    }, []);
 
     if (!currentUser) {
         return <Loading />;
@@ -50,35 +49,29 @@ const UserProfile = () => {
 
     return (
         <Container>
-            <Row className="justify-content-md-center mt-4">
-                {user ?
-                    <>
-                        <Col xs={3}>
-                            <Image src={user.gender != 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid />
-                        </Col>
-                        <Col md={9}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>User Information</Card.Title>
-                                    <Card.Text>
-                                        <strong>Name:</strong> {user.name}<br />
-                                        <strong>Last Name:</strong> {user.last_name}<br />
-                                        <strong>Email:</strong> {user.email}<br />
-                                        <strong>Phone:</strong> {user.phone_number}<br />
-                                        <strong>City:</strong> {user.city}<br />
-                                        <strong>Postal Code:</strong> {user.postal_code}<br />
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                            <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                <EditUserProfile user={user} onChangeSubmit={fetchUser} />
-                                <Button onClick={() => deleteUser(currentUser.user.id)} >Cancelar perfil</Button>
+            <Row className="justify-content-center mt-4">
+                <Col xs={12} md={8}>
+                    <Card className="shadow">
+                        <Card.Body>
+                            <Row>
+                                <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
+                                    <Image src={user.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
+                                </Col>
+                                <Col xs={12} sm={8}>
+                                    <h2 className="mb-4">{user.name} {user.last_name}</h2>
+                                    <p><strong>Correo electrónico:</strong> {user.email}</p>
+                                    <p><strong>Teléfono:</strong> {user.phone_number}</p>
+                                    <p><strong>Ciudad:</strong> {user.city}</p>
+                                    <p><strong>Código Postal:</strong> {user.postal_code}</p>
+                                    <div className="mt-4">
+                                        <EditUserProfile user={user} onChangeSubmit={fetchUser} />
+                                        <Button onClick={() => deleteUser(currentUser.user.id)} >Cancelar perfil</Button>
                             </div>
-                        </Col>
-                    </>
-                    :
-                    <Loading />
-                }
+                                </Col>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                </Col>
             </Row>
         </Container>
     );

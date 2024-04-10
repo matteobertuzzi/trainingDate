@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Col from 'react-bootstrap/Col';
 import { LogInModal } from "./LogInModal.jsx";
+import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
 import { useContext } from "react";
 import { Context } from "../store/appContext";
@@ -12,7 +13,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { faCartShopping, faDumbbell, faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import Button from 'react-bootstrap/Button';
 
 
 export const MyNavbar = () => {
@@ -33,7 +33,7 @@ export const MyNavbar = () => {
   }
 
   return (
-    <Navbar key="md" expand="md" className="bg-primary" data-bs-theme="dark">
+    <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-between p-2 mx-2">
         <Navbar.Brand href="/">Training Date</Navbar.Brand>
         {logged && currentUser.role === "users" ? (

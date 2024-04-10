@@ -64,7 +64,7 @@ function MapModal({ addressData }) {
                 centered
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Class Location</Modal.Title>
+                    <Modal.Title>Dirección de la clase</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div>
@@ -79,7 +79,7 @@ function MapModal({ addressData }) {
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center'>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Cerrar
                     </Button>
                 </Modal.Footer>
             </Modal>
