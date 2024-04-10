@@ -75,7 +75,7 @@ const TrainerHomepage = () => {
                 id="specialization-class"
                 className="mt-5 d-flex justify-content-center"
             >
-                <Tab eventKey="home" title="Todas las clases">
+                <Tab eventKey="home" title="Todas las especialización">
                     <AllSpecializations />
                 </Tab>
                 <Tab eventKey="specialization" title="Añadir nueva especialización">

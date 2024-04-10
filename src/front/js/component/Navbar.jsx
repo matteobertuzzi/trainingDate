@@ -13,7 +13,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { faCartShopping, faDumbbell, faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import Button from 'react-bootstrap/Button';
 
 
 export const MyNavbar = () => {
