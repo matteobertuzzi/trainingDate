@@ -1,14 +1,14 @@
 import React from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
-import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import { useParams } from 'react-router-dom';
 
 export const TrainerClasses = () => {
     const { store, actions } = useContext(Context)
     const { currentUser, trainerClasses } = store
-    const { createCheckoutSession, deleteStripeProduct } = actions
+    const { deleteClass } = actions
     const { id } = useParams();
 
 
@@ -29,10 +29,10 @@ export const TrainerClasses = () => {
                                     <Card.Text>Ciudad: {classItem.city}</Card.Text>
                                     <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
                                     <Card.Text>Calle: {classItem.street_name}</Card.Text>
+                                    <Card.Text>Precio: {classItem.price}</Card.Text>
                                 </section>
                                 <section className="d-flex flex-column gap-2">
-                                    <Button variant="primary" onClick={() => createCheckoutSession(classItem.stripe_id)}>Checkout</Button>
-                                    <Button variant="danger" onClick={() => deleteStripeProduct(classItem.stripe_id)}>Delete</Button>
+                                    <Button variant="danger" onClick={() => deleteClass(classItem.trainer, classItem.id)}>Delete</Button>
                                 </section>
                             </Card.Body>
                         </Card>

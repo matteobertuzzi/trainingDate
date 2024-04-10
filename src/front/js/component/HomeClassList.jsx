@@ -8,18 +8,17 @@ import Carousel from 'react-bootstrap/Carousel';
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
+    const { createCheckoutSession, addCartItem, removeCartItem } = actions
+    const { currentUser } = store
     const allClasses = store.allClasses;
     const [showAlert, setShowAlert] = useState(false);
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'))
     const isUser = currentUser && currentUser.role === 'users';
 
+
     let filteredClasses = allClasses.filter((cls) => {
         return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
     });
-
-    const updateCart = (newClass) => {
-        actions.updateCart(newClass);
-    }
 
     return (
         <>
