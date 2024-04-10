@@ -139,6 +139,12 @@ def webhook():
                 print('El PaymentIntent ya ha sido confirmado anteriormente')
                 class_id = checkout_session_data['metadata']["class_id"] # Verificar si la clave existe
                 if class_id is not None:
+                    trainer_id = checkout_session_data['metadata']["trainer_id"]
+                    if trainer_id is not None:
+                        trainer_class = db.session.query(TrainersClasses).filter_by(id=class_id, trainer_id=trainer_id).first()
+                        trainer_class.capacity -= 1
+                        db.session.commit()
+                        print(f"Capacidad clase actualizada: {trainer_class.serialize()}")
                     user_id = checkout_session_data['metadata']["user"]
                     user_class = db.session.query(UsersClasses).filter_by(class_id=class_id, user_id=user_id).first()
                     if user_class:
