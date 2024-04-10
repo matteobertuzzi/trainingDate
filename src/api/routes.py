@@ -41,7 +41,7 @@ mail = Mail()
 def create_checkout_session():
     response_body = {}
     data = request.json
-    if not data or 'productId' not in data:
+    if not data or 'productId' not in data or 'price' not in data:
         response_body["message"] = "Missing required parameters"
         return jsonify(response_body), 400
     product_id = data['productId']
@@ -50,22 +50,18 @@ def create_checkout_session():
         if not product:
             response_body["message"] = "Product not found"
             return jsonify(response_body), 400
-        prices = stripe.Price.list(product=product_id, active=True)
-        if not prices.data:
-            response_body["message"] = "No active prices found for the product"
-            return jsonify(response_body), 400
-        price = prices.data[0]
-        session = stripe.checkout.Session.create(line_items=[{'price_data': {'currency': 'usd',
-                                                                             'unit_amount': price.unit_amount ,
-                                                                             'product_data': {
-                                                                                'name': product.name ,},},
-                                                              'quantity': 1,}],
+        session = stripe.checkout.Session.create(line_items=[{'price_data': {'currency': 'eur',
+                                                                             'unit_amount': data["price"],
+                                                                             'product': product.id},
+                                                              'quantity': 1}],
                                                  mode='payment',
-                                                 success_url='https://www.google.com',
-                                                 cancel_url='https://wikipedia.com',)
-        print(session)
+                                                 payment_method_types=['card'],
+                                                 success_url=os.environ['FRONT_URL'],
+                                                 cancel_url='https://wikipedia.com')
+        response_body["result"] = session
         response_body["sessionId"] = session.id
         response_body["sessionUrl"] = session.url
+        print(response_body)
         return jsonify(response_body), 200
     except stripe.error.StripeError as e:
         response_body["message"] = str(e)
@@ -73,6 +69,21 @@ def create_checkout_session():
     except Exception as e:
         response_body["message"] = str(e)
         return jsonify(response_body), 500
+
+def update_payment_status(user_id, session_id):
+    try:
+        payment_status = stripe.checkout.Session.retrieve(session_id).payment_status
+        user_class = UsersClasses.query.filter_by(user_id=user_id).first()
+        if user_class:
+            if payment_status == "paid":
+                user_class.stripe_status = "Paid"
+            elif payment_status == "unpaid":
+                user_class.stripe_status = "Rejected"
+            db.session.commit()
+            return True
+    except Exception as e:
+        print("Error updating payment status:", str(e))
+        return False
 
 
 @api.route('/forgetpassword/<user_type>', methods=['POST'])
@@ -162,12 +173,9 @@ def handle_forget_password(user_type):
 def handle_current_available_account():
     response_body = {}
     current_user = get_jwt_identity()
-    if current_user:
-        response_body["message"] = "Welcome, your account is active"
-        response_body["results"] = current_user
-        return response_body, 200
-    response_body["message"] = "No accound found!"
-    return response_body, 400
+    response_body["message"] = "Welcome, your account is active"
+    response_body["results"] = current_user
+    return response_body, 200
 
 
 # Mirar los usuarios registrados
@@ -973,7 +981,6 @@ def handle_user_classes(id):
                 response_body["message"] = "User class already exist"
                 return response_body, 409
             trainer_class = TrainersClasses.query.filter_by(id = data["class_id"]).first()
-            print(trainer_class)
             if not trainer_class:
                 response_body["message"] = "No Trainer class available"
                 return response_body, 404
@@ -1035,28 +1042,38 @@ def handle_trainer_classes(id):
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
-            # Hacer llamada stripe
-            new_trainer_class = TrainersClasses(trainer_id=id,
-                                                class_name = data.get("class_name"),
-                                                class_details = data.get("class_details"),
-                                                city=data["city"], 
-                                                postal_code=int(data["postal_code"]),
-                                                street_name=data["street_name"],
-                                                street_number=int(data["street_number"]),
-                                                additional_info=data.get("additional_info"),
-                                                capacity=data["capacity"], 
-                                                start_date=data["start_date"],
-                                                end_date=data["end_date"],
-                                                price=float(data["price"]),
-                                                training_type=int(data["training_type"]),
-                                                training_level=data["training_level"])
-            db.session.add(new_trainer_class)
-            db.session.commit()
-            response_body["message"] = "New class created"
-            response_body["class"] = new_trainer_class.serialize()
-            return response_body, 201
-        response_body["message"] = 'Not allowed!'
-        return response_body, 405
+            try:
+                product = stripe.Product.create(name=data["start_date"],
+                                                description=data["city"])
+                print(product)
+                new_trainer_class = TrainersClasses(trainer_id=id,
+                                                    class_name=data.get("class_name"),
+                                                    class_details=data.get("class_details"),
+                                                    city=data["city"], 
+                                                    postal_code=int(data["postal_code"]),
+                                                    street_name=data["street_name"],
+                                                    street_number=int(data["street_number"]),
+                                                    additional_info=data.get("additional_info"),
+                                                    capacity=data["capacity"], 
+                                                    start_date=data["start_date"],
+                                                    end_date=data["end_date"],
+                                                    price = float(data["price"]),
+                                                    training_type=int(data["training_type"]),
+                                                    training_level=data["training_level"],
+                                                    stripe_product_id=product.id)
+                db.session.add(new_trainer_class)
+                db.session.commit()
+                response_body["message"] = "New class created"
+                response_body["class"] = new_trainer_class.serialize()
+                return response_body, 201
+            except stripe.error.StripeError as e:
+                response_body["message"] = "Stripe error: " + str(e)
+                db.session.rollback() 
+                return response_body, 500
+            except Exception as e:
+                response_body["message"] = "Error: " + str(e)
+                db.session.rollback()
+                return response_body, 500
         
 
 # Mostrar, crear, borrar clase trainer
@@ -1082,12 +1099,18 @@ def handle_trainer_class(id, class_id):
             classes_user = UsersClasses.query.filter_by(class_id=class_id).all()
             if classes_user:
                 response_body["message"] = "Unable to delete class, it has associated users"
-                return response_body, 400
+                return response_body, 400  
+        try:
+            stripe_product_id = trainer_class.stripe_product_id
+            stripe.Product.delete(stripe_product_id)
             db.session.delete(trainer_class)
-            db.session.commit()
-            response_body["message"] = "Class deleted successfully"
+            db.session.commit()       
+            response_body["message"] = "Clase cancelada y producto eliminado correctamente en Stripe"
             response_body["class"] = trainer_class.serialize()
             return response_body, 200
+        except stripe.error.StripeError as e:
+            print("Error al procesar la operación en Stripe:", str(e))
+            return {"message": "Error al procesar la operación en Stripe"}, 500
         if request.method == "PATCH":
             data = request.json
             if not data:

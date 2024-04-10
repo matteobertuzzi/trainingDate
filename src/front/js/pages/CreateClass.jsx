@@ -18,7 +18,7 @@ export const CreateClass = () => {
     const navigate = useNavigate()
     const { store, actions } = useContext(Context)
     const { currentUser } = store
-    const { postTrainerClasses } = actions
+    const { postTrainerClasses, getTrainerClasses } = actions
     const params = useParams()
     const { trainerId } = params
     const [error, setError] = useState(null);
@@ -50,19 +50,18 @@ export const CreateClass = () => {
         const form = event.currentTarget;
         if (form.checkValidity() === false || inputs.start_date >= inputs.end_date) {
             event.stopPropagation();
-            console.log("Datos enviados al servidor:", form);
-            return;
         }
 
         setValidated(true);
-        console.log("Datos enviados al servidor:", inputs);
         const postClass = await postTrainerClasses(inputs);
         if (!postClass) {
             setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {
             setError(null);
             alert("¡Clase grabada con éxito!");
+            await getTrainerClasses()
             navigate(`/trainer/${currentUser.trainer.id}/profile`)
+
         }
     };
 

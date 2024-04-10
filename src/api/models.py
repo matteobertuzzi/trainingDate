@@ -144,7 +144,9 @@ class TrainersClasses(db.Model):
                     'end_date': self.end_date,
                     'price': self.price,
                     'training_type': self.training_type,
-                    'training_level': self.training_level}
+                    'training_level': self.training_level,
+                    "stripe_product_id": self.stripe_product_id,
+                    "stripe_price_id": self.stripe_price_id}
     
 
 class UsersClasses(db.Model):

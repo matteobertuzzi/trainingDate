@@ -115,7 +115,7 @@ export const LogInModal = ({ show, onHide }) => {
                                 <FontAwesomeIcon
                                     icon={showPassword ? faEyeSlash : faEye}
                                     className="position-absolute end-0 top-50 translate-middle-y"
-                                    style={{ cursor: 'pointer', zIndex: 1, marginRight: '10px' }}
+                                    style={{ cursor: 'pointer', zIndex: 1, marginRight: '30px' }}
                                     onClick={togglePasswordVisibility}
                                 />
                                 <Form.Control.Feedback type="invalid">
