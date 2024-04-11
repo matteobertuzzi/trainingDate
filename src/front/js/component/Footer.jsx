@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-light text-dark py-4 mt-5">
+    <footer className="bg-light text-dark mt-3 py-2 fixed">
       <Container>
-        <Row>
-          <Col xs={12} md={4} className="mb-3 mb-md-0">
+        <Row >
+          <Col xs={12} md={4} className="mb-3 mb-md-0 ">
             <h5>Contacto</h5>
             <p>Correo electrónico: info@training-date.es</p>
             <p>Teléfono: +34 123456900 </p>
@@ -21,10 +21,12 @@ const Footer = () => {
               <li><Link to="/entrenadores">Regístrate como entrenador</Link></li>
             </ul>
           </Col>
-          <Col xs={12} md={4}>
-            <h5>Síguenos</h5>
-            <p>Síguenos en nuestras redes sociales para estar al tanto de las últimas novedades y eventos.</p>
-            <div className="d-flex">
+          <Col xs={12} md={4} className='d-flex flex-row'>
+            <div>
+              <h5>Síguenos</h5>
+              <p>Síguenos en nuestras redes sociales para estar al tanto de las últimas novedades y eventos.</p>
+            </div>
+            <div className="d-flex flex-column align-items-center justify-content-center">
               <ul>
                 <li>
                   <i className="fa-brands fa-facebook-f"></i>
@@ -39,7 +41,7 @@ const Footer = () => {
             </div>
           </Col>
         </Row>
-        <hr className="mt-4" />
+        <hr className="mt-2" />
         <Row>
           <Col className="text-center">
             <p>&copyright; 2024 Training Date</p>

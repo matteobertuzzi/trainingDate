@@ -5,6 +5,8 @@ import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
 import { AddTrainerSpecialization } from './AddTrainerSpecialization.jsx';
+import { Link } from "react-router-dom";
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 const TrainerProfile = () => {
     const [modalShow, setModalShow] = useState(false);
@@ -49,26 +51,40 @@ const TrainerProfile = () => {
 
     return (
         <Container>
+            <Row className='m-3 d-flex flex-row gap-2'>
+                <Link to={"/"}>
+                    <RiArrowGoBackLine /> Volver atrás
+                </Link>
+            </Row>
             <Row className="justify-content-center mt-4">
                 <Col xs={12} md={8}>
                     <Card className="shadow">
                         <Card.Body>
                             <Row>
-                                <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
-                                    <Image src={currentUser.trainer.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
+                                <Col xs={12} sm={6} className="mb-3 mb-sm-0 d-flex flex-column gap-3 justify-content-center align-items-center">
+                                    <Image
+                                        src={trainer.gender === 'Male' ? profilePictureMan : profilePictureWoman}
+                                        roundedCircle
+                                        fluid
+                                        style={{ maxHeight: '250px' }}
+                                    />
+                                    <div className="d-flex flex-row gap-5 align-items-center mt-3">
+                                        <i className="fab fa-facebook-f fa-lg"></i>
+                                        <i className="fab fa-twitter fa-lg"></i>
+                                        <i className="fab fa-instagram fa-lg"></i>
+                                    </div>
                                 </Col>
-                                <Col xs={12} sm={8}>
+                                <Col xs={12} sm={6}>
                                     <h2 className="mb-4">{trainer.name} {trainer.last_name}</h2>
                                     <p><strong>Correo electrónico:</strong> {trainer.email}</p>
                                     <p><strong>Teléfono:</strong> {trainer.phone_number}</p>
+                                    <p><strong>Género:</strong> {trainer.gender === "Male" ? "Masculino" : trainer.gender === "Female" ? "Femenino" : "No especificado"}</p>
                                     <p><strong>IBAN:</strong> {trainer.bank_iban}</p>
                                     <p><strong>Ciudad:</strong> {trainer.city}</p>
                                     <p><strong>Código Postal:</strong> {trainer.postal_code}</p>
                                     <p><strong>URL del sitio web:</strong> {trainer.website_url}</p>
                                     <div className="mt-4">
                                         <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
-                                        <Button className="mx-3" onClick={() => setModalShow(true)}>Agregar Especialización</Button>
-                                        <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
                                     </div>
                                 </Col>
                             </Row>

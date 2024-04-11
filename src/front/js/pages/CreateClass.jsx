@@ -11,6 +11,7 @@ import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Loading from '../component/Loading.jsx';
 import { useNavigate } from 'react-router-dom';
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 
 export const CreateClass = () => {
@@ -71,7 +72,12 @@ export const CreateClass = () => {
     }
 
     return (
-        <Container className="d-flex justify-content-center align-items-center">
+        <Container className="d-flex flex-column ">
+            <Row className='m-3 d-flex flex-row  gap-2'>
+                <Link to={"/"}>
+                    <RiArrowGoBackLine /> Volver atrás
+                </Link>
+            </Row>
             {currentUser.trainer ? (
                 <Form noValidate validated={validated} onSubmit={handleSubmit} className="w-100 w-md-75 border rounded p-3">
                     <fieldset>
