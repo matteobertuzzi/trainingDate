@@ -40,13 +40,12 @@ const TrainerSpecializations = () => {
                     ))
                 ) : (
                     <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center">
-                        <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay especializaciónes disponibles</Alert.Heading>
+                        <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases disponibles</Alert.Heading>
                         <p>
-                            Parece que aún no has creado ninguna especializaciónes. ¡No te preocupes! Puedes empezar ahora mismo enviandonos tu especialización.
+                            Parece que aún no has creado ninguna clase. ¡No te preocupes! Puedes empezar ahora mismo creando tu primera clase.
                         </p>
                         <hr />
-                        <Button onClick={() => setModalShow(true)}>Envianos tu espacializacion!</Button>
-                        <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
+                        <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`}>Crea una nueva clase!</Button>
                     </Alert>
                 )}
             </Row>
