@@ -53,7 +53,7 @@ function MapModal({ addressData }) {
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-                View in map
+            Ver en el mapa
             </Button>
 
             <Modal

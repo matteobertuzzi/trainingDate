@@ -25,6 +25,7 @@ import SignupTrainer from "./component/SignupTrainer.jsx";
 import SuccessCheckout from "./pages/SuccessCheckout.jsx";
 import CancelCheckout from "./pages/CancelCheckout.jsx";
 import AccountAlreadyConfirmedPage from "./pages/AccountAlreadyConfirmed.jsx";
+import AllClasses from "./component/AllClasses.jsx";
 import TrainerInfo from "./pages/TrainerInfo.jsx";
 import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
 
@@ -42,9 +43,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <MyNavbar />
                     <Routes>
-                        <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
-                        <Route element={<TrainerInfo />} path="trainers/info" />
-                        <Route element={<AccountAlreadyConfirmedPage />} path="account/already/confirmed" />
+                        <Route element={<AccountAlreadyConfirmedPage/>} path="account/already/confirmed"/>
                         <Route element={<CancelCheckout />} path="checkout/cancel" />
                         <Route element={<SuccessCheckout />} path="checkout/success" />
                         <Route element={<CreateClass />} path="/trainers/:trainerId/create/class" />
@@ -62,6 +61,7 @@ const Layout = () => {
                         <Route element={<TrainerClasses />} path='/trainer/:id/classes' />
                         <Route element={<UserClasses />} path='/user/:id/classes' />
                         <Route element={<TrainerHomepage />} path='/trainer/homepage' />
+                        <Route element={<AllClasses />} path='/allClasses' />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />
