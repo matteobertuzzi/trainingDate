@@ -110,7 +110,7 @@ class Specializations(db.Model):
 class TrainersClasses(db.Model):
         __tablename__= "trainers_classes"
         id = db.Column(db.Integer, primary_key=True)
-        class_name = db.Column(db.String(120), unique=False, nullable=False)
+        class_name = db.Column(db.String(120), unique=False, nullable=True)
         class_details = db.Column(db.String(200), unique=False, nullable=True)
         city = db.Column(db.String(120), unique=False, nullable=False)
         postal_code = db.Column(db.Integer, unique=False, nullable=False)

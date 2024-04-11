@@ -4,13 +4,14 @@ import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditUserProfile from '../component/EditUserProfile.jsx';
+import DeleteUserModal from '../component/DeleteUserModal.jsx'
 
 
 const UserProfile = () => {
     const { id } = useParams();
     const { store, actions } = useContext(Context);
     const { currentUser } = store
-    const { deleteUser } = actions
+    const [modalShow, setModalShow] = useState(false);
     const user = currentUser && currentUser.user;
     let profilePictureMan = 'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg';
     let profilePictureWoman = 'https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-person-gray-photo-placeholder-woman-in-t-shirt-on-white-background-png-image_4853921.png';
@@ -55,7 +56,7 @@ const UserProfile = () => {
                         <Card.Body>
                             <Row>
                                 <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
-                                    <Image src={user.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
+                                    <Image src={currentUser.user.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
                                 </Col>
                                 <Col xs={12} sm={8}>
                                     <h2 className="mb-4">{user.name} {user.last_name}</h2>
@@ -63,16 +64,17 @@ const UserProfile = () => {
                                     <p><strong>Teléfono:</strong> {user.phone_number}</p>
                                     <p><strong>Ciudad:</strong> {user.city}</p>
                                     <p><strong>Código Postal:</strong> {user.postal_code}</p>
-                                    <div className="mt-4">
+                                    <div className="mt-4 d-flex flex-row gap-2 align-items-center justify-content-center'">
                                         <EditUserProfile user={user} onChangeSubmit={fetchUser} />
-                                        <Button onClick={() => deleteUser(currentUser.user.id)} >Cancelar perfil</Button>
-                            </div>
+                                        <Button onClick={() => setModalShow(true)} >Cancelar perfil</Button>
+                                    </div>
                                 </Col>
                             </Row>
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
+            <DeleteUserModal show={modalShow} onHide={() => setModalShow(false)} />
         </Container>
     );
 };

@@ -61,8 +61,8 @@ def create_checkout_session():
                                                               'quantity': 1}],
                                                  mode='payment',
                                                  customer=user.stripe_customer_id,
-                                                 success_url=os.environ['FRONT_URL'],
-                                                 cancel_url='https://google.com',
+                                                 success_url=f"{os.environ['FRONT_URL']}checkout/success",
+                                                 cancel_url=f"{os.environ['FRONT_URL']}checkout/cancel",
                                                  metadata={'class_id': trainer_class.id,
                                                            'trainer_id': trainer_class.trainer_id,
                                                            'start_date': trainer_class.start_date,
@@ -137,7 +137,7 @@ def webhook():
             payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
             if payment_intent.status == 'succeeded':
                 print('El PaymentIntent ya ha sido confirmado anteriormente')
-                class_id = checkout_session_data['metadata']["class_id"] # Verificar si la clave existe
+                class_id = checkout_session_data['metadata']["class_id"] 
                 if class_id is not None:
                     trainer_id = checkout_session_data['metadata']["trainer_id"]
                     if trainer_id is not None:
@@ -468,8 +468,7 @@ def confirm_email(token):
         return response_body, 400
     if user:
         if user.is_active:
-            response_body["message"] = "User account already confirmed."
-            return response_body, 400
+            return redirect(f"{os.environ['FRONT_URL']}account/already/confirmed")
         stripe_customer = stripe.Customer.create(name=user.name,
                                                  email=user.email,
                                                  phone=user.phone_number)
@@ -481,8 +480,7 @@ def confirm_email(token):
         return redirect(f"{os.environ['FRONT_URL']}confirmation")
     elif trainer:
         if trainer.is_active:
-            response_body["message"] = "Trainer account already confirmed."
-            return response_body, 400   
+            return redirect(f"{os.environ['FRONT_URL']}account/already/confirmed")   
         trainer.is_active = True
         db.session.add(trainer)
         db.session.commit()
@@ -925,6 +923,10 @@ def handle_user(id):
             response_body["user"] = user.serialize()
             return response_body, 200
         if request.method == "DELETE":
+            user_classes = UsersClasses.query.filter_by(user_id=id).all()
+            if user_classes:
+                response_body["message"] = "Unable to cancel user, because he have class pending"
+                return response_body, 404
             del_stripe_customer =stripe.Customer.delete(user.stripe_customer_id)
             db.session.delete(user)
             db.session.commit()

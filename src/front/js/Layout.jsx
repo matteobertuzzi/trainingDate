@@ -22,6 +22,9 @@ import { UserClasses } from "./pages/UserClasses.jsx";
 import TrainerHomepage from "./component/TrainerHomepage.jsx";
 import SignupUser from "./component/SignupUser.jsx";
 import SignupTrainer from "./component/SignupTrainer.jsx";
+import SuccessCheckout from "./pages/SuccessCheckout.jsx";
+import CancelCheckout from "./pages/CancelCheckout.jsx";
+import AccountAlreadyConfirmedPage from "./pages/AccountAlreadyConfirmed.jsx";
 
 
 // Create your first component
@@ -37,6 +40,9 @@ const Layout = () => {
                 <ScrollToTop>
                     <MyNavbar />
                     <Routes>
+                        <Route element={<AccountAlreadyConfirmedPage/>} path="account/already/confirmed"/>
+                        <Route element={<CancelCheckout />} path="checkout/cancel" />
+                        <Route element={<SuccessCheckout />} path="checkout/success" />
                         <Route element={<CreateClass />} path="/trainers/:trainerId/create/class" />
                         <Route element={<ConfirmationSignUp />} path="/confirmation" />
                         <Route element={<SessionEnd />} path="/end/session" />

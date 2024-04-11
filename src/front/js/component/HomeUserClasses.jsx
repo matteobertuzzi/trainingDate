@@ -10,9 +10,17 @@ import ClassModal from './ClassModal.jsx';
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
-    const { currentUser } = store
+    const { currentUser, allClasses, userClasses } = store
+    const { postUserClass, deleteUserClass } = actions
     const [showAlert, setShowAlert] = useState(false);
-    const {userClasses} = store;
+    const [interested, setInterested] = useState(interested)
+
+
+    const chunkSize = 3;
+    const chunkedClasses = [];
+    for (let i = 0; i < userClasses.length; i += chunkSize) {
+        chunkedClasses.push(userClasses.slice(i, i + chunkSize));
+    }
 
     if (!currentUser || !currentUser.user) {
         return <Loading />;
@@ -22,10 +30,14 @@ const HomeUserClasses = () => {
         return <Loading />;
     }
 
-    const chunkSize = 3;
-    const chunkedClasses = [];
-    for (let i = 0; i < userClasses.length; i += chunkSize) {
-        chunkedClasses.push(userClasses.slice(i, i + chunkSize));
+    const handleInterested = async (value, classId, price) => {
+        if (value) {
+            setInterested(true)
+            await deleteUserClass(currentUser.user.id, classId)
+        } else {
+            setInterested(false)
+            await postUserClass(price, classId)
+        }
     }
 
     return (
@@ -57,7 +69,7 @@ const HomeUserClasses = () => {
                 </Carousel>
             ) : (
                 <div className="row">
-                    {userClasses.map(oneClass => (
+                    {allClasses.map(oneClass => (
                         <div className='col-4' key={oneClass.id}>
                             <Card className='my-3'>
                                 <Card.Header>Detalles de la Clase</Card.Header>
@@ -66,18 +78,23 @@ const HomeUserClasses = () => {
                                     <Card.Text>
                                         {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
                                     </Card.Text>
-                                    <div className='d-flex justify-content-center'>
+                                    <div className='d-flex justify-content-center gap-2'>
                                         <ClassModal userClass={oneClass} />
+                                        <Button variant={interested ? "primary" : "danger"} onClick={() => handleInterested(!interested, oneClass.id, oneClass.price)}>
+                                            {interested ? "Estoy interesado" : "No estoy interesado"}
+                                        </Button>
                                     </div>
                                 </Card.Body>
                             </Card>
                         </div>
                     ))}
-                </div>
+                </div >
             )}
-            {userClasses.length === 0 && (
-                <FilterAlert location='userClasses' showAlert={setShowAlert} />
-            )}
+            {
+                allClasses.length === 0 && (
+                    <FilterAlert location='userClasses' showAlert={setShowAlert} />
+                )
+            }
         </>
     )
 }

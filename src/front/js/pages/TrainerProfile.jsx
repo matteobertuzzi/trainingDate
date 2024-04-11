@@ -55,7 +55,7 @@ const TrainerProfile = () => {
                         <Card.Body>
                             <Row>
                                 <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
-                                    <Image src={trainer.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
+                                    <Image src={currentUser.trainer.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
                                 </Col>
                                 <Col xs={12} sm={8}>
                                     <h2 className="mb-4">{trainer.name} {trainer.last_name}</h2>

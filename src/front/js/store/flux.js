@@ -83,6 +83,35 @@ const getState = ({ getStore, getActions, setStore }) => {
         localStorage.setItem('allClasses', JSON.stringify(data.results))
       },
 
+      getTrainerSpecializations: async () => {
+        let currentAccount = localStorage.getItem('availableAccount');
+        currentAccount = JSON.parse(currentAccount);
+        const id = currentAccount.trainer.id;
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.error("No access token proivded!");
+          return null;
+        }
+
+        const options = {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const url = process.env.BACKEND_URL + `api/trainers/${id}/specializations`
+        const response = await fetch(url, options)
+        if (!response.ok) {
+          console.error(`Error fetching user classes. HTTP Status ${response.status}`)
+          return null
+        }
+        const data = await response.json();
+        setStore({ trainerSpecializations: data.result })
+        localStorage.setItem('trainerSpecializations', JSON.stringify(data.result))
+
+      },
+
       getSpecializations: async () => {
         const url = `${process.env.BACKEND_URL}api/specializations`
         const response = await fetch(url)
@@ -550,14 +579,14 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
 
         const response = await fetch(`${process.env.BACKEND_URL}api/users/${id}`, options)
-        if (!response.ok) return response.status
+        if (!response.ok) return false
         const data = response.json()
-        console.log(data)
         setStore({ logged: false })
         setStore({ currentUser: [] })
         localStorage.removeItem("accessToken")
         localStorage.removeItem("availableUser")
         window.location.href = `${process.env.FRONT_URL}`
+        return true
       },
 
       deleteTrainer: async (id) => {

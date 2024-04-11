@@ -1,10 +1,8 @@
 import React from "react";
-import { Container } from "react-bootstrap";
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import { useState } from 'react';
 import Button from "react-bootstrap/Button";
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Nav from 'react-bootstrap/Nav';
 import { Context } from "../store/appContext";
@@ -59,10 +57,15 @@ export const ConfirmationSignUp = () => {
   };
 
   return (
-    <Container className="vh-100 d-flex justify-content-center align-items-center flex-column">
-      <h3 className="text-center">¡Bienvenido a Fitness Date!</h3>
-      <h4 className="text-center">¡Estás listo para comenzar tu entrenamiento!</h4>
-      <p className="text-center">Por favor, inicia sesión para continuar.</p>
+    <Container className="mt-4 d-flex justify-content-center align-items-center flex-column">
+      <Row>
+        <Col md={{ span: 6, offset: 3 }} className="text-center">
+          <Alert variant="success">
+            <Alert.Heading>¡Cuenta confirmada!</Alert.Heading>
+            <p>Tu cuenta ha sido confirmada con éxito. Ahora puedes disfrutar de todos los beneficios de nuestro servicio.</p>
+          </Alert>
+        </Col>
+      </Row>
       <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit} style={{ border: '1px solid #ccc', borderRadius: '10px', padding: '20px' }}>
         <div className="text-center mb-3">
           <h4>Elige cómo deseas iniciar sesión:</h4>
