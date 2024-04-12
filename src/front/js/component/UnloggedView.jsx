@@ -9,31 +9,29 @@ const UnloggedView = () => {
 
     return (
         <div className="landing-page mt-4">
-            <header className="header">
-                <Container fluid={true} className="d-flex justify-content-center">
-                    <Row className="d-flex justify-content-center">
-                        <Col className="d-flex align-items-center my-5">
-                            <Card className="text-white" style={{ backgroundColor: 'transparent', borderWidth: '0px', borderRadius: '10%' }}>
-                                <Card.Img src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg" alt="Training Date" style={{ borderRadius: '10%' }} />
-                                <Card.ImgOverlay className='d-flex justify-content-center align-items-center'>
-                                    <Row>
-                                        <Col md={8} className="text-center text-md-left">
-                                            <h1 className="display-4 mb-4">¡Bienvenido a Training Date!</h1>
-                                            <p className="lead">Conecta con entrenadores y usuarios de toda España</p>
-                                        </Col>
-                                        <Col md={4} className="text-center">
-                                            <FaDumbbell size={150} />
-                                        </Col>
-                                    </Row>
-                                </Card.ImgOverlay>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-            </header>
+            <Container fluid={true} className="d-flex justify-content-center">
+                <Row className="d-flex justify-content-center">
+                    <Col className="d-flex align-items-center my-5">
+                        <Card className="text-white" style={{ backgroundColor: 'transparent', borderWidth: '0px' }}>
+                            <Card.Img src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg" alt="Training Date" />
+                            <Card.ImgOverlay className='d-flex justify-content-center align-items-center'>
+                                <Row>
+                                    <Col md={8} className="text-center text-md-left">
+                                        <h1 className="display-4 mb-4">¡Bienvenido a Training Date!</h1>
+                                        <p className="lead">Conecta con entrenadores y usuarios de toda España</p>
+                                    </Col>
+                                    <Col md={4} className="text-center">
+                                        <FaDumbbell size={150} />
+                                    </Col>
+                                </Row>
+                            </Card.ImgOverlay>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
 
             <section className="features my-3">
-                <Container>
+                <Container >
                     <Row style={{ display: 'flex' }}>
                         <Col md={4} className="text-center">
                             <Card style={{ height: '100%' }}>
@@ -88,7 +86,7 @@ const UnloggedView = () => {
                         </Col>
                     </Row>
                     <Row className='d-flex justify-content-center'>
-                        <Card md={6} className="my-4 p-3" style={{ width: '80%', borderRadius: '10%' }}>
+                        <Card md={6} className="my-4 p-3" style={{ width: '80%' }}>
                             <h4 className='text-center'>¿Ya estás registrado?</h4>
                             <p className='text-center'>¡Bienvenido! Si ya estás registrado como entrenador o usuario, haz clic en el siguiente button para iniciar tu sesión.</p>
                             <div className='d-flex justify-content-center'>
