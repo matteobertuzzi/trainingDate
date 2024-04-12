@@ -13,31 +13,55 @@ const HomeUserClasses = () => {
     const { currentUser, allClasses, userClasses } = store
     const { postUserClass, deleteUserClass } = actions
     const [showAlert, setShowAlert] = useState(false);
-    const [interested, setInterested] = useState(interested)
+    const [interested, setInterested] = useState(false);
 
+    useEffect(() => {
+        checkClasses();
+    }, []);
+
+    const checkClasses = () => {
+        if (userClasses) {
+            userClasses.map((userClass) => {
+                for (let i = 0; i < allClasses.length; i++) {
+                    if (allClasses[i].id === userClass.class) {
+                        allClasses[i]["isInterested"] = false;
+                        setInterested(false);
+                        console.log(allClasses[i]);
+
+                    } else {
+                        allClasses[i]["isInterested"] = true;
+                        setInterested(true);
+                        console.log(allClasses[i]);
+                    }
+                }
+            })
+        } else {
+            return
+        }
+    };
 
     const chunkSize = 3;
     const chunkedClasses = [];
-    for (let i = 0; i < userClasses.length; i += chunkSize) {
-        chunkedClasses.push(userClasses.slice(i, i + chunkSize));
+    for (let i = 0; i < allClasses.length; i += chunkSize) {
+        chunkedClasses.push(allClasses.slice(i, i + chunkSize));
     }
 
     if (!currentUser || !currentUser.user) {
         return <Loading />;
     }
 
-    if (!userClasses) {
+    if (!allClasses) {
         return <Loading />;
     }
 
     const handleInterested = async (value, classId, price) => {
-        if (value) {
-            setInterested(true)
-            await deleteUserClass(currentUser.user.id, classId)
+        if (!value) {
+            await deleteUserClass(currentUser.user.id, classId);
+            setInterested(true);
         } else {
-            setInterested(false)
-            await postUserClass(price, classId)
-        }
+            await postUserClass(price, classId);
+            setInterested(false);
+        };
     }
 
     return (
@@ -80,8 +104,8 @@ const HomeUserClasses = () => {
                                     </Card.Text>
                                     <div className='d-flex justify-content-center gap-2'>
                                         <ClassModal userClass={oneClass} />
-                                        <Button variant={interested ? "primary" : "danger"} onClick={() => handleInterested(!interested, oneClass.id, oneClass.price)}>
-                                            {interested ? "Estoy interesado" : "No estoy interesado"}
+                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => handleInterested(oneClass.isInterested, oneClass.id, oneClass.price)}>
+                                            {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                         </Button>
                                     </div>
                                 </Card.Body>

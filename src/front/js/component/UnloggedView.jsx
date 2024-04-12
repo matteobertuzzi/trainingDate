@@ -10,7 +10,7 @@ const UnloggedView = () => {
     return (
         <div className="landing-page mt-4">
             <header className="header">
-                <Container>
+                <Container fluid={true} className="d-flex justify-content-center">
                     <Row className="d-flex justify-content-center">
                         <Col className="d-flex align-items-center my-5">
                             <Card className="text-white" style={{ backgroundColor: 'transparent', borderWidth: '0px', borderRadius: '10%' }}>

@@ -17,8 +17,8 @@ const Footer = () => {
             <h5>Enlaces útiles</h5>
             <ul className="list-unstyled">
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/signupUser">Regístrate como usuario</Link></li>
-              <li><Link to="/signupTrainer">Regístrate como entrenador</Link></li>
+              <li><Link to="users/info">Recursos para el usuario</Link></li>
+              <li><Link to="trainers/info">Recursos para el entrenador</Link></li>
             </ul>
           </Col>
           <Col xs={12} md={4} className='d-flex flex-row'>
