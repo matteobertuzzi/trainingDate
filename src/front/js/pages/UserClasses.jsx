@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Card, Image, Button, Alert } from 'react-bootstrap';
@@ -31,8 +31,7 @@ export const UserClasses = () => {
                     userClasses.map((classItem) => (
                         classItem.stripe_status === "Paid" ? (
                             <Col className="d-flex flex-column align-items-center justify-content-center gap-3" key={classItem.id}>
-                                <Card.Header>{classItem.id}</Card.Header>
-                                <Card border="primary" style={{ width: '18rem' }}>
+                                <Card key={classItem.id} border="primary" style={{ width: '18rem' }}>
                                     <Card.Header>{classItem.id}</Card.Header>
                                     <Card.Body className="d-flex justify-content-between align-items-center">
                                         <section>
