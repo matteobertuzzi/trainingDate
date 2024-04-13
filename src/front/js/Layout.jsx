@@ -26,6 +26,7 @@ import SuccessCheckout from "./pages/SuccessCheckout.jsx";
 import CancelCheckout from "./pages/CancelCheckout.jsx";
 import AccountAlreadyConfirmedPage from "./pages/AccountAlreadyConfirmed.jsx";
 import TrainerInfo from "./pages/TrainerInfo.jsx";
+import UserInfo from "./pages/UserInfo.jsx";
 import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
 import AllClasses from "./component/AllClasses.jsx";
 
@@ -43,6 +44,7 @@ const Layout = () => {
                     <MyNavbar />
                     <Routes>
                         <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
+                        <Route element={<UserInfo />} path='users/info' />
                         <Route element={<TrainerInfo />} path="trainers/info" />
                         <Route element={<AccountAlreadyConfirmedPage />} path="account/already/confirmed" />
                         <Route element={<CancelCheckout />} path="checkout/cancel" />

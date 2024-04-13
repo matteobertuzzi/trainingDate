@@ -523,6 +523,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/users/${userId}/classes/${classId}`, options)
         if (!response.ok) return response.status
         const data = await response.json()
+        console.log(data)
         localStorage.setItem('userClasses', JSON.stringify(updatedClasses));
         setStore({ userClasses: updatedClasses });
       },
