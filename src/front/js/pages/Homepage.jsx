@@ -30,12 +30,12 @@ const Homepage = () => {
             {isLogged && isUser ?
                 <div className='container'>
                     <div className='row'>
-                        <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
-                    </div>
-                    <div className='row'>
                         <HomeClassList filters={filters} />
                     </div>
-                    <h3 className='text-center my-4' style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>Mis próximas clases</h3>
+                    <h3 className='text-center my-4' style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>Clases disponibles</h3>
+                    <div className='row'>
+                        <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
+                    </div>
                     <HomeUserClasses />
                 </div>
                 :

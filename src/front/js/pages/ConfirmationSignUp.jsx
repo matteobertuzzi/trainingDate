@@ -1,12 +1,6 @@
-import React from "react";
-import { Container, Row, Col, Alert } from 'react-bootstrap';
-import { useState } from 'react';
-import Button from "react-bootstrap/Button";
-import Form from 'react-bootstrap/Form';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import Nav from 'react-bootstrap/Nav';
+import React, { useContext, useState } from "react";
+import { Container, Row, Col, Alert, Button, Form, FloatingLabel, Nav } from 'react-bootstrap';
 import { Context } from "../store/appContext";
-import { useContext } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 

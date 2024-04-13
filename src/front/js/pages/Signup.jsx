@@ -1,8 +1,8 @@
 import React from 'react';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+import { Tab, Tabs } from 'react-bootstrap/';
 import SignupTrainer from '../component/SignupTrainer.jsx';
 import SignupUser from '../component/SignupUser.jsx';
+
 
 const Signup = () => {
 

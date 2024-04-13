@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
-import { useContext } from 'react';
 import { Context } from '../store/appContext';
+
 
 const DeletelUser = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)

@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import { Button, Card, Carousel} from 'react-bootstrap/';
 import FilterAlert from './FilterAlert.jsx';
 import MapModal from './MapModal.jsx';
-import Carousel from 'react-bootstrap/Carousel';
+
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);

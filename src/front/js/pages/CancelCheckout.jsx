@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaTimesCircle } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
-import { useContext } from 'react';
 import { Context } from '../store/appContext';
 
 

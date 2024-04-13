@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
 import { AddTrainerSpecialization } from './AddTrainerSpecialization.jsx';
-import { Link } from "react-router-dom";
 import { RiArrowGoBackLine } from "react-icons/ri";
+
 
 const TrainerProfile = () => {
     const [modalShow, setModalShow] = useState(false);
@@ -50,7 +50,7 @@ const TrainerProfile = () => {
     }
 
     return (
-        <Container>
+        <Container className="mb-3 mt-4">
             <Row className='m-3 d-flex flex-row gap-2'>
                 <Link to={"/"}>
                     <RiArrowGoBackLine /> Volver atrás

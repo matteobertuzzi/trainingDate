@@ -84,7 +84,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       getTrainerSpecializations: async () => {
-        let currentAccount = localStorage.getItem('availableAccount');
+        let  currentAccount = localStorage.getItem('availableAccount');
         currentAccount = JSON.parse(currentAccount);
         const id = currentAccount.trainer.id;
         const token = localStorage.getItem("accessToken");
@@ -109,7 +109,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         setStore({ trainerSpecializations: data.result })
         localStorage.setItem('trainerSpecializations', JSON.stringify(data.result))
-
       },
 
       getSpecializations: async () => {
@@ -217,6 +216,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ currentUser: JSON.parse(account) });
           if (data.results.role == "trainers") {
             getActions().getTrainerClasses()
+            getActions().getTrainerSpecializations()
           } else if (data.results.role == "users") {
             getActions().getUserClasses()
           }
@@ -437,7 +437,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           return null;
         }
 
-        // Crear un nuevo objeto FormData
         const formData = new FormData();
         formData.append('certification', inputs.certification);
         formData.append('specialization_id', inputs.specialization_id);
@@ -447,7 +446,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           headers: {
             Authorization: `Bearer ${token}`
           },
-          body: formData // Pasar formData directamente como cuerpo de la solicitud
+          body: formData 
         };
 
         try {
@@ -492,7 +491,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}api/users/${userId}/classes`, options)
         if (!response.ok) return response.status
         const data = await response.json()
-        const updatedUserClasses = { ...userClasses, ...data };
+        console.log(data.results)
+        const updatedUserClasses = { ...userClasses, ...data.results };
         setStore({ userClasses: updatedUserClasses });
         localStorage.setItem('userClasses', JSON.stringify(updatedUserClasses));
       },
@@ -527,7 +527,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ userClasses: updatedClasses });
       },
 
-      deleteClass: async (trainerId, classId) => {
+      deleteTrainerClass: async (trainerId, classId) => {
         const token = localStorage.getItem("accessToken");
         const options = {
           method: 'DELETE',
@@ -548,14 +548,11 @@ const getState = ({ getStore, getActions, setStore }) => {
           return false;
         }
 
-        console.log('Class deleted successfully');
-
         const storedClassesString = localStorage.getItem("trainerClasses");
         if (storedClassesString) {
           const storedClasses = JSON.parse(storedClassesString);
           const updatedClasses = storedClasses.filter(cls => cls.id !== classId);
           localStorage.setItem("trainerClasses", JSON.stringify(updatedClasses));
-          // Actualizar trainerClasses
           return true;
         } else {
           console.error('No classes found in local storage');

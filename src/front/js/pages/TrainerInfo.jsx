@@ -4,6 +4,7 @@ import { Context } from '../store/appContext';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { Link } from 'react-router-dom'
 
+
 const TrainerInfo = () => {
     const { store, actions } = useContext(Context)
     const { logged } = store

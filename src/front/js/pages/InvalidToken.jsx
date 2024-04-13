@@ -3,6 +3,7 @@ import { Button, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
 
+
 export const InvalidToken = () => {
 
     return (

@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import { Button,  Card, Alert} from 'react-bootstrap/';
 import MapModal from './MapModal.jsx';
-import Alert from 'react-bootstrap/Alert';
 import { IoIosWarning } from "react-icons/io";
+
 
 const AllClasses = ({ filters }) => {
     const { store, actions } = useContext(Context);

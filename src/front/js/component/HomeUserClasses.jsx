@@ -1,9 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
-import Carousel from 'react-bootstrap/Carousel';
 import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import { Button, Card, Carousel } from 'react-bootstrap';
 import Loading from './Loading.jsx';
 import FilterAlert from './FilterAlert.jsx';
 import ClassModal from './ClassModal.jsx';
@@ -11,7 +9,7 @@ import ClassModal from './ClassModal.jsx';
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
     const { currentUser, allClasses, userClasses } = store
-    const { postUserClass, deleteUserClass } = actions
+    const { postUserClass, deleteUserClass, removeItem, addToCart, removeCartItem } = actions
     const [showAlert, setShowAlert] = useState(false);
     const [interested, setInterested] = useState(interested)
 
@@ -28,16 +26,6 @@ const HomeUserClasses = () => {
 
     if (!userClasses) {
         return <Loading />;
-    }
-
-    const handleInterested = async (value, classId, price) => {
-        if (value) {
-            setInterested(true)
-            await deleteUserClass(currentUser.user.id, classId)
-        } else {
-            setInterested(false)
-            await postUserClass(price, classId)
-        }
     }
 
     return (
@@ -80,9 +68,12 @@ const HomeUserClasses = () => {
                                     </Card.Text>
                                     <div className='d-flex justify-content-center gap-2'>
                                         <ClassModal userClass={oneClass} />
-                                        <Button variant={interested ? "primary" : "danger"} onClick={() => handleInterested(!interested, oneClass.id, oneClass.price)}>
-                                            {interested ? "Estoy interesado" : "No estoy interesado"}
-                                        </Button>
+                                        {userClasses.length !== 0 ? (
+                                            <Button onClick={() => addToCart(oneClass.id)} variant="primary">Estoy interesado</Button>
+                                        ) : (
+                                            <Button onClick={() => removeItem(oneClass.id)} variant="danger">No estoy interesado</Button>
+                                        )
+                                        }
                                     </div>
                                 </Card.Body>
                             </Card>

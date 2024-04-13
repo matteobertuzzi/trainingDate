@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { LogInModal } from "/workspaces/sp54-final-project-g3/src/front/js/component/LogInModal.jsx";
-import { useState } from "react";
+
 
 export const SessionEnd = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);

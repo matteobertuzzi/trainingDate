@@ -1,16 +1,7 @@
-import React from "react";
-import { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from "react-bootstrap/Button";
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import CloseButton from 'react-bootstrap/CloseButton';
-import Nav from 'react-bootstrap/Nav';
+import React, { useState, useContext } from "react";
+import { Modal, Button, Col, Form, Row, Nav, CloseButton, FloatingLabel} from 'react-bootstrap/';
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
-import { useContext } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -126,7 +117,7 @@ export const LogInModal = ({ show, onHide }) => {
                     </Row>
                     {loginError && <div className="text-danger mt-2">{loginError}</div>}
                 </Form>
-                <div className="d-flex flex-row">
+                <div className="d-flex flex-row mt-2">
                     <span className="me-2">Todavia no estas registrado?</span><Link to={"/signup"} onClick={onHide}>Regístrate</Link>
                 </div>
             </Modal.Body>

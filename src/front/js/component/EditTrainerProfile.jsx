@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
+import { Button, Modal, Form } from 'react-bootstrap/';
+
 
 function EditTrainerProfile({ trainer, onChangeSubmit }) {
     const { store, actions } = useContext(Context);

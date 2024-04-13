@@ -1,21 +1,14 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
-import { useParams } from "react-router-dom";
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-import { Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Button, Col, Form, InputGroup, Row, Container, Toast } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
-import { useNavigate } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 
 
 export const CreateClass = () => {
     const [validated, setValidated] = useState(false);
+    const [showToast, setShowToast] = useState(false);
     const navigate = useNavigate()
     const { store, actions } = useContext(Context)
     const { currentUser } = store
@@ -59,20 +52,27 @@ export const CreateClass = () => {
             setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {
             setError(null);
-            alert("¡Clase grabada con éxito!");
+            handleShowToast()
             await getTrainerClasses()
             await getAllClasses()
-            navigate(`/trainer/${currentUser.trainer.id}/profile`)
-
+            navigate(`/trainer/${currentUser.trainer.id}/classes`)
         }
     };
+
+    const handleShowToast = () => {
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    };
+
 
     if (!currentUser || !currentUser.trainer) {
         return <Loading />;
     }
 
     return (
-        <Container className="d-flex flex-column ">
+        <Container className="d-flex flex-column min-vh-100 mb-3">
             <Row className='m-3 d-flex flex-row  gap-2'>
                 <Link to={"/"}>
                     <RiArrowGoBackLine /> Volver atrás
@@ -160,7 +160,7 @@ export const CreateClass = () => {
                                 <Form.Group controlId="training_type">
                                     <Form.Label>Tipo de entrenamiento:</Form.Label>
                                     <Form.Select onChange={handleChange} name='training_type' value={inputs.training_type} required className="w-auto">
-                                        <option value="">Selecciona un tipo de entrenamiento</option>
+                                        <option value="" disabled hidden>Selecciona un tipo de entrenamiento</option>
                                         {currentUser.specializations.map((specialization) => (
                                             <option key={specialization.trainers_specialization.specialization} value={specialization.trainers_specialization.specialization}>{specialization.specialization.name}</option>
                                         ))}
@@ -218,9 +218,17 @@ export const CreateClass = () => {
                     <Row className="mb-3">
                         <Col className="d-flex justify-content-end">
                             <Button type="submit" className="me-2">Crear Clase</Button>
-                            <Link to={`/trainer/${currentUser.trainer.id}/profile`} className="btn btn-danger">Volver a mi perfil</Link>
+                            <Link to="/" className="btn btn-danger">Volver a la Home</Link>
                         </Col>
                     </Row>
+                    <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed top-0 start-50 translate-middle-x m-4" style={{ minWidth: '300px', backgroundColor: '#28a745', color: 'white' }}>
+                        <Toast.Header className="d-flex justify-content-center align-items-center" closeButton={false}>
+                            <strong>¡Éxito!</strong>
+                        </Toast.Header>
+                        <Toast.Body className="d-flex justify-content-center align-items-center">
+                            Tu clase ha sido grabada correctamente. ¡Felicidades! Ahora puedes seguir gestionando tus clases y alumnos con tranquilidad.
+                        </Toast.Body>
+                    </Toast>
                 </Form>
             ) : (
                 <Loading />
