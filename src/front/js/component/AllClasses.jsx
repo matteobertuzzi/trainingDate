@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Container, Row, Col, Card, Button, Alert, Nav } from 'react-bootstrap';
-import Loading from '../component/Loading.jsx';
+import { Container, Row, Col, Card, Button, Alert, Nav, Pagination } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
@@ -13,6 +12,8 @@ const AllClasses = () => {
     const [pastClasses, setPastClasses] = useState([]);
     const [futureClasses, setFutureClasses] = useState([]);
     const [activeTab, setActiveTab] = useState("past");
+    const [activePage, setActivePage] = useState(1);
+    const classesPerPage = 6;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -37,6 +38,16 @@ const AllClasses = () => {
         setFutureClasses(future);
     }, [allClasses, currentDateTime]);
 
+    const handleClick = async (trainerId, classId) => {
+        // Handle click logic here
+    }
+
+    const paginate = (pageNumber) => setActivePage(pageNumber);
+
+    const indexOfLastClass = activePage * classesPerPage;
+    const indexOfFirstClass = indexOfLastClass - classesPerPage;
+    const currentClasses = activeTab === "past" ? pastClasses.slice(indexOfFirstClass, indexOfLastClass) : futureClasses.slice(indexOfFirstClass, indexOfLastClass);
+
     return (
         <Container className="min-vh-100 my-4">
             <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
@@ -56,52 +67,45 @@ const AllClasses = () => {
                 </Nav.Item>
             </Nav>
             <Row xs={1} md={2} lg={3} className="justify-content-center">
-                {(activeTab === "past" && pastClasses.length !== 0) && (
-                    <div className="d-flex flex-row flex-wrap align-items-center justify-content-center">
-                        {pastClasses.map(classItem => (
-                            <div key={classItem.id} className="d-flex gap-2 m-2 justify-content-center align-items-center">
-                                <Card border="primary" style={{ width: '18rem' }}>
-                                    <Card.Header>{classItem.id}</Card.Header>
-                                    <Card.Body className="d-flex justify-content-between align-items-center">
-                                        <section>
-                                            <Card.Text>Ciudad: {classItem.city}</Card.Text>
-                                            <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
-                                            <Card.Text>Calle: {classItem.street_name}</Card.Text>
-                                            <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
-                                        </section>
-                                        <section className="d-flex flex-column gap-2">
-                                            <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
-                                        </section>
-                                    </Card.Body>
-                                </Card>
-                            </div>
-                        ))}
+                {currentClasses.map(classItem => (
+                    <div key={classItem.id} className="d-flex gap-2 m-2 justify-content-center align-items-center">
+                        <Card border="primary" style={{ width: '18rem' }}>
+                            <Card.Header>{classItem.id}</Card.Header>
+                            <Card.Body className="d-flex justify-content-between align-items-center">
+                                <section>
+                                    <Card.Text>Ciudad: {classItem.city}</Card.Text>
+                                    <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
+                                    <Card.Text>Calle: {classItem.street_name}</Card.Text>
+                                    <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
+                                </section>
+                                <section className="d-flex flex-column gap-2">
+                                    <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
+                                </section>
+                            </Card.Body>
+                        </Card>
                     </div>
-                )}
+                ))}
             </Row>
-            <Row>
-                {(activeTab === "future" && futureClasses.length !== 0) && (
-                    <div className="d-flex flex-row flex-wrap align-items-center justify-content-center">
-                        {futureClasses.map(classItem => (
-                            <div key={classItem.id} className="d-flex gap-2 m-3 justify-content-center align-items-center">
-                                <Card border="primary" style={{ width: '18rem' }}>
-                                    <Card.Header>{classItem.id}</Card.Header>
-                                    <Card.Body className="d-flex justify-content-between align-items-center">
-                                        <section>
-                                            <Card.Text>Ciudad: {classItem.city}</Card.Text>
-                                            <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
-                                            <Card.Text>Calle: {classItem.street_name}</Card.Text>
-                                            <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
-                                        </section>
-                                        <section className="d-flex flex-column gap-2">
-                                            <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
-                                        </section>
-                                    </Card.Body>
-                                </Card>
-                            </div>
-                        ))}
-                    </div>
-                )}
+            <Row className="d-flex justify-content-center align-items-center">
+                <Pagination>
+                    {activeTab === "past" ? (
+                        pastClasses.length > classesPerPage ? (
+                            Array.from({ length: Math.ceil(pastClasses.length / classesPerPage) }).map((_, index) => (
+                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))
+                        ) : null
+                    ) : (
+                        futureClasses.length > classesPerPage ? (
+                            Array.from({ length: Math.ceil(futureClasses.length / classesPerPage) }).map((_, index) => (
+                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))
+                        ) : null
+                    )}
+                </Pagination>
             </Row>
             <Row className="d-flex justify-content-center align-items-center">
                 {(activeTab === "past" && pastClasses.length === 0) && (
