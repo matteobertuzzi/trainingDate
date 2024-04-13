@@ -134,7 +134,7 @@ const HomeUserClasses = () => {
                                         </Button>
                                         {
                                             oneClass.isInterested === false ?
-                                                <Button onClick={() => { handleCheckout(oneClass.id, currentUser.user.stripe_customer_id) }}>Checkout!</Button> : <></>
+                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button> : <></>
                                         }
                                     </div>
                                 </Card.Body>
