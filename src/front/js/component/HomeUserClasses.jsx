@@ -10,6 +10,7 @@ import ClassModal from './ClassModal.jsx';
 
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
+    const { createCheckoutSession } = actions
     const { currentUser, allClasses, userClasses } = store
     const { postUserClass, deleteUserClass } = actions
     const [showAlert, setShowAlert] = useState(false);
@@ -20,25 +21,28 @@ const HomeUserClasses = () => {
     }, []);
 
     const checkClasses = () => {
-        if (userClasses) {
+        if (userClasses.length !== 0) {
             userClasses.map((userClass) => {
                 for (let i = 0; i < allClasses.length; i++) {
                     if (allClasses[i].id === userClass.class) {
                         allClasses[i]["isInterested"] = false;
-                        setInterested(false);
-                        console.log(allClasses[i]);
-
+                        console.log('No interest', allClasses[i]);
                     } else {
                         allClasses[i]["isInterested"] = true;
-                        setInterested(true);
-                        console.log(allClasses[i]);
+                        console.log('Interest', allClasses[i]);
                     }
                 }
             })
         } else {
-            return
+            for (let i = 0; i < allClasses.length; i++) {
+                allClasses[i]["isInterested"] = true;
+                console.log(allClasses[i]);
+                setInterested(true);
+                console.log('hey!')
+            }
         }
     };
+
 
     const chunkSize = 3;
     const chunkedClasses = [];
@@ -54,31 +58,31 @@ const HomeUserClasses = () => {
         return <Loading />;
     }
 
-    const handleInterested = async (value, classId, price) => {
-        if (!value) {
-            await deleteUserClass(currentUser.user.id, classId);
-            setInterested(true);
-            for (let i = 0; i < allClasses.length; i++) {
-                if (allClasses[i][id] === classId) {
-                    allClasses[i]["isInterested"] = true;
-                }
-                else {
-                    console.error("No class found!");
-                };
-            }
-        } else {
-            await postUserClass(price, classId);
-            setInterested(false);
-            for (let i = 0; i < allClasses.length; i++) {
-                if (allClasses[i][id] === classId) {
-                    allClasses[i]["isInterested"] = false;
-                }
-                else {
-                    console.error("No class found!");
-                };
-            }
-        };
+    const handleCheckout = async (productId, customerId) => {
+        await createCheckoutSession(productId, customerId)
     }
+
+    const handleInterested = async (value, classId, price) => {
+        try {
+            if (!value) {
+                await deleteUserClass(currentUser.user.id, classId);
+                setInterested(value);
+            } else {
+                await postUserClass(price, classId);
+                setInterested(!value);
+            }
+            allClasses.map(oneClass => {
+                if (oneClass.id === classId) {
+                    oneClass["isInterested"] = !value
+                    return
+                }
+                return;
+            });
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
 
     return (
         <>
@@ -120,9 +124,18 @@ const HomeUserClasses = () => {
                                     </Card.Text>
                                     <div className='d-flex justify-content-center gap-2'>
                                         <ClassModal userClass={oneClass} />
-                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => handleInterested(oneClass.isInterested, oneClass.id, oneClass.price)}>
+                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                            handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                            oneClass.isInterested = !oneClass.isInterested;
+
+                                        }
+                                        }>
                                             {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                         </Button>
+                                        {
+                                            oneClass.isInterested === false ?
+                                                <Button onClick={() => { handleCheckout(oneClass.id, currentUser.user.stripe_customer_id) }}>Checkout!</Button> : <></>
+                                        }
                                     </div>
                                 </Card.Body>
                             </Card>
@@ -140,3 +153,5 @@ const HomeUserClasses = () => {
 }
 
 export default HomeUserClasses;
+
+
