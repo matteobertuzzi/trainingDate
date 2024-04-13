@@ -18,6 +18,13 @@ gunicorn = "*"
 cloudinary = "*"
 flask-admin = "*"
 typing-extensions = "*"
+bcrypt = "*"
+flask-bcrypt = "*"
+flask-jwt-extended = "*"
+flask-login = "*"
+stripe = "*"
+googlemaps = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.10"
