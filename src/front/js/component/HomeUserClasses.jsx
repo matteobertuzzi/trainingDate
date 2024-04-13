@@ -58,9 +58,25 @@ const HomeUserClasses = () => {
         if (!value) {
             await deleteUserClass(currentUser.user.id, classId);
             setInterested(true);
+            for (let i = 0; i < allClasses.length; i++) {
+                if (allClasses[i][id] === classId) {
+                    allClasses[i]["isInterested"] = true;
+                }
+                else {
+                    console.error("No class found!");
+                };
+            }
         } else {
             await postUserClass(price, classId);
             setInterested(false);
+            for (let i = 0; i < allClasses.length; i++) {
+                if (allClasses[i][id] === classId) {
+                    allClasses[i]["isInterested"] = false;
+                }
+                else {
+                    console.error("No class found!");
+                };
+            }
         };
     }
 
