@@ -61,7 +61,7 @@ const TrainerProfile = () => {
                     <Card className="shadow">
                         <Card.Body>
                             <Row>
-                                <Col xs={12} sm={6} className="mb-3 mb-sm-0 d-flex flex-column gap-3 justify-content-center align-items-center">
+                                <Col xs={12} sm={6} className="mb-3 mb-sm-2 d-flex flex-column gap-3 justify-content-center align-items-center">
                                     <Image
                                         src={trainer.gender === 'Male' ? profilePictureMan : profilePictureWoman}
                                         roundedCircle

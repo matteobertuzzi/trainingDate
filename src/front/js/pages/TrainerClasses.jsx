@@ -20,13 +20,11 @@ export const TrainerClasses = () => {
             setShow(true)
         }
         setShow(false)
+        useEffect(() => {
+            actions.getTrainerClasses(currentUser.trainer.id);
+        }, [trainerClasses])
     }
 
-    useEffect(() => {
-        if (currentUser && currentUser.trainer) {
-            actions.getTrainerClasses(currentUser.trainer.id);
-        }
-    }, [trainerClasses])
 
     if (!currentUser || !currentUser.trainer) {
         return <Loading />;
@@ -53,7 +51,7 @@ export const TrainerClasses = () => {
                 {trainerClasses.length !== 0 ? (
                     trainerClasses.map((classItem) => (
                         <Col className="d-flex flex-column align-items-center justify-content-center gap-3">
-                            <Card border="primary" style={{ width: '18rem' }}>
+                            <Card key={classItem.id} border="primary" style={{ width: '18rem' }}>
                                 <Card.Header>{classItem.id}</Card.Header>
                                 <Card.Body className="d-flex justify-content-between align-items-center">
                                     <section>

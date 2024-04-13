@@ -7,7 +7,7 @@ import { Context } from '../store/appContext';
 const DeletelUser = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)
     const { currentUser } = store
-    const { deleteUser, getAvailableAccount, setLogged } = actions
+    const { deleteUser, setLogged } = actions
     const [loginError, setLoginError] = useState(null);
     const navigate = useNavigate()
 
@@ -30,8 +30,8 @@ const DeletelUser = ({ show, onHide }) => {
                 {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>Cancelar</Button>
                 <Button variant="primary" onClick={handleClick}>Confirmar cancelación</Button>
+                <Button variant="secondary" onClick={onHide}>Cancelar</Button>
             </Modal.Footer>
         </Modal>
     );

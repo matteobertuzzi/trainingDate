@@ -20,98 +20,109 @@ export const MyNavbar = () => {
   const handleLogout = () => {
     setLogged(false);
     setUser([]);
+    navigate("/")
   };
 
   return (
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-evenly p-2 mx-2">
         <Col>
-          <Navbar.Brand href="/">Training Date</Navbar.Brand>
+          <Navbar.Brand>
+            <Link to={"/"}>Training Date</Link>
+          </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
-          <Col xs="auto" className="d-flex gap-3">
-            <Nav className="d-flex flex-row gap-3">
-              <NavDropdown
-                id="nav-dropdown-cart-shopping"
-                title={<FontAwesomeIcon icon={faCartShopping} />}
-                menuVariant="dark"
-                align='end'
-              >
-                {!cart || cart.length === 0 ? (
-                  <NavDropdown.Item>El carrito está vacío</NavDropdown.Item>
-                ) : (
-                  <>
-                    {cart.map((item, index) => (
-                      <div className="d-flex flex-row justify-content-between" key={index}>
-                        <NavDropdown.Item key={index}>{item}</NavDropdown.Item>
-                        <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
-                          <i className="fa-solid fa-trash"></i>
-                        </Button>
-                      </div>
-                    ))}
-                  </>
-                )}
-                <NavDropdown.Divider />
-                <NavDropdown.Item>Abre todo el carrito</NavDropdown.Item>
-              </NavDropdown>
-              <NavDropdown
-                id="nav-dropdown-dumbbell"
-                title={<FontAwesomeIcon icon={faDumbbell} />}
-                menuVariant="dark"
-                align='end'
-                className="d-none d-sm-block"
-              >
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              </NavDropdown>
-              <NavDropdown
-                id="nav-dropdown-dumbbell"
-                title={<FontAwesomeIcon icon={faUser} />}
-                menuVariant="dark"
-                align='end'
-                className="d-none d-sm-block"
-              >
-                <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                  <Link to={`/user/${currentUser.user.id}/profile`}>Mi Perfil</Link>
-                </NavDropdown.Item>
-                <NavDropdown.Item className="d-flex justify-content-end align-items-center" href="#action/3.1">
-                  <Link to={`/user/${currentUser.user.id}/classes`}>Mis Classes</Link>
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
-                  <span>LogOut</span>
-                  <FontAwesomeIcon icon={faRightFromBracket} />
-                </NavDropdown.Item>
-              </NavDropdown>
-              <Navbar.Toggle className="d-sm-none" aria-controls="offcanvasNavbar-expand-sm" />
-              <Navbar.Offcanvas
-                id="offcanvasNavbar-expand-sm"
-                aria-labelledby="offcanvasNavbarLabel-expand-sm"
-                placement="end"
-                className="d-sm-none d-flex flex-columns justify-content-center align-items-center"
-              >
-                <Offcanvas.Header closeButton>
-                  <Offcanvas.Title id="offcanvasNavbarLabel-expand-sm">
-                    Training Date
-                  </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                  <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link>
-                      <Link to={`/`}>Homepage</Link>
-                    </Nav.Link>
-                    <Nav.Link>
-                      <Link to={`user/${currentUser.user.id}/profile`}>Mi Perfil</Link>
-                    </Nav.Link>
-                    <Nav.Link href="#action2">Mis Classes</Nav.Link>
-                    <Nav.Link onClick={handleLogout} className="text-danger d-flex justify-content-end align-items-center gap-2" href="/">
-                      <span>LogOut</span>
-                      <FontAwesomeIcon icon={faRightFromBracket} />
-                    </Nav.Link>
-                  </Nav>
-                </Offcanvas.Body>
-              </Navbar.Offcanvas>
-            </Nav>
-          </Col>
+          <>
+            <Col xs="auto" className="d-flex gap-3">
+              <Nav className="d-flex flex-row justify-content-center" style={{ gap: '1rem' }}>
+                <Nav.Item>
+                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/profile`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                    Mi Perfil
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                    Mis Clases
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                    Todas las clases
+                  </Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Col>
+            <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
+              <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
+                <NavDropdown
+                  id="nav-dropdown-cart-shopping"
+                  title={<FontAwesomeIcon icon={faCartShopping} />}
+                  menuVariant="dark"
+                  align='end'
+                >
+                  {!cart || cart.length === 0 ? (
+                    <NavDropdown.Item>El carrito está vacío</NavDropdown.Item>
+                  ) : (
+                    <>
+                      {cart.map((item, index) => (
+                        <div className="d-flex flex-row justify-content-between" key={index}>
+                          <NavDropdown.Item key={index}>{item}</NavDropdown.Item>
+                          <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
+                            <i className="fa-solid fa-trash"></i>
+                          </Button>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item>Abre todo el carrito</NavDropdown.Item>
+                </NavDropdown>
+                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
+                </Nav.Item>
+                <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-md" />
+              </Nav>
+            </Col>
+            <Navbar.Offcanvas
+              id="offcanvasNavbar-expand-md"
+              aria-labelledby="offcanvasNavbarLabel-expand-md"
+              placement="end"
+              className="d-md-none w-auto p-2 d-flex flex-columns justify-content-center align-items-center"
+            >
+              <Offcanvas.Header className="border-bottom" closeButton>
+                <Offcanvas.Title className="me-3" id="offcanvasNavbarLabel-expand-md">
+                  Training Date
+                </Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">
+                  <Nav.Link as={Link} to={`/`}>
+                    Homepage
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link as={Link} to={`user/${currentUser.user.id}/profile`}>
+                    Mi Perfil
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link as={Link} to={`user/${currentUser.user.id}/classes`}>
+                    Mis Classes
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link>
+                    Todas las clases
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link onClick={handleLogout} className="text-danger d-flex align-items-center gap-2" >
+                    LogOut<FontAwesomeIcon icon={faRightFromBracket} />
+                  </Nav.Link>
+                </Nav>
+              </Offcanvas.Body>
+            </Navbar.Offcanvas>
+          </>
         ) : logged && currentUser.role === "trainers" ? (
           <>
             <Col xs="auto" className="d-flex gap-3">
