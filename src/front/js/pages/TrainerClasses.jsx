@@ -14,17 +14,26 @@ export const TrainerClasses = () => {
     const { id } = useParams();
     const [show, setShow] = useState(false);
 
+
     const handleClick = async (trainerId, classId) => {
         const deleteClass = await deleteTrainerClass(trainerId, classId)
         if (!deleteClass) {
-            setShow(true)
+            return
         }
-        setShow(false)
-        useEffect(() => {
-            actions.getTrainerClasses(currentUser.trainer.id);
-        }, [trainerClasses])
+        actions.getTrainerClasses(currentUser.trainer.id);
     }
 
+    useEffect(() => {
+        if (!trainerClasses) {
+            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                        <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases disponibles</Alert.Heading>
+                        <p>
+                            Parece que aún no has creado ninguna clase. ¡No te preocupes! Puedes empezar ahora mismo creando tu primera clase.
+                        </p>
+                        <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`}>Crea una nueva clase!</Button>
+                    </Alert>
+        }
+    }, [trainerClasses])
 
     if (!currentUser || !currentUser.trainer) {
         return <Loading />;
@@ -58,7 +67,7 @@ export const TrainerClasses = () => {
                                         <Card.Text>Ciudad: {classItem.city}</Card.Text>
                                         <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
                                         <Card.Text>Calle: {classItem.street_name}</Card.Text>
-                                        <Card.Text>Precio: {classItem.price / 100}</Card.Text>
+                                        <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
                                     </section>
                                     <section className="d-flex flex-column gap-2">
                                         <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
@@ -77,10 +86,6 @@ export const TrainerClasses = () => {
                     </Alert>
                 )}
             </Row>
-            <Alert show={show} className="d-flex flex-column justify-content-center align-items-center" variant="danger" onClose={() => setShow(false)} dismissible>
-                <Alert.Heading>Error al cancelar la clase!</Alert.Heading>
-                <p>No se puede cancelar la clase porque hay usuarios apuntados a ella.</p>
-            </Alert>
         </Container>
     )
 }

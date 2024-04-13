@@ -29,19 +29,21 @@ export const UserClasses = () => {
             <Row xs={1} md={2} lg={3} className="d-flex justify-content-center g-4">
                 {userClasses.length !== 0 ? (
                     userClasses.map((classItem) => (
-                        <Col className="d-flex flex-column align-items-center justify-content-center gap-3" key={classItem.id}>
-                            <Card.Header>{classItem.id}</Card.Header>
-                            <Card border="primary" style={{ width: '18rem' }}>
+                        classItem.stripe_status === "Paid" ? (
+                            <Col className="d-flex flex-column align-items-center justify-content-center gap-3" key={classItem.id}>
                                 <Card.Header>{classItem.id}</Card.Header>
-                                <Card.Body className="d-flex justify-content-between align-items-center">
-                                    <section>
-                                        <Card.Text>Ciudad: {classItem.city}</Card.Text>
-                                        <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
-                                        <Card.Text>Calle: {classItem.street_name}</Card.Text>
-                                    </section>
-                                </Card.Body>
-                            </Card>
-                        </Col>
+                                <Card border="primary" style={{ width: '18rem' }}>
+                                    <Card.Header>{classItem.id}</Card.Header>
+                                    <Card.Body className="d-flex justify-content-between align-items-center">
+                                        <section>
+                                            <Card.Text>Ciudad: {classItem.city}</Card.Text>
+                                            <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
+                                            <Card.Text>Calle: {classItem.street_name}</Card.Text>
+                                        </section>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ) : ""
                     ))
                 ) : (
                     <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">
