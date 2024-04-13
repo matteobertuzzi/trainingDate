@@ -8,7 +8,7 @@ const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);
 
     return (
-        <div className="landing-page mt-4">
+        <div className="landing-page my-4">
             <Container fluid={true} className="d-flex justify-content-center">
                 <Row className="d-flex justify-content-center">
                     <Col className="d-flex align-items-center my-5">
@@ -95,7 +95,7 @@ const UnloggedView = () => {
                     </Card>
                 </Row>
                 <Row className='mt-5 d-flex justify-content-center'>
-                    <Col md={6} lg={6}>
+                    <Col md={6} lg={6} className='d-flex justify-content-center align-items-center'>
                         <Card style={{ width: '90%', borderRadius: '10px' }}>
                             <Card.Img variant="top" src="https://hips.hearstapps.com/hmg-prod/images/mh-trainer-2-1533576998.png" />
                             <Card.Body>
@@ -111,7 +111,7 @@ const UnloggedView = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={6} lg={6}>
+                    <Col md={6} lg={6} className='d-flex justify-content-center align-items-center'>
                         <Card style={{ width: '90%', borderRadius: '10px' }}>
                             <Card.Img variant="top" src="https://cvlifestyles.co.uk/wp-content/uploads/2019/02/personal-training.jpg" />
                             <Card.Body>

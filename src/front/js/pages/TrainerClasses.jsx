@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
@@ -33,7 +33,7 @@ export const TrainerClasses = () => {
     }
 
     return (
-        <Container className="min-vh-100 mt-4">
+        <Container className="min-vh-100 my-4">
             <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
                 <Col>
                     <Link to={"/"}>
