@@ -1197,21 +1197,22 @@ def handle_trainer_class(id, class_id):
         return response_body, 200
     if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
         if request.method == "DELETE":
-            classes_user = UsersClasses.query.filter_by(class_id=class_id).all()
-            if classes_user:
-                response_body["message"] = "Unable to delete class, it has associated users"
-                return response_body, 400  
-        try:
-            stripe_product_id = trainer_class.stripe_product_id
-            stripe.Product.delete(stripe_product_id)
-            db.session.delete(trainer_class)
-            db.session.commit()       
-            response_body["message"] = "Clase cancelada y producto eliminado correctamente en Stripe"
-            response_body["class"] = trainer_class.serialize()
-            return response_body, 200
-        except stripe.error.StripeError as e:
-            print("Error al procesar la operación en Stripe:", str(e))
-            return {"message": "Error al procesar la operación en Stripe"}, 500
+            classes_users = UsersClasses.query.filter_by(class_id=class_id).all()
+            has_paid_users = any(class_user.stripe_status == "Paid" for class_user in classes_users)
+            if has_paid_users:
+                response_body["message"] = "Unable to delete class, it has associated users with paid status"
+                return response_body, 400
+            try:
+                stripe_product_id = trainer_class.stripe_product_id
+                stripe.Product.delete(stripe_product_id)
+                db.session.delete(trainer_class)
+                db.session.commit()       
+                response_body["message"] = "Clase cancelada y producto eliminado correctamente en Stripe"
+                response_body["class"] = trainer_class.serialize()
+                return response_body, 200
+            except stripe.error.StripeError as e:
+                print("Error al procesar la operación en Stripe:", str(e))
+                return {"message": "Error al procesar la operación en Stripe"}, 500
         if request.method == "PATCH":
             data = request.json
             if not data:

@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import { Button, Card, Carousel } from 'react-bootstrap/';
 import FilterAlert from './FilterAlert.jsx';
 import MapModal from './MapModal.jsx';
-import Carousel from 'react-bootstrap/Carousel';
+
 
 const HomeClassList = ({ filters }) => {
     const { store, actions } = useContext(Context);
@@ -19,11 +18,11 @@ const HomeClassList = ({ filters }) => {
         await createCheckoutSession(productId, customerId)
         await getUserClasses()
     }
-    
+
     const handleAddCart = async (price, id) => {
         await postUserClass(price, id)
     }
-    
+
     const handleRemoveCart = async (user_id, class_id) => {
         await deleteUserClass(user_id, class_id)
     }
@@ -39,7 +38,7 @@ const HomeClassList = ({ filters }) => {
             {filteredClasses.length > 0 ?
                 <Carousel fade style={{ marginTop: '20px' }} >
                     {filteredClasses.map(oneClass => (
-                        <Carousel.Item>
+                        <Carousel.Item key={oneClass.id}>
                             <img
                                 className="d-block w-100"
                                 src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
@@ -55,7 +54,6 @@ const HomeClassList = ({ filters }) => {
                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                             </Carousel.Caption>
                         </Carousel.Item>
-
                     ))}
                 </Carousel >
                 :

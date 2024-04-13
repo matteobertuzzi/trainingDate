@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditUserProfile from '../component/EditUserProfile.jsx';
 import DeleteUserModal from '../component/DeleteUserModal.jsx'
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 
 const UserProfile = () => {
@@ -49,29 +50,47 @@ const UserProfile = () => {
     }
 
     return (
-        <Container>
-            <Row className="justify-content-center mt-4">
+        <Container className="min-vh-100 mb-3 mt-4 flex-column">
+            <Row className='m-3 d-flex flex-row gap-2'>
+                <Link to={"/"}>
+                    <RiArrowGoBackLine /> Volver atrás
+                </Link>
+            </Row>
+            <Row className="d-flex justify-content-center mt-6">
                 <Col xs={12} md={8}>
-                    <Card className="shadow">
+                    <Card className="shadow p-3 w-auto">
                         <Card.Body>
                             <Row>
-                                <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
-                                    <Image src={currentUser.user.gender !== 'Male' ? profilePictureWoman : profilePictureMan} roundedCircle fluid style={{ maxHeight: '250px' }} />
+                                <Col xs={12} sm={6} className="mb-3 mb-sm-0 d-flex flex-column gap-3 justify-content-center align-items-center">
+                                    <Image
+                                        src={currentUser.user.gender !== 'Male' ? profilePictureWoman : profilePictureMan}
+                                        roundedCircle
+                                        fluid
+                                        style={{ maxHeight: '250px' }}
+                                    />
+                                    <div className="d-flex flex-row gap-5 align-items-center mt-3">
+                                        <i className="fab fa-facebook-f fa-lg"></i>
+                                        <i className="fab fa-twitter fa-lg"></i>
+                                        <i className="fab fa-instagram fa-lg"></i>
+                                    </div>
                                 </Col>
-                                <Col xs={12} sm={8}>
+                                <Col xs={12} sm={6}>
                                     <h2 className="mb-4">{user.name} {user.last_name}</h2>
                                     <p><strong>Correo electrónico:</strong> {user.email}</p>
                                     <p><strong>Teléfono:</strong> {user.phone_number}</p>
                                     <p><strong>Ciudad:</strong> {user.city}</p>
                                     <p><strong>Código Postal:</strong> {user.postal_code}</p>
-                                    <div className="mt-4 d-flex flex-row gap-2 align-items-center justify-content-center'">
-                                        <EditUserProfile user={user} onChangeSubmit={fetchUser} />
-                                        <Button onClick={() => setModalShow(true)} >Cancelar perfil</Button>
-                                    </div>
+                                    <p><strong>Género:</strong> {user.gender === "Male" ? "Masculino" : user.gender === "Female" ? "Femenino" : "No especificado"}</p>
                                 </Col>
                             </Row>
                         </Card.Body>
                     </Card>
+                </Col>
+            </Row>
+            <Row className='d-flex flex-row justify-content-center align-items-center gap-3'>
+                <Col className="mt-4 d-flex flex-row gap-2 align-items-center justify-content-center">
+                    <EditUserProfile user={user} onChangeSubmit={fetchUser} />
+                    <Button variant="danger" onClick={() => setModalShow(true)} >Cancelar perfil</Button>
                 </Col>
             </Row>
             <DeleteUserModal show={modalShow} onHide={() => setModalShow(false)} />

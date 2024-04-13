@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
+import { Button, Modal, Form } from 'react-bootstrap/';
+
 
 function EditUserProfile({ user, onChangeSubmit }) {
     const { store, actions } = useContext(Context);
@@ -46,7 +45,7 @@ function EditUserProfile({ user, onChangeSubmit }) {
                 <Modal.Header closeButton>
                     <Modal.Title>Actualizar Usuario</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className='p-4'>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="phone-number">
                             <Form.Label>Número de teléfono</Form.Label>
@@ -60,12 +59,12 @@ function EditUserProfile({ user, onChangeSubmit }) {
                             <Form.Label>Código postal</Form.Label>
                             <Form.Control type="number" placeholder={user.postal_code} name='postal_code' value={inputs.postal_code || ""} onChange={changeInputs} />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className='my-3'>
-                            Actualizar datos de usuario
-                        </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button variant="primary" type="submit">
+                        Actualizar datos de usuario
+                    </Button>
                     <Button variant="secondary" onClick={handleClose}>
                         Cerrar
                     </Button>

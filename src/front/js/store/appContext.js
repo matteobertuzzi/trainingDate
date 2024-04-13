@@ -28,7 +28,6 @@ const injectContext = (PassedComponent) => {
       state.actions.getSpecializations();
       state.actions.getAllClasses()
       state.actions.getUserClasses()
-      state.actions.getCartItem()
     }, []);
 
     return (

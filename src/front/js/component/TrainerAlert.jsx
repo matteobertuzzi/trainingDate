@@ -1,7 +1,6 @@
-import React from 'react';
-import { useState } from 'react';
-import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
+import React, { useState } from 'react';
+import { Alert, Button } from 'react-bootstrap/Alert';
+
 
 function TrainerAlert({ location }) {
     const [show, setShow] = useState(true);

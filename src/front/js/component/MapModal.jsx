@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext.js';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import { Button, Modal } from 'react-bootstrap/';
+
 
 // Define libraries as a static variable outside the component
 const libraries = ['places'];

@@ -1,10 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext.js';
-import Carousel from 'react-bootstrap/Carousel';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import { Button, Card, Carousel } from 'react-bootstrap/';
 import FilterAlert from './FilterAlert.jsx';
-import MapModal from './MapModal.jsx';
+
 
 const AllSpecializations = ({ filters }) => {
     const { store, actions } = useContext(Context);

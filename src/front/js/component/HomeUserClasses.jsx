@@ -8,6 +8,7 @@ import Loading from './Loading.jsx';
 import FilterAlert from './FilterAlert.jsx';
 import ClassModal from './ClassModal.jsx';
 
+
 const HomeUserClasses = () => {
     const { store, actions } = useContext(Context);
     const { createCheckoutSession } = actions
@@ -34,6 +35,7 @@ const HomeUserClasses = () => {
                 }
             })
         } else {
+
             for (let i = 0; i < allClasses.length; i++) {
                 allClasses[i]["isInterested"] = true;
                 console.log(allClasses[i]);
@@ -42,7 +44,6 @@ const HomeUserClasses = () => {
             }
         }
     };
-
 
     const chunkSize = 3;
     const chunkedClasses = [];
@@ -83,7 +84,6 @@ const HomeUserClasses = () => {
         }
     };
 
-
     return (
         <>
             {chunkedClasses.length > 1 ? (
@@ -114,7 +114,7 @@ const HomeUserClasses = () => {
             ) : (
                 <div className="row">
                     {allClasses.map(oneClass => (
-                        <div className='col-4' key={oneClass.id}>
+                        <div className='col-4 h-100' key={oneClass.id}>
                             <Card className='my-3'>
                                 <Card.Header>Detalles de la Clase</Card.Header>
                                 <Card.Body>
@@ -122,22 +122,27 @@ const HomeUserClasses = () => {
                                     <Card.Text>
                                         {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
                                     </Card.Text>
-                                    <div className='d-flex justify-content-center gap-2'>
-                                        <ClassModal userClass={oneClass} />
-                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
-                                            handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
-                                            oneClass.isInterested = !oneClass.isInterested;
-
-                                        }
-                                        }>
-                                            {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                        </Button>
-                                        {
-                                            oneClass.isInterested === false ?
-                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button> : <></>
-                                        }
-                                    </div>
                                 </Card.Body>
+                                <Card.Footer>
+                                    {oneClass.capacity < 1 ? (
+                                        <div className='d-flex justify-content-center align-items-center'>
+                                            <Button variant='danger' disabled>Clase completa!</Button>
+                                        </div>
+                                    ) : (
+                                        <div className='d-flex justify-content-center gap-2'>
+                                            <ClassModal userClass={oneClass} />
+                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                oneClass.isInterested = !oneClass.isInterested;
+                                            }}>
+                                                {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                            </Button>
+                                            {oneClass.isInterested === false ? (
+                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                            ) : null}
+                                        </div>
+                                    )}
+                                </Card.Footer>
                             </Card>
                         </div>
                     ))}
@@ -151,7 +156,4 @@ const HomeUserClasses = () => {
         </>
     )
 }
-
 export default HomeUserClasses;
-
-

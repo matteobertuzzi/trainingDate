@@ -8,7 +8,7 @@ const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);
 
     return (
-        <div className="landing-page mt-4">
+        <div className="landing-page my-4">
             <Container fluid={true} className="d-flex justify-content-center">
                 <Row className="d-flex justify-content-center">
                     <Col className="d-flex align-items-center my-5">
@@ -29,16 +29,15 @@ const UnloggedView = () => {
                     </Col>
                 </Row>
             </Container>
-
             <Container >
-                <Row className='my-3' style={{ display: 'flex' }}>
-                    <Col md={4} className="text-center">
+                <Row className='my-3' style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <Col md={4} className="text-center mb-3">
                         <Card style={{ height: '100%' }}>
                             <Card.Body className="d-flex flex-column justify-content-between">
                                 <div>
                                     <Card.Title>Para Entrenadores</Card.Title>
                                     <Card.Text>
-                                        Ofrece tus propias clases y entrena a usuarios de toda España. Para descubrir más información, haz click en el botón abajo.
+                                        Ofrece tus propias clases y entrena a usuarios de toda España. Para descubrir más información, haz clic en el botón abajo.
                                     </Card.Text>
                                 </div>
                                 <div className="my-3">
@@ -49,7 +48,7 @@ const UnloggedView = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={4} className="text-center">
+                    <Col md={4} className="text-center mb-3">
                         <Card style={{ backgroundColor: '#ffe8e5', height: '100%' }}>
                             <Card.Body className="d-flex flex-column justify-content-between">
                                 <div>
@@ -66,13 +65,13 @@ const UnloggedView = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={4} className="text-center">
+                    <Col md={4} className="text-center mb-3">
                         <Card style={{ height: '100%' }}>
                             <Card.Body className="d-flex flex-column justify-content-between">
                                 <div>
                                     <Card.Title>Para Usuarios</Card.Title>
                                     <Card.Text>
-                                        Descubre clases y entrenamientos adaptados a tus necesidades. Encuentra el entrenador perfecto para alcanzar tus objetivos de fitness. Para descubrir más información, haz click en el botón abajo.
+                                        Descubre clases y entrenamientos adaptados a tus necesidades. Encuentra el entrenador perfecto para alcanzar tus objetivos de fitness. Para descubrir más información, haz clic en el botón abajo.
                                     </Card.Text>
                                 </div>
                                 <div className="my-3">
@@ -95,8 +94,8 @@ const UnloggedView = () => {
                     </Card>
                 </Row>
                 <Row className='mt-5 d-flex justify-content-center'>
-                    <Col md={6} lg={6}>
-                        <Card style={{ width: '90%', borderRadius: '10px' }}>
+                    <Col md={6} lg={6} className='d-flex justify-content-center align-items-center my-3'>
+                        <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
                             <Card.Img variant="top" src="https://hips.hearstapps.com/hmg-prod/images/mh-trainer-2-1533576998.png" />
                             <Card.Body>
                                 <Card.Title>Entrenador</Card.Title>
@@ -111,7 +110,7 @@ const UnloggedView = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={6} lg={6}>
+                    <Col md={6} lg={6} className='d-flex justify-content-center align-items-center my-3'>
                         <Card style={{ width: '90%', borderRadius: '10px' }}>
                             <Card.Img variant="top" src="https://cvlifestyles.co.uk/wp-content/uploads/2019/02/personal-training.jpg" />
                             <Card.Body>
