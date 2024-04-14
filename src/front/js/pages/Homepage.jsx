@@ -36,7 +36,7 @@ const Homepage = () => {
                     <div className='row'>
                         <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
                     </div>
-                    <HomeUserClasses />
+                    <HomeUserClasses filters={filters} />
                 </div>
                 :
                 (isLogged && isTrainer) ?

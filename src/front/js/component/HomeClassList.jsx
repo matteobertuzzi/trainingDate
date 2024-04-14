@@ -51,7 +51,7 @@ const HomeClassList = ({ filters }) => {
                                 {isUser &&
                                     <Button className='mx-3' variant="primary" onClick={() => updateCart(oneClass.id)}>Inscribirse en la clase</Button>
                                 }
-                                <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+
                             </Carousel.Caption>
                         </Carousel.Item>
                     ))}

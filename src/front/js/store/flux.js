@@ -84,7 +84,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       getTrainerSpecializations: async () => {
-        let  currentAccount = localStorage.getItem('availableAccount');
+        let currentAccount = localStorage.getItem('availableAccount');
         currentAccount = JSON.parse(currentAccount);
         const id = currentAccount.trainer.id;
         const token = localStorage.getItem("accessToken");
@@ -446,7 +446,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           headers: {
             Authorization: `Bearer ${token}`
           },
-          body: formData 
+          body: formData
         };
 
         try {
@@ -651,7 +651,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error(`Failed to process geolocation request. HTTP error ${response.statusText}`)
         };
         const data = await response.json();
-        console.log(data);
         const location = data.results[0].geometry.location;
         console.log(location)
         const lat = location.lat;

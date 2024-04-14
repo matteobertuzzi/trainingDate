@@ -16,7 +16,7 @@ export const TrainerClasses = () => {
     const [futureClasses, setFutureClasses] = useState([]);
     const [activeTab, setActiveTab] = useState("past");
     const [activePage, setActivePage] = useState(1);
-    const classesPerPage = 6;
+    const classesPerPage = 4;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -97,7 +97,7 @@ export const TrainerClasses = () => {
                 ))}
             </Row>
             <Row className="d-flex justify-content-center align-items-center">
-                <Pagination>
+                <Pagination className="d-flex justify-content-center align-items-center mt-4">
                     {activeTab === "past" ? (
                         pastClasses.length > classesPerPage ? (
                             Array.from({ length: Math.ceil(pastClasses.length / classesPerPage) }).map((_, index) => (

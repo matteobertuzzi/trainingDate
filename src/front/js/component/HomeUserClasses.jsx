@@ -7,9 +7,10 @@ import Card from 'react-bootstrap/Card';
 import Loading from './Loading.jsx';
 import FilterAlert from './FilterAlert.jsx';
 import ClassModal from './ClassModal.jsx';
+import MapModal from './MapModal.jsx';
 
 
-const HomeUserClasses = () => {
+const HomeUserClasses = ({ filters }) => {
     const { store, actions } = useContext(Context);
     const { createCheckoutSession } = actions
     const { currentUser, allClasses, userClasses } = store
@@ -35,7 +36,6 @@ const HomeUserClasses = () => {
                 }
             })
         } else {
-
             for (let i = 0; i < allClasses.length; i++) {
                 allClasses[i]["isInterested"] = true;
                 console.log(allClasses[i]);
@@ -84,69 +84,182 @@ const HomeUserClasses = () => {
         }
     };
 
+    let filteredClasses = allClasses.filter((cls) => {
+        return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
+    });
+
+    const chunkedFilteredClasses = [];
+    for (let i = 0; i < filteredClasses.length; i += chunkSize) {
+        chunkedFilteredClasses.push(filteredClasses.slice(i, i + chunkSize));
+    }
+
     return (
         <>
-            {chunkedClasses.length > 1 ? (
-                <Carousel prevIcon={<BsChevronCompactLeft />} nextIcon={<BsChevronCompactRight />}>
-                    {chunkedClasses.map((chunk, index) => (
-                        <Carousel.Item key={index}>
-                            <div className="row">
-                                {chunk.map(oneClass => (
-                                    <div className='col-4' key={oneClass.id}>
-                                        <Card className='my-3'>
-                                            <Card.Header>Detalles de la Clase</Card.Header>
-                                            <Card.Body>
-                                                <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
-                                                <Card.Text>
-                                                    {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
-                                                </Card.Text>
-                                                <div className='d-flex justify-content-center'>
-                                                    <ClassModal userClass={oneClass} />
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    </div>
-                                ))}
+            {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
+            {filteredClasses.length > 0 ? (
+                chunkedFilteredClasses.length > 1 ? (
+                    <Carousel prevIcon={<BsChevronCompactLeft />} nextIcon={<BsChevronCompactRight />}>
+                        {chunkedFilteredClasses.map((chunk, index) => (
+                            <Carousel.Item key={index}>
+                                <div className="row">
+                                    {chunk.map(oneClass => (
+                                        <div className='col-4' key={oneClass.id}>
+                                            <Card className='my-3'>
+                                                <Card.Header>Detalles de la Clase</Card.Header>
+                                                <Card.Body>
+                                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
+                                                    <Card.Text>
+                                                        {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
+                                                    </Card.Text>
+                                                </Card.Body>
+                                                <Card.Footer className='p-3'>
+                                                    {oneClass.capacity < 1 ? (
+                                                        <div className='d-flex justify-content-center align-items-center'>
+                                                            <Button variant='danger' disabled>Clase completa!</Button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className='d-flex justify-content-center gap-2'>
+                                                            <ClassModal userClass={oneClass} />
+                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                                handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                                oneClass.isInterested = !oneClass.isInterested;
+                                                            }}>
+                                                                {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                            </Button>
+                                                            {oneClass.isInterested === false ? (
+                                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                            ) : null}
+                                                            <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                                                        </div>
+                                                    )}
+                                                </Card.Footer>
+                                            </Card>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Carousel.Item>
+                        ))}
+                    </Carousel>
+                ) : (
+                    <div className="row">
+                        {filteredClasses.map(oneClass => (
+                            <div className='col-4 h-100' key={oneClass.id}>
+                                <Card className='my-3'>
+                                    <Card.Header>Detalles de la Clase</Card.Header>
+                                    <Card.Body>
+                                        <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
+                                        <Card.Text>
+                                            {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
+                                        </Card.Text>
+                                    </Card.Body>
+                                    <Card.Footer className='p-3'>
+                                        {oneClass.capacity < 1 ? (
+                                            <div className='d-flex justify-content-center align-items-center'>
+                                                <Button variant='danger' disabled>Clase completa!</Button>
+                                            </div>
+                                        ) : (
+                                            <div className='d-flex justify-content-center gap-2'>
+                                                <ClassModal userClass={oneClass} />
+                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                    handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                    oneClass.isInterested = !oneClass.isInterested;
+                                                }}>
+                                                    {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                </Button>
+                                                {oneClass.isInterested === false ? (
+                                                    <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                ) : null}
+                                                <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                                            </div>
+                                        )}
+                                    </Card.Footer>
+                                </Card>
                             </div>
-                        </Carousel.Item>
-                    ))}
-                </Carousel>
+                        ))}
+                    </div >
+                )
             ) : (
-                <div className="row">
-                    {allClasses.map(oneClass => (
-                        <div className='col-4 h-100' key={oneClass.id}>
-                            <Card className='my-3'>
-                                <Card.Header>Detalles de la Clase</Card.Header>
-                                <Card.Body>
-                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
-                                    <Card.Text>
-                                        {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
-                                    </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                    {oneClass.capacity < 1 ? (
-                                        <div className='d-flex justify-content-center align-items-center'>
-                                            <Button variant='danger' disabled>Clase completa!</Button>
+                chunkedClasses.length > 1 ? (
+                    <Carousel prevIcon={<BsChevronCompactLeft />} nextIcon={<BsChevronCompactRight />}>
+                        {chunkedClasses.map((chunk, index) => (
+                            <Carousel.Item key={index}>
+                                <div className="row">
+                                    {chunk.map(oneClass => (
+                                        <div className='col-4' key={oneClass.id}>
+                                            <Card className='my-3'>
+                                                <Card.Header>Detalles de la Clase</Card.Header>
+                                                <Card.Body>
+                                                    <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
+                                                    <Card.Text>
+                                                        {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
+                                                    </Card.Text>
+                                                </Card.Body>
+                                                <Card.Footer className='p-3'>
+                                                    {oneClass.capacity < 1 ? (
+                                                        <div className='d-flex justify-content-center align-items-center'>
+                                                            <Button variant='danger' disabled>Clase completa!</Button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className='d-flex justify-content-center gap-2'>
+                                                            <ClassModal userClass={oneClass} />
+                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                                handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                                oneClass.isInterested = !oneClass.isInterested;
+                                                            }}>
+                                                                {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                            </Button>
+                                                            {oneClass.isInterested === false ? (
+                                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                            ) : null}
+                                                            <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                                                        </div>
+                                                    )}
+                                                </Card.Footer>
+                                            </Card>
                                         </div>
-                                    ) : (
-                                        <div className='d-flex justify-content-center gap-2'>
-                                            <ClassModal userClass={oneClass} />
-                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
-                                                handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
-                                                oneClass.isInterested = !oneClass.isInterested;
-                                            }}>
-                                                {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                            </Button>
-                                            {oneClass.isInterested === false ? (
-                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                            ) : null}
-                                        </div>
-                                    )}
-                                </Card.Footer>
-                            </Card>
-                        </div>
-                    ))}
-                </div >
+                                    ))}
+                                </div>
+                            </Carousel.Item>
+                        ))}
+                    </Carousel>
+                ) : (
+                    <div className="row">
+                        {allClasses.map(oneClass => (
+                            <div className='col-4 h-100' key={oneClass.id}>
+                                <Card className='my-3'>
+                                    <Card.Header>Detalles de la Clase</Card.Header>
+                                    <Card.Body>
+                                        <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
+                                        <Card.Text>
+                                            {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
+                                        </Card.Text>
+                                    </Card.Body>
+                                    <Card.Footer className='p-3'>
+                                        {oneClass.capacity < 1 ? (
+                                            <div className='d-flex justify-content-center align-items-center'>
+                                                <Button variant='danger' disabled>Clase completa!</Button>
+                                            </div>
+                                        ) : (
+                                            <div className='d-flex justify-content-center gap-2'>
+                                                <ClassModal userClass={oneClass} />
+                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                    handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                    oneClass.isInterested = !oneClass.isInterested;
+                                                }}>
+                                                    {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                </Button>
+                                                {oneClass.isInterested === false ? (
+                                                    <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                ) : null}
+                                                <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                                            </div>
+                                        )}
+                                    </Card.Footer>
+                                </Card>
+                            </div>
+                        ))}
+                    </div >
+                )
             )}
             {
                 allClasses.length === 0 && (

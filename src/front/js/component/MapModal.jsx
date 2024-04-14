@@ -22,7 +22,6 @@ function MapModal({ addressData }) {
 
     useEffect(() => {
         coordinates = store.currentGeolocation;
-        console.log(coordinates)
     }, [])
 
     const mapContainerStyle = {

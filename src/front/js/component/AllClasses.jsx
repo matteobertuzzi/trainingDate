@@ -13,7 +13,7 @@ const AllClasses = () => {
     const [futureClasses, setFutureClasses] = useState([]);
     const [activeTab, setActiveTab] = useState("past");
     const [activePage, setActivePage] = useState(1);
-    const classesPerPage = 6;
+    const classesPerPage = 4;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -78,20 +78,17 @@ const AllClasses = () => {
                                     <Card.Text>Calle: {classItem.street_name}</Card.Text>
                                     <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
                                 </section>
-                                <section className="d-flex flex-column gap-2">
-                                    <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
-                                </section>
                             </Card.Body>
                         </Card>
                     </div>
                 ))}
             </Row>
             <Row className="d-flex justify-content-center align-items-center">
-                <Pagination>
+                <Pagination className="d-flex justify-content-center align-items-center mt-4">
                     {activeTab === "past" ? (
                         pastClasses.length > classesPerPage ? (
                             Array.from({ length: Math.ceil(pastClasses.length / classesPerPage) }).map((_, index) => (
-                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)} style={{ backgroundColor: '#e95420 !important', color: 'white !important' }}>
                                     {index + 1}
                                 </Pagination.Item>
                             ))
@@ -99,7 +96,7 @@ const AllClasses = () => {
                     ) : (
                         futureClasses.length > classesPerPage ? (
                             Array.from({ length: Math.ceil(futureClasses.length / classesPerPage) }).map((_, index) => (
-                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)} style={{ backgroundColor: '#e95420 !important', color: 'white !important' }}>
                                     {index + 1}
                                 </Pagination.Item>
                             ))
