@@ -121,16 +121,16 @@ const HomeUserClasses = ({ filters }) => {
                                                             <Button variant='danger' disabled>Clase completa!</Button>
                                                         </div>
                                                     ) : (
-                                                        <div className='d-flex justify-content-center gap-2'>
+                                                        <div className='d-flex flex-column gap-2'>
                                                             <ClassModal userClass={oneClass} />
-                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
                                                                 handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
                                                                 oneClass.isInterested = !oneClass.isInterested;
                                                             }}>
                                                                 {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                             </Button>
                                                             {oneClass.isInterested === false ? (
-                                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                                <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                             ) : null}
                                                             <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                                         </div>
@@ -162,16 +162,16 @@ const HomeUserClasses = ({ filters }) => {
                                                 <Button variant='danger' disabled>Clase completa!</Button>
                                             </div>
                                         ) : (
-                                            <div className='d-flex justify-content-center gap-2'>
+                                            <div className='d-flex flex-column gap-2'>
                                                 <ClassModal userClass={oneClass} />
-                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
                                                     handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
                                                     oneClass.isInterested = !oneClass.isInterested;
                                                 }}>
                                                     {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                 </Button>
                                                 {oneClass.isInterested === false ? (
-                                                    <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                    <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                 ) : null}
                                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                             </div>
@@ -205,16 +205,16 @@ const HomeUserClasses = ({ filters }) => {
                                                             <Button variant='danger' disabled>Clase completa!</Button>
                                                         </div>
                                                     ) : (
-                                                        <div className='d-flex justify-content-center gap-2'>
+                                                        <div className='d-flex flex-column gap-2'>
                                                             <ClassModal userClass={oneClass} />
-                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
                                                                 handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
                                                                 oneClass.isInterested = !oneClass.isInterested;
                                                             }}>
                                                                 {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                             </Button>
                                                             {oneClass.isInterested === false ? (
-                                                                <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                                <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                             ) : null}
                                                             <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                                         </div>
@@ -246,16 +246,16 @@ const HomeUserClasses = ({ filters }) => {
                                                 <Button variant='danger' disabled>Clase completa!</Button>
                                             </div>
                                         ) : (
-                                            <div className='d-flex justify-content-center gap-2'>
+                                            <div className='d-flex flex-column gap-2'>
                                                 <ClassModal userClass={oneClass} />
-                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} onClick={() => {
+                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
                                                     handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
                                                     oneClass.isInterested = !oneClass.isInterested;
                                                 }}>
                                                     {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                 </Button>
                                                 {oneClass.isInterested === false ? (
-                                                    <Button onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                    <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                 ) : null}
                                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                             </div>
