@@ -16,7 +16,6 @@ import TrainerProfile from "./pages/TrainerProfile.jsx";
 import { AddTrainerSpecialization } from "./pages/AddTrainerSpecialization.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Signup from "./pages/Signup.jsx";
-import { Cart } from "./pages/Cart.jsx";
 import { TrainerClasses } from "./pages/TrainerClasses.jsx";
 import { UserClasses } from "./pages/UserClasses.jsx";
 import TrainerHomepage from "./component/TrainerHomepage.jsx";
@@ -61,7 +60,6 @@ const Layout = () => {
                         <Route element={<Signup />} path='/signup' />
                         <Route element={<SignupUser />} path='/signupUser' />
                         <Route element={<SignupTrainer />} path='/signupTrainer' />
-                        <Route element={<Cart />} path='/cart' />
                         <Route element={<TrainerClasses />} path='/trainer/:id/classes' />
                         <Route element={<UserClasses />} path='/user/:id/classes' />
                         <Route element={<TrainerHomepage />} path='/trainer/homepage' />

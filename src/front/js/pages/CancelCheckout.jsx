@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaTimesCircle } from 'react-icons/fa';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Context } from '../store/appContext';
 
 
@@ -10,12 +10,8 @@ const CancelCheckout = () => {
     const { getUserClasses } = actions
     const navigate = useNavigate()
 
-    const handleClick = async () => {
-        await getUserClasses()
-        navigate("/")
-    }
     return (
-        <Container>
+        <Container className="my-4 min-vh-100 d-flex flex-column justify-content-center align-items-center">
             <Row className="mt-5">
                 <Col className="text-center">
                     <FaTimesCircle style={{ fontSize: '5em', color: 'red' }} />
@@ -30,7 +26,7 @@ const CancelCheckout = () => {
             </Row>
             <Row className="mt-3">
                 <Col className="text-center">
-                    <Button onClick={handleClick} variant="primary">Volver a la tienda</Button>
+                    <Button as={Link} to="/" variant="primary">Volver a la tienda</Button>
                 </Col>
             </Row>
         </Container>

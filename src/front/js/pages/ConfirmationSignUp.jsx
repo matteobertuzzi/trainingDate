@@ -51,7 +51,7 @@ export const ConfirmationSignUp = () => {
   };
 
   return (
-    <Container className="mt-4 d-flex justify-content-center align-items-center flex-column">
+    <Container className="py-4 d-flex justify-content-center align-items-center flex-column">
       <Row>
         <Col md={{ span: 6, offset: 3 }} className="text-center">
           <Alert variant="success">

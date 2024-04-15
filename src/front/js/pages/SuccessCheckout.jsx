@@ -1,19 +1,12 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaCheckCircle } from 'react-icons/fa';
-import { useNavigate } from "react-router-dom";
 import { Context } from '../store/appContext';
+import { Link } from 'react-router-dom'
 
 
 const SuccessCheckout = () => {
     const { store, actions } = useContext(Context)
-    const { getUserClasses } = actions
-    const navigate = useNavigate()
-
-    const handleClick = async () => {
-        await getUserClasses()
-        navigate("/")
-    }
 
     return (
         <Container className='min-vh-100 d-flex justify-content-center align-items-center flex-column'>
@@ -31,7 +24,7 @@ const SuccessCheckout = () => {
             </Row>
             <Row className="mt-3">
                 <Col className="text-center">
-                    <Button onClick={handleClick} variant="primary">Volver a la Home</Button>
+                    <Button as={Link} to="/" variant="primary">Volver a la Home</Button>
                 </Col>
             </Row>
         </Container>

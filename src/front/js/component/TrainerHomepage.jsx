@@ -10,9 +10,9 @@ const TrainerHomepage = () => {
 
     return (
 
-        <Container className='my-2 w-100' fluid>
-            <Row>
-                <Col >
+        <Container className='p-0' fluid>
+            <Row className="m-0">
+                <Col>
                     <Carousel>
                         <Carousel.Item>
                             <img

@@ -28,7 +28,7 @@ export const MyNavbar = () => {
       <Container fluid className=" justify-content-evenly p-2 mx-2">
         <Col>
           <Navbar.Brand>
-            <Link to={"/"}>Training Date</Link>
+            <Link to={"/"}>Training <FontAwesomeIcon icon={faDumbbell} className="text-decoration-none" />  Date</Link>
           </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
@@ -54,29 +54,6 @@ export const MyNavbar = () => {
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
               <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
-                <NavDropdown
-                  id="nav-dropdown-cart-shopping"
-                  title={<FontAwesomeIcon icon={faCartShopping} />}
-                  menuVariant="dark"
-                  align='end'
-                >
-                  {!cart || cart.length === 0 ? (
-                    <NavDropdown.Item>El carrito está vacío</NavDropdown.Item>
-                  ) : (
-                    <>
-                      {cart.map((item, index) => (
-                        <div className="d-flex flex-row justify-content-between" key={index}>
-                          <NavDropdown.Item key={index}>{item}</NavDropdown.Item>
-                          <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
-                            <i className="fa-solid fa-trash"></i>
-                          </Button>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item>Abre todo el carrito</NavDropdown.Item>
-                </NavDropdown>
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
                   <FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
                 </Nav.Item>
@@ -234,28 +211,6 @@ export const MyNavbar = () => {
           </>
         ) : (
           <Col xs="auto d-flex align-items-center justify-content-center gap-3">
-            <Nav>
-              <NavDropdown
-                id="nav-dropdown-cart-shopping"
-                title={<FontAwesomeIcon icon={faCartShopping} />}
-                menuVariant="dark"
-                align='end'
-              >
-                {console.log(cart)}
-                {!cart || cart.length === 0 ? (
-                  <NavDropdown.Item>El carrito está vacío</NavDropdown.Item>
-                ) : (
-                  cart.map((item, index) => (
-                    <React.Fragment key={index}>
-                      <NavDropdown.Item>{item}</NavDropdown.Item>
-                      <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
-                        <i className="fa-solid fa-trash"></i>
-                      </Button>
-                    </React.Fragment>
-                  ))
-                )}
-              </NavDropdown>
-            </Nav>
             <FontAwesomeIcon onClick={() => setLoginModalShow(true)} icon={faRightToBracket} className="text-success p-2" />
           </Col>
         )}

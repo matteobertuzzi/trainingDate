@@ -124,7 +124,7 @@ const UnloggedView = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className='d-flex flex-column justify-content-center align-items-center p-3' style={{ width: '100%' }}>
+            <Row className='d-flex flex-column justify-content-center align-items-center p-3 mb-4' style={{ width: '100%' }}>
                 <Col>
                     <h2 className="text-center">Preguntas frecuentes</h2>
                     <Accordion>

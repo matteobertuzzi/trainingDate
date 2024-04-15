@@ -83,6 +83,36 @@ export const TrainerClasses = () => {
                     <Nav.Link eventKey="future">Futuras</Nav.Link>
                 </Nav.Item>
             </Nav>
+
+            {/* Alerta si no hay clases pasadas */}
+            {activeTab === "past" && pastClasses.length === 0 && (
+                <Row className="d-flex justify-content-center align-items-center">
+                    <Col className="d-flex justify-content-center align-items-center m-4">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
+                                <IoIosWarning />No hay clases pasadas disponibles
+                            </Alert.Heading>
+                            <p>
+                                Parece que aún no tienes ninguna clase pasada.
+                            </p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+            {activeTab === "future" && futureClasses.length === 0 && (
+                <Row className="d-flex justify-content-center align-items-center">
+                    <Col className="d-flex justify-content-center align-items-center m-4">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
+                                <IoIosWarning />No hay clases futuras disponibles
+                            </Alert.Heading>
+                            <p>
+                                Parece que aún no tienes ninguna clase futura.
+                            </p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
             <Row className="justify-content-center mt-3 d-flex flex-row gap-2">
                 {currentClasses.map(classItem => (
                     <Col key={classItem.id} className="d-flex flex-row gap-2 justify-content-center align-items-center">

@@ -12,7 +12,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       userInTrainerClass: [],
       allClasses: [],
       userClasses: [],
-      cart: [],
       clientSecret: [],
       filters: {
         trainingType: '',
@@ -43,32 +42,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ currentUser: null })
         } else {
           setStore({ logged: value })
-        }
-      },
-
-      addCartItem: (newItem) => {
-        const store = getStore();
-        if (!store.cart.includes(newItem)) {
-          const updatedCart = [...store.cart, newItem];
-          setStore({ cart: updatedCart });
-          localStorage.setItem('cart', JSON.stringify(updatedCart));
-        } else {
-          getActions().removeCartItem(newItem, store.cart);
-        }
-      },
-
-      removeCartItem: (item, array) => {
-        const updatedCart = array.filter((element) => element !== item);
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
-        setStore({ cart: updatedCart });
-      },
-
-      getCartItem: () => {
-        const storageCart = localStorage.getItem('cart');
-        if (storageCart) {
-          setStore({ cart: JSON.parse(storageCart) });
-        } else {
-          setStore({ cart: [] });
         }
       },
 
