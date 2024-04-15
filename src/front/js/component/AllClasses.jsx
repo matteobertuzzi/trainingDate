@@ -12,7 +12,7 @@ const AllClasses = () => {
     const { currentUser, allClasses, userClasses } = store;
     const { postUserClass, deleteUserClass } = actions;
     const [interested, setInterested] = useState(false);
-    const [merge, setMerge] = useState([])
+    const [merge, setMerge] = useState([]);
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
@@ -115,12 +115,14 @@ const AllClasses = () => {
                 {currentClasses.map(classItem => (
                     <Col key={classItem.id} className="mb-4">
                         <Card border="primary">
-                            <Card.Body>
-                                <Card.Title><strong>ID de la Clase:</strong> {classItem.id}</Card.Title>
+                            <Card.Header>{classItem.class_name}</Card.Header>
+                            <Card.Body >
                                 <Card.Text><strong>Ciudad:</strong> {classItem.city}</Card.Text>
                                 <Card.Text><strong>Código Postal:</strong> {classItem.postal_code}</Card.Text>
                                 <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
                                 <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
+                                <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
+                                <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
                             </Card.Body>
                             <Card.Footer className='p-3'>
                                 {classItem.capacity < 1 ? (

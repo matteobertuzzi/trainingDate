@@ -57,9 +57,11 @@ export const UserClasses = () => {
                                     <Card.Header>{classItem.class_name}</Card.Header>
                                     <Card.Body className="d-flex justify-content-between align-items-center">
                                         <section>
-                                            <Card.Text><strong>Class Details:</strong> {classItem.class_details}</Card.Text>
-                                            <Card.Text><strong>Ciudad:</strong> {classItem.city}, {classItem.postal_code}</Card.Text>
-                                            <Card.Text><strong>Dirección:</strong> {classItem.street_name}, {classItem.street_number}</Card.Text>
+                                            <Card.Text><strong>Ciudad:</strong> {classItem.city}</Card.Text>
+                                            <Card.Text><strong>Código Postal:</strong> {classItem.postal_code}</Card.Text>
+                                            <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
+                                            <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
+                                            <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
                                             <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
                                         </section>
                                     </Card.Body>
