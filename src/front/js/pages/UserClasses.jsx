@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Card, Image, Button, Alert } from 'react-bootstrap';
@@ -6,12 +6,34 @@ import Loading from '../component/Loading.jsx';
 import { useParams, Link } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
+import MapModal from "../component/MapModal.jsx";
+import ClassModal from "../component/ClassModal.jsx";
 
 export const UserClasses = () => {
     const { store, actions } = useContext(Context);
-    const { currentUser, userClasses } = store;
+    const { currentUser, userClasses, allClasses } = store;
+    const [merge, setMerge] = useState([])
     const { id } = useParams();
 
+
+    useEffect(() => {
+        mergeClasses();
+    }, []);
+
+    const mergeClasses = () => {
+        const merged = [];
+
+        for (let i = 0; i < userClasses.length; i++) {
+            const userClass = userClasses[i];
+            const foundClass = allClasses.find(classItem => classItem.id === userClass.class);
+            if (foundClass) {
+                const mergedClass = { ...foundClass, ...userClass };
+                merged.push(mergedClass);
+                setMerge(merged)
+                console.log(merged)
+            }
+        }
+    };
 
     if (!currentUser || !currentUser.user) {
         return <Loading />;
@@ -27,19 +49,26 @@ export const UserClasses = () => {
                 </Col>
             </Row>
             <Row xs={1} md={2} lg={3} className="d-flex justify-content-center g-4">
-                {userClasses.length !== 0 ? (
-                    userClasses.map((classItem) => (
+                {merge.length !== 0 ? (
+                    merge.map((classItem) => (
                         classItem.stripe_status === "Paid" ? (
                             <Col className="d-flex flex-column align-items-center justify-content-center gap-3" key={classItem.id}>
                                 <Card key={classItem.id} border="primary" style={{ width: '18rem' }}>
-                                    <Card.Header>{classItem.id}</Card.Header>
+                                    <Card.Header>{classItem.class_name}</Card.Header>
                                     <Card.Body className="d-flex justify-content-between align-items-center">
                                         <section>
-                                            <Card.Text>Ciudad: {classItem.city}</Card.Text>
-                                            <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
-                                            <Card.Text>Calle: {classItem.street_name}</Card.Text>
+                                            <Card.Text><strong>Class Details:</strong> {classItem.class_details}</Card.Text>
+                                            <Card.Text><strong>Ciudad:</strong> {classItem.city}, {classItem.postal_code}</Card.Text>
+                                            <Card.Text><strong>Dirección:</strong> {classItem.street_name}, {classItem.street_number}</Card.Text>
+                                            <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
                                         </section>
                                     </Card.Body>
+                                    <Card.Footer>
+                                        <div className='d-flex flex-column gap-2'>
+                                            <ClassModal userClass={classItem} />
+                                            <MapModal className='mx-3' addressData={[classItem.city, classItem.postal_code, classItem.street_name, classItem.street_number]} />
+                                        </div>
+                                    </Card.Footer>
                                 </Card>
                             </Col>
                         ) : ""
