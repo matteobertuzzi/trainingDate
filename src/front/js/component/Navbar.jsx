@@ -46,7 +46,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                  <Nav.Link className="d-none d-md-block" as={Link} to={"/allClasses"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
                     Todas las clases
                   </Nav.Link>
                 </Nav.Item>

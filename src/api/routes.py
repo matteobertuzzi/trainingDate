@@ -1164,6 +1164,8 @@ def handle_trainer_classes(id):
                                                     stripe_price_id=price.id)
                 db.session.add(new_trainer_class)
                 db.session.commit()
+                class_specialization = Specializations.query.filter(Specializations.id==new_trainer_class.training_type).first()
+                response_body["specialization"] = class_specialization.serialize()
                 response_body["message"] = "New class created"
                 response_body["class"] = new_trainer_class.serialize()
                 return response_body, 201
@@ -1192,6 +1194,15 @@ def handle_trainer_class(id, class_id):
             response_body["message"] = "Class doesn't exist"
             return response_body, 404
     if request.method == "GET":
+        user_in_class = UsersClasses.query.filter(UsersClasses.class_id == class_id).all()
+        users_details = []
+        for user_class in user_in_class:
+            user = Users.query.get(user_class.user_id)
+            if not user:
+                response_body["message"] = "User not found"
+                return response_body, 400
+            users_details.append(user.serialize())
+        response_body["user_in_class"] = users_details
         response_body["message"] = "Trainer class"
         response_body["class"] = trainer_class.serialize()
         return response_body, 200
@@ -1202,17 +1213,11 @@ def handle_trainer_class(id, class_id):
             if has_paid_users:
                 response_body["message"] = "Unable to delete class, it has associated users with paid status"
                 return response_body, 400
-            try:
-                stripe_product_id = trainer_class.stripe_product_id
-                stripe.Product.delete(stripe_product_id)
-                db.session.delete(trainer_class)
-                db.session.commit()       
-                response_body["message"] = "Clase cancelada y producto eliminado correctamente en Stripe"
-                response_body["class"] = trainer_class.serialize()
-                return response_body, 200
-            except stripe.error.StripeError as e:
-                print("Error al procesar la operación en Stripe:", str(e))
-                return {"message": "Error al procesar la operación en Stripe"}, 500
+            db.session.delete(trainer_class)
+            db.session.commit()       
+            response_body["message"] = "Clase cancelada"
+            response_body["class"] = trainer_class.serialize()
+            return response_body, 200
         if request.method == "PATCH":
             data = request.json
             if not data:
