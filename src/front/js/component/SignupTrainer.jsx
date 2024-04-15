@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Context } from "../store/appContext.js";
-import {Button, Card, Col, Container, Form, Row } from 'react-bootstrap/';
-import { useNavigate } from 'react-router-dom';
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap/';
+import { useNavigate, Link } from 'react-router-dom';
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 
 function SignupTrainer() {
@@ -36,7 +37,7 @@ function SignupTrainer() {
             const validateLog = await addTrainer(inputs);
             if (!validateLog) {
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
-                
+
             } else {
                 setInputs({
                     name: '',
@@ -69,7 +70,14 @@ function SignupTrainer() {
     }
 
     return (
-        <Container className="my-5">
+        <Container className="my-4">
+            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
+                <Col>
+                    <Link to={"/"}>
+                        <RiArrowGoBackLine /> Volver atrás
+                    </Link>
+                </Col>
+            </Row>
             <Card className="border-0 shadow-lg">
                 <Card.Body>
                     <Card.Title>Registro de Entrenador</Card.Title>

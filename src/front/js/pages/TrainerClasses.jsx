@@ -6,7 +6,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
 
-
 export const TrainerClasses = () => {
     const { store, actions } = useContext(Context);
     const { currentUser, trainerClasses } = store;
@@ -56,6 +55,11 @@ export const TrainerClasses = () => {
     const indexOfFirstClass = indexOfLastClass - classesPerPage;
     const currentClasses = activeTab === "past" ? pastClasses.slice(indexOfFirstClass, indexOfLastClass) : futureClasses.slice(indexOfFirstClass, indexOfLastClass);
 
+
+    if (!currentUser || !currentUser.trainer) {
+        return <Loading />;
+    }
+
     return (
         <Container className="min-vh-100 my-4">
             <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
@@ -64,13 +68,11 @@ export const TrainerClasses = () => {
                         <RiArrowGoBackLine /> Volver atrás
                     </Link>
                 </Col>
-                {trainerClasses.length !== 0 && (
-                    <Col className='d-flex justify-content-end'>
-                        <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='w-auto'>
-                            Crea nueva clase
-                        </Button>
-                    </Col>
-                )}
+                <Col className='d-flex justify-content-end'>
+                    <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='w-auto'>
+                        Crea nueva clase
+                    </Button>
+                </Col>
             </Row>
             <h1 className="text-center mb-4">Mis Clases</h1>
             <Nav className="d-flex flex-row justify-content-center align-items-center" variant="tabs" activeKey={activeTab} onSelect={(selectedKey) => setActiveTab(selectedKey)}>
@@ -85,11 +87,14 @@ export const TrainerClasses = () => {
                 {currentClasses.map(classItem => (
                     <Col key={classItem.id} className="d-flex flex-row gap-2 justify-content-center align-items-center">
                         <Card border="primary" style={{ width: '18rem' }}>
-                            <Card.Img className="img-fluid" variant="top" src="https://cvlifestyles.co.uk/wp-content/uploads/2019/02/personal-training.jpg" />
-                            <Card.Header>{classItem.class_name}</Card.Header>
+                            <Card.Header>{classItem.class_name ? classItem.class_name : "Nombre clase"}</Card.Header>
                             <Card.Body className="d-flex justify-content-between align-items-center flex-column">
                                 <section>
+                                    <Card.Text>Fecha inicio: {classItem.start_date}</Card.Text>
+                                    <Card.Text>Fecha fin: {classItem.end_date}</Card.Text>
                                     <Card.Text>Ciudad: {classItem.city}</Card.Text>
+                                    <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
+                                    <Card.Text>Capacidad: {classItem.capacity} personas</Card.Text>
                                     <Card.Text>
                                         Nivel entrenamiento: {
                                             classItem.training_level === "Advanced" ? "Avanzado" :
@@ -98,14 +103,11 @@ export const TrainerClasses = () => {
                                                         classItem.training_level
                                         }
                                     </Card.Text>
-                                    <Card.Text>Fecha inicio: {classItem.start_date}</Card.Text>
-                                    <Card.Text>Fecha fin: {classItem.end_date}</Card.Text>
-                                    <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
                                 </section>
-                                <Card.Footer className="d-flex flex-row gap-2 p-2 border-0">
+                                <div className="d-flex flex-row gap-2 p-2 border-0">
                                     <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
                                     <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
-                                </Card.Footer>
+                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
