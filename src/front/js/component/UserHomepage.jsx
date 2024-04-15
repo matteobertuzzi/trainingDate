@@ -1,11 +1,24 @@
 import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Card, Button, Carousel } from 'react-bootstrap';
 import { Context } from '../store/appContext';
-import { Link } from 'react-router-dom'
-
+import { Link } from 'react-router-dom';
 
 const UserHomepage = () => {
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
+
+    // Inline styles for responsive text sizes
+    const textStyle = {
+        '@media (max-width: 768px)': {
+            fontSizeH3: '1.5rem',
+            fontSizeH6: '1rem',
+            fontSizeP: '0.8rem'
+        },
+        '@media (min-width: 769px)': {
+            fontSizeH3: '2rem',
+            fontSizeH6: '1.5rem',
+            fontSizeP: '1rem'
+        }
+    };
 
     return (
         <Container className='p-3' fluid>
@@ -20,11 +33,11 @@ const UserHomepage = () => {
                                 style={{ objectFit: 'cover', opacity: '0.5' }}
                             />
                             <Card.ImgOverlay className='d-flex flex-column align-items-center justify-content-center mx-3' style={{ textAlign: 'center', color: 'white' }}>
-                                <h3 style={{ color: 'black' }}><strong>¡Hola, {currentUser.user.name}!</strong></h3>
-                                <h6 style={{ color: 'black' }}>¡Qué emocionante tenerte de vuelta! Explora las clases disponibles y comienza tu viaje hacia un estilo de vida más saludable.</h6>
-                                <p style={{ color: 'black' }}>¿Listo para encontrar la clase perfecta para ti? ¡Echa un vistazo a nuestras opciones y únete hoy mismo!</p>
-                                <p style={{ color: 'black' }}>Necesitas ayuda para comenzar o tienes alguna pregunta sobre cómo funciona la aplicación? Aquí encontrarás todo lo que necesitas saber. 😊</p>
-                                <Button as={Link} to="/users/info" >
+                                <h3 style={{ color: 'black', fontSize: textStyle.fontSizeH3 }}><strong>¡Hola, {currentUser.user.name}!</strong></h3>
+                                <h6 style={{ color: 'black', fontSize: textStyle.fontSizeH6 }}>¡Qué emocionante tenerte de vuelta! Explora las clases disponibles y comienza tu viaje hacia un estilo de vida más saludable.</h6>
+                                <p style={{ color: 'black', fontSize: textStyle.fontSizeP }}>¿Listo para encontrar la clase perfecta para ti? ¡Echa un vistazo a nuestras opciones y únete hoy mismo!</p>
+                                <p style={{ color: 'black', fontSize: textStyle.fontSizeP }}>Necesitas ayuda para comenzar o tienes alguna pregunta sobre cómo funciona la aplicación? Aquí encontrarás todo lo que necesitas saber. 😊</p>
+                                <Button as={Link} to="/users/info">
                                     Obtener más información
                                 </Button>
                             </Card.ImgOverlay>
