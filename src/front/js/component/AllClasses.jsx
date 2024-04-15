@@ -12,6 +12,7 @@ const AllClasses = () => {
     const { currentUser, allClasses, userClasses } = store;
     const { postUserClass, deleteUserClass } = actions;
     const [interested, setInterested] = useState(false);
+    const [merge, setMerge] = useState([])
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
@@ -33,6 +34,7 @@ const AllClasses = () => {
 
     useEffect(() => {
         checkClasses();
+        mergeClasses();
     }, []);
 
     const checkClasses = () => {
@@ -83,6 +85,21 @@ const AllClasses = () => {
         }
     };
 
+    const mergeClasses = () => {
+        const merged = [];
+
+        for (let i = 0; i < userClasses.length; i++) {
+            const userClass = userClasses[i];
+            const foundClass = allClasses.find(classItem => classItem.id === userClass.class);
+            if (foundClass) {
+                const mergedClass = { ...foundClass, ...userClass };
+                merged.push(mergedClass);
+                setMerge(merged)
+                console.log(merged)
+            }
+        }
+    };
+
 
     return (
         <Container className="min-vh-100 my-4">
@@ -113,17 +130,24 @@ const AllClasses = () => {
                                 ) : (
                                     <div className='d-flex flex-column gap-2'>
                                         <ClassModal userClass={classItem} />
-                                        <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
-                                            handleInterested(classItem.isInterested, classItem.id, classItem.price);
-                                            classItem.isInterested = !classItem.isInterested;
-                                        }}>
-                                            {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                        </Button>
-                                        {classItem.isInterested === false ? (
-                                            <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                        ) : null}
+                                        {merge.find(mergedItem => mergedItem.class === classItem.id && mergedItem.stripe_status === 'Paid') ? (
+                                            <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                        ) : (
+                                            <>
+                                                <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                    handleInterested(classItem.isInterested, classItem.id, classItem.price);
+                                                    classItem.isInterested = !classItem.isInterested;
+                                                }}>
+                                                    {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                </Button>
+                                                {classItem.isInterested === false ? (
+                                                    <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                ) : null}
+                                            </>
+                                        )}
                                         <MapModal className='mx-3' addressData={[classItem.city, classItem.postal_code, classItem.street_name, classItem.street_number]} />
                                     </div>
+
                                 )}
                             </Card.Footer>
                         </Card>
