@@ -11,7 +11,7 @@ const TrainerInfo = () => {
 
 
     return (
-        <Container className="my-5">
+        <Container className="my-4">
             <Row className='m-3 d-flex flex-row gap-2'>
                 <Link to={"/"}>
                     <RiArrowGoBackLine /> Volver atrás

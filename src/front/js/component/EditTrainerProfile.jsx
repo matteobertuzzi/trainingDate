@@ -83,14 +83,14 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                             <Form.Label>URL de Twitter</Form.Label>
                             <Form.Control type="url" placeholder={trainer.x_url} name='x_url' value={inputs.x_url || ""} onChange={changeInputs} />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className='my-3'>
-                            Actualizar datos del entrenador
-                        </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Cerrar
+                    </Button>
+                    <Button variant="primary" type="submit" className='my-3'>
+                        Actualizar datos del entrenador
                     </Button>
                 </Modal.Footer>
             </Modal>

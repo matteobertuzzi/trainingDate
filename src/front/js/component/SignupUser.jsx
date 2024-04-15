@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
-import {Button, Card, Col, Form, Container, Row} from 'react-bootstrap/';
+import { Button, Card, Col, Form, Container, Row } from 'react-bootstrap/';
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 
 function SignupUser() {
@@ -57,7 +58,14 @@ function SignupUser() {
     }
 
     return (
-        <Container className="my-5">
+        <Container className="my-4">
+            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
+                <Col>
+                    <Link to={"/"}>
+                        <RiArrowGoBackLine /> Volver atrás
+                    </Link>
+                </Col>
+            </Row>
             <Card className="border-0 shadow-lg">
                 <Card.Body>
                     <Card.Title>Registro de Usuario</Card.Title>

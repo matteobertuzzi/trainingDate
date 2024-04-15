@@ -30,8 +30,8 @@ const DeletelUser = ({ show, onHide }) => {
                 {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="primary" onClick={handleClick}>Confirmar cancelación</Button>
                 <Button variant="secondary" onClick={onHide}>Cancelar</Button>
+                <Button variant="primary" onClick={handleClick}>Confirmar cancelación</Button>
             </Modal.Footer>
         </Modal>
     );
