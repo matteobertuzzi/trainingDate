@@ -9,14 +9,16 @@ import FilterAlert from './FilterAlert.jsx';
 import ClassModal from './ClassModal.jsx';
 import MapModal from './MapModal.jsx';
 
+const placeholderImageUrl = ''; // Add your placeholder image URL here
 
 const HomeUserClasses = ({ filters }) => {
     const { store, actions } = useContext(Context);
-    const { createCheckoutSession } = actions
-    const { currentUser, allClasses, userClasses } = store
-    const { postUserClass, deleteUserClass } = actions
+    const { createCheckoutSession } = actions;
+    const { currentUser, allClasses, userClasses } = store;
+    const { postUserClass, deleteUserClass } = actions;
     const [showAlert, setShowAlert] = useState(false);
     const [interested, setInterested] = useState(false);
+    const placeholderImageUrl = 'https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg'
 
     useEffect(() => {
         checkClasses();
@@ -60,8 +62,8 @@ const HomeUserClasses = ({ filters }) => {
     }
 
     const handleCheckout = async (productId, customerId) => {
-        await createCheckoutSession(productId, customerId)
-    }
+        await createCheckoutSession(productId, customerId);
+    };
 
     const handleInterested = async (value, classId, price) => {
         try {
@@ -74,8 +76,8 @@ const HomeUserClasses = ({ filters }) => {
             }
             allClasses.map(oneClass => {
                 if (oneClass.id === classId) {
-                    oneClass["isInterested"] = !value
-                    return
+                    oneClass["isInterested"] = !value;
+                    return;
                 }
                 return;
             });
@@ -105,6 +107,7 @@ const HomeUserClasses = ({ filters }) => {
                                     {chunk.map(oneClass => (
                                         <div className='col-4' key={oneClass.id}>
                                             <Card className='my-3'>
+                                                <Card.Img variant="top" src={placeholderImageUrl} />
                                                 <Card.Header>Detalles de la Clase</Card.Header>
                                                 <Card.Body>
                                                     <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
@@ -145,6 +148,7 @@ const HomeUserClasses = ({ filters }) => {
                         {filteredClasses.map(oneClass => (
                             <div className='col-4 h-100' key={oneClass.id}>
                                 <Card className='my-3'>
+                                    <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>
                                     <Card.Body>
                                         <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
@@ -176,7 +180,7 @@ const HomeUserClasses = ({ filters }) => {
                                 </Card>
                             </div>
                         ))}
-                    </div >
+                    </div>
                 )
             ) : (
                 chunkedClasses.length > 1 ? (
@@ -187,6 +191,7 @@ const HomeUserClasses = ({ filters }) => {
                                     {chunk.map(oneClass => (
                                         <div className='col-4' key={oneClass.id}>
                                             <Card className='my-3'>
+                                                <Card.Img variant="top" src={placeholderImageUrl} />
                                                 <Card.Header>Detalles de la Clase</Card.Header>
                                                 <Card.Body>
                                                     <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
@@ -227,6 +232,7 @@ const HomeUserClasses = ({ filters }) => {
                         {allClasses.map(oneClass => (
                             <div className='col-4 h-100' key={oneClass.id}>
                                 <Card className='my-3'>
+                                    <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>
                                     <Card.Body>
                                         <Card.Title>{oneClass.class_name ? oneClass.class_name : 'Clase de entrenamiento'}</Card.Title>
@@ -258,7 +264,7 @@ const HomeUserClasses = ({ filters }) => {
                                 </Card>
                             </div>
                         ))}
-                    </div >
+                    </div>
                 )
             )}
             {
@@ -267,6 +273,7 @@ const HomeUserClasses = ({ filters }) => {
                 )
             }
         </>
-    )
-}
+    );
+};
+
 export default HomeUserClasses;

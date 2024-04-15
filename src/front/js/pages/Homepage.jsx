@@ -8,6 +8,7 @@ import HomeUserClasses from '../component/HomeUserClasses.jsx';
 import HomeFilters from '../component/HomeFilters.jsx';
 import TrainerHomepage from '../component/TrainerHomepage.jsx';
 import UnloggedView from '../component/UnloggedView.jsx';
+import UserHomepage from '../component/UserHomepage.jsx';
 
 const Homepage = () => {
     const { store, actions } = useContext(Context);
@@ -30,7 +31,7 @@ const Homepage = () => {
             {isLogged && isUser ?
                 <div className='container'>
                     <div className='row'>
-                        <HomeClassList filters={filters} />
+                        <UserHomepage />
                     </div>
                     <h3 className='text-center my-4' style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>Clases disponibles</h3>
                     <div className='row'>
