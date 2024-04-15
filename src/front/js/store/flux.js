@@ -9,6 +9,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       specializations: [],
       trainerSpecializations: [],
       trainerClasses: [],
+      userInTrainerClass: [],
       allClasses: [],
       userClasses: [],
       cart: [],
@@ -177,6 +178,31 @@ const getState = ({ getStore, getActions, setStore }) => {
         const classes = data.classes
         setStore({ trainerClasses: classes })
         localStorage.setItem('trainerClasses', JSON.stringify(classes))
+      },
+
+      getTrainerClassDetails: async (classId) => {
+        const token = localStorage.getItem("accessToken");
+        const availableAccountString = localStorage.getItem("availableAccount");
+        const availableAccount = JSON.parse(availableAccountString);
+        const trainerId = availableAccount.trainer.id;
+        if (!trainerId) {
+          console.log("No trainer available")
+          return null
+        }
+        if (!token) {
+          console.error("No access token found");
+          return null;
+        }
+        const options = {
+          headers: {
+            "Content-Type": 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        const response = await fetch(`${process.env.BACKEND_URL}api/trainers/${trainerId}/classes/${classId}`, options)
+        if (!response) return response.status
+        const data = await response.json()
+        setStore({userInTrainerClass : data})
       },
 
       getAvailableAccount: async () => {

@@ -2,15 +2,17 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Card, Button, Alert, Nav, Pagination } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
+
 
 export const TrainerClasses = () => {
     const { store, actions } = useContext(Context);
     const { currentUser, trainerClasses } = store;
     const { deleteTrainerClass } = actions;
     const { id } = useParams();
+    const navigate = useNavigate()
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const [pastClasses, setPastClasses] = useState([]);
     const [futureClasses, setFutureClasses] = useState([]);
@@ -26,7 +28,6 @@ export const TrainerClasses = () => {
     }, []);
 
     useEffect(() => {
-        // Filter past and future classes
         const past = [];
         const future = [];
         trainerClasses.forEach(classItem => {
@@ -43,6 +44,10 @@ export const TrainerClasses = () => {
 
     const handleClick = async (trainerId, classId) => {
         await deleteTrainerClass(trainerId, classId);
+    }
+
+    const handleDetails = async (classId) => {
+        await actions.getTrainerClassDetails(classId)
     }
 
     const paginate = (pageNumber) => setActivePage(pageNumber);
@@ -76,24 +81,34 @@ export const TrainerClasses = () => {
                     <Nav.Link eventKey="future">Futuras</Nav.Link>
                 </Nav.Item>
             </Nav>
-            <Row xs={1} md={2} lg={3} className="justify-content-center">
+            <Row className="justify-content-center mt-3 d-flex flex-row gap-2">
                 {currentClasses.map(classItem => (
-                    <div key={classItem.id} className="d-flex gap-2 m-2 justify-content-center align-items-center">
+                    <Col key={classItem.id} className="d-flex flex-row gap-2 justify-content-center align-items-center">
                         <Card border="primary" style={{ width: '18rem' }}>
-                            <Card.Header>{classItem.id}</Card.Header>
-                            <Card.Body className="d-flex justify-content-between align-items-center">
+                            <Card.Img className="img-fluid" variant="top" src="https://cvlifestyles.co.uk/wp-content/uploads/2019/02/personal-training.jpg" />
+                            <Card.Header>{classItem.class_name}</Card.Header>
+                            <Card.Body className="d-flex justify-content-between align-items-center flex-column">
                                 <section>
                                     <Card.Text>Ciudad: {classItem.city}</Card.Text>
-                                    <Card.Text>Codigo Postal:{classItem.postal_code}</Card.Text>
-                                    <Card.Text>Calle: {classItem.street_name}</Card.Text>
+                                    <Card.Text>
+                                        Nivel entrenamiento: {
+                                            classItem.training_level === "Advanced" ? "Avanzado" :
+                                                classItem.training_level === "Intermediate" ? "Intermedio" :
+                                                    classItem.training_level === "Beginner" ? "Principiante" :
+                                                        classItem.training_level
+                                        }
+                                    </Card.Text>
+                                    <Card.Text>Fecha inicio: {classItem.start_date}</Card.Text>
+                                    <Card.Text>Fecha fin: {classItem.end_date}</Card.Text>
                                     <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
                                 </section>
-                                <section className="d-flex flex-column gap-2">
+                                <Card.Footer className="d-flex flex-row gap-2 p-2 border-0">
                                     <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
-                                </section>
+                                    <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
+                                </Card.Footer>
                             </Card.Body>
                         </Card>
-                    </div>
+                    </Col>
                 ))}
             </Row>
             <Row className="d-flex justify-content-center align-items-center">

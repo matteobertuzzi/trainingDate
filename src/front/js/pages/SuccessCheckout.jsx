@@ -1,4 +1,4 @@
-import React,{ useContext } from 'react';
+import React, { useContext } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ const SuccessCheckout = () => {
     }
 
     return (
-        <Container>
+        <Container className='min-vh-100 d-flex justify-content-center align-items-center flex-column'>
             <Row className="mt-5">
                 <Col className="text-center">
                     <FaCheckCircle style={{ fontSize: '5em', color: 'green' }} />
