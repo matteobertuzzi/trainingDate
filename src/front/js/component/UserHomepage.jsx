@@ -20,7 +20,7 @@ const UserHomepage = () => {
     };
 
     return (
-        <Container className='p-3' fluid>
+        <Container className='w-100' fluid>
             <Row>
                 <Col>
                     <Carousel>

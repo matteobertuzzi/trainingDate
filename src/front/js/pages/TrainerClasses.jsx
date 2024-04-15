@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Container, Row, Col, Card, Button, Alert, Nav, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Alert, Nav, Pagination, Modal } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
@@ -18,6 +18,7 @@ export const TrainerClasses = () => {
     const [activeTab, setActiveTab] = useState("past");
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -42,7 +43,12 @@ export const TrainerClasses = () => {
     }, [trainerClasses, currentDateTime]);
 
     const handleClick = async (trainerId, classId) => {
-        await deleteTrainerClass(trainerId, classId);
+        const deleteClass = await deleteTrainerClass(trainerId, classId);
+        if (!deleteClass) {
+            setShowModal(true);
+        } else {
+            setShowModal(false);
+        }
     }
 
     const handleDetails = async (classId) => {
@@ -84,7 +90,6 @@ export const TrainerClasses = () => {
                 </Nav.Item>
             </Nav>
 
-            {/* Alerta si no hay clases pasadas */}
             {activeTab === "past" && pastClasses.length === 0 && (
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col className="d-flex justify-content-center align-items-center m-4">
@@ -164,6 +169,12 @@ export const TrainerClasses = () => {
                     )}
                 </Pagination>
             </Row>
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Error!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>La clase no se puede cancelar debido a que tienes usuarios apuntados</Modal.Body>
+            </Modal>
         </Container >
     )
 }

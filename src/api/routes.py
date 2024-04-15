@@ -1195,6 +1195,8 @@ def handle_trainer_class(id, class_id):
             return response_body, 404
     if request.method == "GET":
         user_in_class = UsersClasses.query.filter(UsersClasses.class_id == class_id).all()
+        specialization = Specializations.query.filter(Specializations.id==trainer_class.training_type).first()
+        print(specialization)
         users_details = []
         for user_class in user_in_class:
             user = Users.query.get(user_class.user_id)
@@ -1202,6 +1204,7 @@ def handle_trainer_class(id, class_id):
                 response_body["message"] = "User not found"
                 return response_body, 400
             users_details.append(user.serialize())
+        response_body["specialization"] = specialization.serialize()
         response_body["user_in_class"] = users_details
         response_body["message"] = "Trainer class"
         response_body["class"] = trainer_class.serialize()
