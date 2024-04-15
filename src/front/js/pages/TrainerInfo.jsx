@@ -55,10 +55,12 @@ const TrainerInfo = () => {
             </Row>
             {logged ? "" : (
                 <Row className="my-5">
-                    <Col>
-                        <Button variant="primary" size="lg">
-                            Regístrate como entrenador ahora
-                        </Button>
+                    <Col className='d-flex justify-content-center'>
+                        <Link to='/signupTrainer'>
+                            <Button variant="primary" size="lg">
+                                Regístrate como entrenador
+                            </Button>
+                        </Link>
                     </Col>
                 </Row>
             )}

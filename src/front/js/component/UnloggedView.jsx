@@ -10,7 +10,7 @@ const UnloggedView = () => {
     return (
         <Container fluid={true} className="d-flex justify-content-center flex-column align-items-center">
             <Row className="d-flex w-100 justify-content-center">
-                <Col className="d-flex align-items-center w-100 py-5">
+                <Col className="d-flex justify-content-center w-100 py-5">
                     <Card className="text-white" style={{ backgroundColor: 'transparent' }}>
                         <Card.Img className="img-fluid" src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg" alt="Training Date" />
                         <Card.ImgOverlay className='d-flex justify-content-center align-items-center'>
@@ -124,7 +124,7 @@ const UnloggedView = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className='d-flex flex-column justify-content-center align-items-center py-5'>
+            <Row className='d-flex flex-column justify-content-center align-items-center p-3' style={{ width: '100%' }}>
                 <Col>
                     <h2 className="text-center">Preguntas frecuentes</h2>
                     <Accordion>
