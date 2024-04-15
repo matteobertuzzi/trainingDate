@@ -17,11 +17,13 @@ const HomeUserClasses = ({ filters }) => {
     const { currentUser, allClasses, userClasses } = store;
     const { postUserClass, deleteUserClass } = actions;
     const [showAlert, setShowAlert] = useState(false);
+    const [merge, setMerge] = useState([]);
     const [interested, setInterested] = useState(false);
     const placeholderImageUrl = 'https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg'
 
     useEffect(() => {
         checkClasses();
+        mergeClasses();
     }, []);
 
     const checkClasses = () => {
@@ -95,6 +97,21 @@ const HomeUserClasses = ({ filters }) => {
         chunkedFilteredClasses.push(filteredClasses.slice(i, i + chunkSize));
     }
 
+    const mergeClasses = () => {
+        const merged = [];
+
+        for (let i = 0; i < userClasses.length; i++) {
+            const userClass = userClasses[i];
+            const foundClass = allClasses.find(oneClass => oneClass.id === userClass.class);
+            if (foundClass) {
+                const mergedClass = { ...foundClass, ...userClass };
+                merged.push(mergedClass);
+                setMerge(merged)
+                console.log(merged)
+            }
+        }
+    };
+
     return (
         <>
             {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
@@ -123,15 +140,21 @@ const HomeUserClasses = ({ filters }) => {
                                                     ) : (
                                                         <div className='d-flex flex-column gap-2'>
                                                             <ClassModal userClass={oneClass} />
-                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
-                                                                handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
-                                                                oneClass.isInterested = !oneClass.isInterested;
-                                                            }}>
-                                                                {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                                            </Button>
-                                                            {oneClass.isInterested === false ? (
-                                                                <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                                            ) : null}
+                                                            {merge.find(mergedItem => mergedItem.class === oneClass.id && mergedItem.stripe_status === 'Paid') ? (
+                                                                <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                                            ) : (
+                                                                <>
+                                                                    <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                                        handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                                        oneClass.isInterested = !oneClass.isInterested;
+                                                                    }}>
+                                                                        {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                                    </Button>
+                                                                    {oneClass.isInterested === false ? (
+                                                                        <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                                    ) : null}
+                                                                </>
+                                                            )}
                                                             <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                                         </div>
                                                     )}
@@ -164,15 +187,21 @@ const HomeUserClasses = ({ filters }) => {
                                         ) : (
                                             <div className='d-flex flex-column gap-2'>
                                                 <ClassModal userClass={oneClass} />
-                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
-                                                    handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
-                                                    oneClass.isInterested = !oneClass.isInterested;
-                                                }}>
-                                                    {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                                </Button>
-                                                {oneClass.isInterested === false ? (
-                                                    <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                                ) : null}
+                                                {merge.find(mergedItem => mergedItem.class === oneClass.id && mergedItem.stripe_status === 'Paid') ? (
+                                                    <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                                ) : (
+                                                    <>
+                                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                            handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                            oneClass.isInterested = !oneClass.isInterested;
+                                                        }}>
+                                                            {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                        </Button>
+                                                        {oneClass.isInterested === false ? (
+                                                            <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                        ) : null}
+                                                    </>
+                                                )}
                                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                             </div>
                                         )}
@@ -207,15 +236,21 @@ const HomeUserClasses = ({ filters }) => {
                                                     ) : (
                                                         <div className='d-flex flex-column gap-2'>
                                                             <ClassModal userClass={oneClass} />
-                                                            <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
-                                                                handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
-                                                                oneClass.isInterested = !oneClass.isInterested;
-                                                            }}>
-                                                                {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                                            </Button>
-                                                            {oneClass.isInterested === false ? (
-                                                                <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                                            ) : null}
+                                                            {merge.find(mergedItem => mergedItem.class === oneClass.id && mergedItem.stripe_status === 'Paid') ? (
+                                                                <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                                            ) : (
+                                                                <>
+                                                                    <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                                        handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                                        oneClass.isInterested = !oneClass.isInterested;
+                                                                    }}>
+                                                                        {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                                    </Button>
+                                                                    {oneClass.isInterested === false ? (
+                                                                        <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                                    ) : null}
+                                                                </>
+                                                            )}
                                                             <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                                         </div>
                                                     )}
@@ -248,15 +283,21 @@ const HomeUserClasses = ({ filters }) => {
                                         ) : (
                                             <div className='d-flex flex-column gap-2'>
                                                 <ClassModal userClass={oneClass} />
-                                                <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
-                                                    handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
-                                                    oneClass.isInterested = !oneClass.isInterested;
-                                                }}>
-                                                    {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                                </Button>
-                                                {oneClass.isInterested === false ? (
-                                                    <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                                ) : null}
+                                                {merge.find(mergedItem => mergedItem.class === oneClass.id && mergedItem.stripe_status === 'Paid') ? (
+                                                    <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                                ) : (
+                                                    <>
+                                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                            handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
+                                                            oneClass.isInterested = !oneClass.isInterested;
+                                                        }}>
+                                                            {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                        </Button>
+                                                        {oneClass.isInterested === false ? (
+                                                            <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                        ) : null}
+                                                    </>
+                                                )}
                                                 <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
                                             </div>
                                         )}
