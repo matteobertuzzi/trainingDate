@@ -8,13 +8,13 @@ const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);
 
     return (
-        <Container fluid={true} className="d-flex justify-content-center flex-column align-items-center">
-            <Row className="d-flex w-100 justify-content-center">
-                <Col className="d-flex justify-content-center w-100 py-5">
-                    <Card className="text-white" style={{ backgroundColor: 'transparent' }}>
+        <Container fluid className="p-0">
+            <Row className="m-0">
+                <Col className="p-0">
+                    <Card className="text-white m-0">
                         <Card.Img className="img-fluid" src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg" alt="Training Date" />
-                        <Card.ImgOverlay className='d-flex justify-content-center align-items-center'>
-                            <Row>
+                        <Card.ImgOverlay className="d-flex justify-content-center align-items-center p-0">
+                            <Row className="w-100">
                                 <Col md={8} className="text-center text-md-left">
                                     <h1 className="display-4 mb-4">¡Bienvenido a Training Date!</h1>
                                     <p className="lead">Conecta con entrenadores y usuarios de toda España</p>
@@ -27,7 +27,7 @@ const UnloggedView = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className='bg-light py-5 px-3' style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <Row className="bg-light py-5 px-3">
                 <Col md={4} className="text-center mb-3">
                     <Card style={{ height: '100%' }}>
                         <Card.Body className="d-flex flex-column justify-content-between">
@@ -80,17 +80,17 @@ const UnloggedView = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className='d-flex py-5 justify-content-center align-items-center'>
+            <Row className="d-flex py-5 justify-content-center align-items-center">
                 <Card md={6} className="p-3 d-flex justify-content-center align-items-center" style={{ width: '80%' }}>
                     <h4 className='text-center'>¿Ya estás registrado?</h4>
-                    <p className='text-center'>¡Bienvenido! Si ya estás registrado como entrenador o usuario, haz clic en el siguiente button para iniciar tu sesión.</p>
+                    <p className='text-center'>¡Bienvenido! Si ya estás registrado como entrenador o usuario, haz clic en el siguiente botón para iniciar tu sesión.</p>
                     <div className='d-flex justify-content-center'>
                         <Button onClick={() => setLoginModalShow(true)} style={{ marginTop: '10px', marginBottom: '10px' }}>Log in</Button>
                     </div>
                     <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
                 </Card>
             </Row>
-            <Row className='d-flex justify-content-evenly align-items-center bg-light py-5'>
+            <Row className="d-flex justify-content-evenly align-items-center bg-light py-5">
                 <Col md={6} lg={4} className='d-flex justify-content-center align-items-center my-3'>
                     <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
                         <Card.Img variant="top" src="https://hips.hearstapps.com/hmg-prod/images/mh-trainer-2-1533576998.png" />
@@ -124,7 +124,7 @@ const UnloggedView = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className='d-flex flex-column justify-content-center align-items-center p-3' style={{ width: '100%' }}>
+            <Row className='d-flex flex-column justify-content-center align-items-center p-3'>
                 <Col>
                     <h2 className="text-center">Preguntas frecuentes</h2>
                     <Accordion>
