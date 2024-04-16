@@ -3,7 +3,7 @@ import { Dropdown, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, ListGrou
 import { LogInModal } from "./LogInModal.jsx";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
-import { faCartShopping, faDumbbell, faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faDumbbell, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BsFillPlusSquareFill, BsCalendarPlus } from "react-icons/bs";
 import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization.jsx"
@@ -27,8 +27,8 @@ export const MyNavbar = () => {
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-evenly p-2 mx-2">
         <Col>
-          <Navbar.Brand>
-            <Link to={"/"}>Training Date</Link>
+          <Navbar.Brand className="text-dark">
+            <Link to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
           </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
@@ -46,7 +46,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                  <Nav.Link className="d-none d-md-block" as={Link} to={"/allClasses"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
                     Todas las clases
                   </Nav.Link>
                 </Nav.Item>
@@ -54,29 +54,6 @@ export const MyNavbar = () => {
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
               <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
-                <NavDropdown
-                  id="nav-dropdown-cart-shopping"
-                  title={<FontAwesomeIcon icon={faCartShopping} />}
-                  menuVariant="dark"
-                  align='end'
-                >
-                  {!cart || cart.length === 0 ? (
-                    <NavDropdown.Item>El carrito está vacío</NavDropdown.Item>
-                  ) : (
-                    <>
-                      {cart.map((item, index) => (
-                        <div className="d-flex flex-row justify-content-between" key={index}>
-                          <NavDropdown.Item key={index}>{item}</NavDropdown.Item>
-                          <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
-                            <i className="fa-solid fa-trash"></i>
-                          </Button>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item>Abre todo el carrito</NavDropdown.Item>
-                </NavDropdown>
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
                   <FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
                 </Nav.Item>
@@ -91,7 +68,7 @@ export const MyNavbar = () => {
             >
               <Offcanvas.Header className="border-bottom" closeButton>
                 <Offcanvas.Title className="me-3" id="offcanvasNavbarLabel-expand-md">
-                  Training Date
+                  <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
@@ -111,9 +88,10 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link>
+                  <Nav.Link as={Link} to={"/allClasses"}>
                     Todas las clases
                   </Nav.Link>
+
                 </Nav>
                 <Nav>
                   <Nav.Link onClick={handleLogout} className="text-danger d-flex align-items-center gap-2" >
@@ -144,7 +122,7 @@ export const MyNavbar = () => {
                 </Nav.Item>
                 <Nav.Item style={{ marginLeft: '10px' }}>
                   <Dropdown align="start" drop="down">
-                    <Dropdown.Toggle className="d-none d-md-block" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
+                    <Dropdown.Toggle className="d-none d-md-block text-dark" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
                       <BsFillPlusSquareFill />
                     </Dropdown.Toggle>
                     <Dropdown.Menu align="end" style={{ boxShadow: 'none', border: 'none' }}>
@@ -190,7 +168,7 @@ export const MyNavbar = () => {
             >
               <Offcanvas.Header className="border-bottom" closeButton>
                 <Offcanvas.Title className="me-3" id="offcanvasNavbarLabel-expand-md">
-                  Training Date
+                  <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
@@ -234,28 +212,6 @@ export const MyNavbar = () => {
           </>
         ) : (
           <Col xs="auto d-flex align-items-center justify-content-center gap-3">
-            <Nav>
-              <NavDropdown
-                id="nav-dropdown-cart-shopping"
-                title={<FontAwesomeIcon icon={faCartShopping} />}
-                menuVariant="dark"
-                align='end'
-              >
-                {console.log(cart)}
-                {!cart || cart.length === 0 ? (
-                  <NavDropdown.Item>El carrito está vacío</NavDropdown.Item>
-                ) : (
-                  cart.map((item, index) => (
-                    <React.Fragment key={index}>
-                      <NavDropdown.Item>{item}</NavDropdown.Item>
-                      <Button onClick={() => removeCartItem(item, cart)} className="btn btn-outline-danger ms-2">
-                        <i className="fa-solid fa-trash"></i>
-                      </Button>
-                    </React.Fragment>
-                  ))
-                )}
-              </NavDropdown>
-            </Nav>
             <FontAwesomeIcon onClick={() => setLoginModalShow(true)} icon={faRightToBracket} className="text-success p-2" />
           </Col>
         )}

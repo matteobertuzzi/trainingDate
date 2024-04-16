@@ -5,7 +5,7 @@ import { Context } from "../store/appContext";
 
 export const AddTrainerSpecialization = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)
-    const { specializations } = store
+    const { specializations, currentUser } = store
     const { postTrainerSpecialization } = actions
     const [showToast, setShowToast] = useState(false);
     const [validated, setValidated] = useState(false);
@@ -42,7 +42,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
         setShowToast(true);
         setTimeout(() => {
             setShowToast(false);
-        }, 3000);
+        }, 5000);
     };
 
     const handleChange = (e) => {
@@ -59,6 +59,10 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
             }));
         }
     };
+
+    if (!currentUser || !currentUser.trainer) {
+        return <Loading />;
+    }
 
     return (
         <Modal show={show} size="md" aria-labelledby="contained-modal-title-vcenter" centered>

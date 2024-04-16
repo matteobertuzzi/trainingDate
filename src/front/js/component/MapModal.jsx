@@ -3,27 +3,30 @@ import { Context } from '../store/appContext.js';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import { Button, Modal } from 'react-bootstrap/';
 
-
 // Define libraries as a static variable outside the component
 const libraries = ['places'];
 
 function MapModal({ addressData }) {
     const [show, setShow] = useState(false);
+    const [coordinates, setCoordinates] = useState(null);
     const { store, actions } = useContext(Context);
-    let coordinates = store.currentGeolocation;
-    const address = `${addressData[0]} ${addressData[1]}, ${addressData[2]} ${addressData[3]} `
-    console.log(address);
-
-    const handleClose = () => setShow(false);
-    const handleShow = async () => {
-        await actions.getGeolocation(address);
-        setShow(true);
-    }
+    const address = `${addressData[0]} ${addressData[1]}, ${addressData[2]} ${addressData[3]}`;
 
     useEffect(() => {
-        coordinates = store.currentGeolocation;
-        console.log(coordinates)
-    }, [])
+        const getGeolocation = async () => {
+            await actions.getGeolocation(address);
+            setCoordinates(store.currentGeolocation);
+        };
+
+        if (show && address) {
+            getGeolocation();
+        }
+    }, [show, address]);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    // Rest of the component remains the same
 
     const mapContainerStyle = {
         position: 'relative',
@@ -32,14 +35,13 @@ function MapModal({ addressData }) {
         overflow: 'hidden'
     };
     const center = {
-        lat: coordinates.lat,
-        lng: coordinates.lng,
+        lat: coordinates ? coordinates.lat : 0,
+        lng: coordinates ? coordinates.lng : 0,
     };
-    console.log(center);
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.GOOGLE_API_KEY,
-        libraries, 
+        libraries,
     });
 
     if (loadError) {
@@ -53,7 +55,7 @@ function MapModal({ addressData }) {
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-            Ver en el mapa
+                Ver en el mapa
             </Button>
 
             <Modal
@@ -88,4 +90,3 @@ function MapModal({ addressData }) {
 }
 
 export default MapModal;
-

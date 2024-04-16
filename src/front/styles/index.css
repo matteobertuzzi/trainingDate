@@ -6,3 +6,9 @@ body{
     color: black !important;
     opacity: 1 !important;
 }
+
+.page-item.active .page-link {
+    background-color: #e95420 !important;
+    border-color: #e95420;
+    color: white;
+}

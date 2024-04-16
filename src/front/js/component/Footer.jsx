@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-light text-dark mt-auto py-2">
+    <footer className="bg-light text-dark py-5">
       <Container>
-        <Row >
-          <Col xs={12} md={4} className="mb-3 mb-md-0 ">
+        <Row className='pb-4'>
+          <Col xs={12} md={4} className="mb-3 mb-md-0">
             <h5>Contacto</h5>
             <p>Correo electrónico: info@training-date.es</p>
             <p>Teléfono: +34 123456900 </p>
@@ -21,30 +21,28 @@ const Footer = () => {
               <li><Link to="trainers/info">Recursos para el entrenador</Link></li>
             </ul>
           </Col>
-          <Col xs={12} md={4} className='d-flex flex-row'>
-            <div>
-              <h5>Síguenos</h5>
-              <p>Síguenos en nuestras redes sociales para estar al tanto de las últimas novedades y eventos.</p>
-            </div>
-            <div className="d-flex flex-column align-items-center justify-content-center">
-              <ul>
+          <Col xs={12} md={4} className='d-flex flex-column align-items-center justify-content-center'>
+            <h5>Síguenos</h5>
+            <p>Síguenos en nuestras redes sociales para estar al tanto de las últimas novedades y eventos.</p>
+            <div className="d-flex justify-content-center">
+              <ul className="list-unstyled d-flex gap-3">
                 <li>
-                  <i className="fa-brands fa-facebook-f"></i>
+                  <i className="fab fa-facebook-f"></i>
                 </li>
                 <li>
-                  <i className="fa-brands fa-twitter"></i>
+                  <i className="fab fa-twitter"></i>
                 </li>
                 <li>
-                  <i className="fa-brands fa-instagram"></i>
+                  <i className="fab fa-instagram"></i>
                 </li>
               </ul>
             </div>
           </Col>
         </Row>
-        <hr className="mt-2" />
+        <hr />
         <Row>
           <Col className="text-center">
-            <p>&copyright; 2024 Training Date</p>
+            <p>&copy; 2024 Training Date</p>
           </Col>
         </Row>
       </Container>

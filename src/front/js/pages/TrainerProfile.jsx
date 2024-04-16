@@ -50,7 +50,7 @@ const TrainerProfile = () => {
     }
 
     return (
-        <Container className="mb-3 mt-4">
+        <Container className="my-4">
             <Row className='m-3 d-flex flex-row gap-2'>
                 <Link to={"/"}>
                     <RiArrowGoBackLine /> Volver atrás
@@ -83,13 +83,15 @@ const TrainerProfile = () => {
                                     <p><strong>Ciudad:</strong> {trainer.city}</p>
                                     <p><strong>Código Postal:</strong> {trainer.postal_code}</p>
                                     <p><strong>URL del sitio web:</strong> {trainer.website_url}</p>
-                                    <div className="mt-4">
-                                        <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
-                                    </div>
                                 </Col>
                             </Row>
                         </Card.Body>
                     </Card>
+                </Col>
+            </Row>
+            <Row>
+                <Col className='d-flex align-items-center justify-content-center mt-3'>
+                    <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
                 </Col>
             </Row>
         </Container>

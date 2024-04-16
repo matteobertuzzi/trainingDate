@@ -11,7 +11,7 @@ const TrainerInfo = () => {
 
 
     return (
-        <Container className="my-5">
+        <Container className="my-4">
             <Row className='m-3 d-flex flex-row gap-2'>
                 <Link to={"/"}>
                     <RiArrowGoBackLine /> Volver atrás
@@ -55,10 +55,12 @@ const TrainerInfo = () => {
             </Row>
             {logged ? "" : (
                 <Row className="my-5">
-                    <Col>
-                        <Button variant="primary" size="lg">
-                            Regístrate como entrenador ahora
-                        </Button>
+                    <Col className='d-flex justify-content-center'>
+                        <Link to='/signupTrainer'>
+                            <Button variant="primary" size="lg">
+                                Regístrate como entrenador
+                            </Button>
+                        </Link>
                     </Col>
                 </Row>
             )}
