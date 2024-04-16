@@ -91,6 +91,7 @@ export const MyNavbar = () => {
                   <Nav.Link>
                     Todas las clases
                   </Nav.Link>
+
                 </Nav>
                 <Nav>
                   <Nav.Link onClick={handleLogout} className="text-danger d-flex align-items-center gap-2" >

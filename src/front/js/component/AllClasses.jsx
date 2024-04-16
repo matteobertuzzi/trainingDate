@@ -6,6 +6,8 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
 import MapModal from "./MapModal.jsx";
 import ClassModal from "./ClassModal.jsx";
+import HomeFilters from "./HomeFilters.jsx";
+import FilterAlert from "./FilterAlert.jsx";
 
 const AllClasses = () => {
     const { store, actions } = useContext(Context);
@@ -16,6 +18,16 @@ const AllClasses = () => {
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
+    const [showAlert, setShowAlert] = useState(false);
+    const [filters, setFilters] = useState({
+        trainingLevel: '',
+        trainingType: ''
+    });
+
+    const handleFilterSubmit = (event, filters) => {
+        setFilters(filters);
+        console.log('Filters submitted:', filters);
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -100,6 +112,9 @@ const AllClasses = () => {
         }
     };
 
+    let filteredClasses = allClasses.filter((cls) => {
+        return cls.training_type === parseInt(filters.trainingType) && cls.training_level === filters.trainingLevel;
+    });
 
     return (
         <Container className="min-vh-100 my-4">
@@ -110,51 +125,101 @@ const AllClasses = () => {
                     </Link>
                 </Col>
             </Row>
+            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
+                <HomeFilters filters={filters} onFilterSubmit={handleFilterSubmit} />
+            </Row>
             <h1 className="text-center mb-4">Todas las Clases</h1>
+            {(filteredClasses.length === 0 && filters.trainingType !== '' && filters.trainingLevel !== '') ? <FilterAlert location='classList' showAlert={setShowAlert} /> : <></>}
             <Row xs={1} md={2} lg={3} className="justify-content-center">
-                {currentClasses.map(classItem => (
-                    <Col key={classItem.id} className="mb-4">
-                        <Card border="primary">
-                            <Card.Header>{classItem.class_name}</Card.Header>
-                            <Card.Body >
-                                <Card.Text><strong>Ciudad:</strong> {classItem.city}</Card.Text>
-                                <Card.Text><strong>Código Postal:</strong> {classItem.postal_code}</Card.Text>
-                                <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
-                                <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
-                                <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
-                                <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
-                            </Card.Body>
-                            <Card.Footer className='p-3'>
-                                {classItem.capacity < 1 ? (
-                                    <div className='d-flex justify-content-center align-items-center'>
-                                        <Button variant='danger' disabled>Clase completa!</Button>
-                                    </div>
-                                ) : (
-                                    <div className='d-flex flex-column gap-2'>
-                                        <ClassModal userClass={classItem} />
-                                        {merge.find(mergedItem => mergedItem.class === classItem.id && mergedItem.stripe_status === 'Paid') ? (
-                                            <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
-                                        ) : (
-                                            <>
-                                                <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
-                                                    handleInterested(classItem.isInterested, classItem.id, classItem.price);
-                                                    classItem.isInterested = !classItem.isInterested;
-                                                }}>
-                                                    {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
-                                                </Button>
-                                                {classItem.isInterested === false ? (
-                                                    <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
-                                                ) : null}
-                                            </>
-                                        )}
-                                        <MapModal className='mx-3' addressData={[classItem.city, classItem.postal_code, classItem.street_name, classItem.street_number]} />
-                                    </div>
+                {filteredClasses.length > 0 ? (
+                    filteredClasses.map(classItem => (
+                        <Col key={classItem.id} className="mb-4">
+                            <Card border="primary">
+                                <Card.Header>{classItem.class_name}</Card.Header>
+                                <Card.Body >
+                                    <Card.Text><strong>Ciudad:</strong> {classItem.city}</Card.Text>
+                                    <Card.Text><strong>Código Postal:</strong> {classItem.postal_code}</Card.Text>
+                                    <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
+                                    <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
+                                    <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
+                                    <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
+                                </Card.Body>
+                                <Card.Footer className='p-3'>
+                                    {classItem.capacity < 1 ? (
+                                        <div className='d-flex justify-content-center align-items-center'>
+                                            <Button variant='danger' disabled>Clase completa!</Button>
+                                        </div>
+                                    ) : (
+                                        <div className='d-flex flex-column gap-2'>
+                                            <ClassModal userClass={classItem} />
+                                            {merge.find(mergedItem => mergedItem.class === classItem.id && mergedItem.stripe_status === 'Paid') ? (
+                                                <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                            ) : (
+                                                <>
+                                                    <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                        handleInterested(classItem.isInterested, classItem.id, classItem.price);
+                                                        classItem.isInterested = !classItem.isInterested;
+                                                    }}>
+                                                        {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                    </Button>
+                                                    {classItem.isInterested === false ? (
+                                                        <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                    ) : null}
+                                                </>
+                                            )}
+                                            <MapModal className='mx-3' addressData={[classItem.city, classItem.postal_code, classItem.street_name, classItem.street_number]} />
+                                        </div>
 
-                                )}
-                            </Card.Footer>
-                        </Card>
-                    </Col>
-                ))}
+                                    )}
+                                </Card.Footer>
+                            </Card>
+                        </Col>
+                    ))
+                ) : (
+                    currentClasses.map(classItem => (
+                        <Col key={classItem.id} className="mb-4">
+                            <Card border="primary">
+                                <Card.Header>{classItem.class_name}</Card.Header>
+                                <Card.Body >
+                                    <Card.Text><strong>Ciudad:</strong> {classItem.city}</Card.Text>
+                                    <Card.Text><strong>Código Postal:</strong> {classItem.postal_code}</Card.Text>
+                                    <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
+                                    <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
+                                    <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
+                                    <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
+                                </Card.Body>
+                                <Card.Footer className='p-3'>
+                                    {classItem.capacity < 1 ? (
+                                        <div className='d-flex justify-content-center align-items-center'>
+                                            <Button variant='danger' disabled>Clase completa!</Button>
+                                        </div>
+                                    ) : (
+                                        <div className='d-flex flex-column gap-2'>
+                                            <ClassModal userClass={classItem} />
+                                            {merge.find(mergedItem => mergedItem.class === classItem.id && mergedItem.stripe_status === 'Paid') ? (
+                                                <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                            ) : (
+                                                <>
+                                                    <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                        handleInterested(classItem.isInterested, classItem.id, classItem.price);
+                                                        classItem.isInterested = !classItem.isInterested;
+                                                    }}>
+                                                        {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                    </Button>
+                                                    {classItem.isInterested === false ? (
+                                                        <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                    ) : null}
+                                                </>
+                                            )}
+                                            <MapModal className='mx-3' addressData={[classItem.city, classItem.postal_code, classItem.street_name, classItem.street_number]} />
+                                        </div>
+
+                                    )}
+                                </Card.Footer>
+                            </Card>
+                        </Col>
+                    ))
+                )}
             </Row>
             <Row className="d-flex justify-content-center align-items-center">
                 <Pagination className="d-flex justify-content-center align-items-center mt-4">
@@ -179,8 +244,8 @@ const AllClasses = () => {
                     </Col>
                 )}
             </Row>
-        </Container >
-    )
+        </Container>
+    );
 };
 
 export default AllClasses;
