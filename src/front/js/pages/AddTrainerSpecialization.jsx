@@ -42,7 +42,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
         setShowToast(true);
         setTimeout(() => {
             setShowToast(false);
-        }, 3000);
+        }, 5000);
     };
 
     const handleChange = (e) => {

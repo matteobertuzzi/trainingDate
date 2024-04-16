@@ -5,6 +5,8 @@ import { Form, Button, Navbar, Nav, Col, Row } from 'react-bootstrap';
 const HomeFilters = ({ filters, onFilterSubmit }) => {
     const { store, actions } = useContext(Context);
     const specializations = store.specializations;
+    const [input, setInput] = useState("");
+    const [isValid, setIsValid] = useState(null);
     const [filter, setFilter] = useState({
         trainingType: '',
         trainingLevel: ''
@@ -31,11 +33,39 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
         onFilterSubmit(event, filter);
     };
 
+    const handleChange = (event) => {
+        setInput(event.target.value);
+        setIsValid(false);
+    };
+
+    const handleSearch = (event) => {
+        event.preventDefault();
+        const matching = store.allClasses.find((oneClass) => oneClass.city.toLowerCase() === input.toLowerCase());
+        if (matching && matching.city) {
+            setIsValid(true);
+            setInput("");
+            onFilterSubmit(event, { ...filter, city: input });
+        } else {
+            setIsValid(false);
+        }
+    };
+
     return (
         <div className="d-flex justify-content-center" style={{ alignItems: 'end !important' }}>
             <Navbar expand="lg" className="py-2">
                 <Row>
                     <Nav className="align-items-center ">
+                        <Form className="d-flex">
+                            <Form.Control
+                                type="search"
+                                placeholder="Busca por ciudad..."
+                                className={`me-2 form-control ${isValid ? 'is-valid' : 'is-invalid'}`}
+                                aria-label="Search"
+                                value={input}
+                                onChange={handleChange}
+                            />
+                            <Button type='submit' onClick={handleSearch} variant="outline-success">Search</Button>
+                        </Form>
                         <Form onSubmit={handleFormSubmit} className="d-flex flex-column flex-sm-row align-items-center justify-content-center">
                             <Col className='d-flex flex-row align-items-center justify-content-center flex-wrap gap-2 my-1 mx-2'>
                                 <Form.Group controlId="trainingType">
@@ -46,7 +76,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                                         required
                                         className="form-select-sm"
                                     >
-                                        <option>Selecciona tipo de entrenamiento</option>
+                                        <option value="" disabled hidden>Selecciona tipo de entrenamiento</option>
                                         {specializations.map((specialization) =>
                                             <option key={specialization.id} value={specialization.id}>{specialization.name}</option>
                                         )}
@@ -60,7 +90,7 @@ const HomeFilters = ({ filters, onFilterSubmit }) => {
                                         required
                                         className="form-select-sm"
                                     >
-                                        <option>Selecciona nivel de entrenamiento</option>
+                                        <option value="" disabled hidden>Selecciona nivel de entrenamiento</option>
                                         <option value='Beginner'>Principiante</option>
                                         <option value='Intermediate'>Intermedio</option>
                                         <option value='Advanced'>Avanzado</option>

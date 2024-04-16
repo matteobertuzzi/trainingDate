@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Card, Button, Carousel } from 'react-bootstrap';
 import { Context } from '../store/appContext';
 import { Link } from 'react-router-dom';
+import personalTrainer from "/workspaces/sp54-final-project-g3/src/front/img/personal-trainer.jpg"
 
 const TrainerHomepage = () => {
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
@@ -28,20 +29,22 @@ const TrainerHomepage = () => {
     const { fontSizeH5, fontSizeH6, fontSizeP } = getFontSize();
 
     return (
-        <Container className='p-0' fluid>
+        <Container className='p-0 mx-0' fluid>
             <Card className="text-white w-100" style={{ borderWidth: '0' }}>
                 <Card.Img
                     className="rounded-0 img-fluid w-100"
-                    src="https://cdn.static.aptavs.com/imagenes/en-que-consiste-ser-entrenador-personal.jpg"
+                    src={personalTrainer}
                     alt="First slide"
-                    style={{ opacity: '0.7' }}
+                    style={{ filter: 'brightness(70%)' }}
                 />
                 <Card.ImgOverlay className="d-flex flex-column gap-2 justify-content-center align-items-center">
-                    <h5><strong>¡Hola, {currentUser.trainer.name}!</strong></h5>
-                    <h6>¡Qué emocionante tenerte de vuelta! ¿Estás listo para empezar a crear tus clases y ayudar a tus clientes a alcanzar sus objetivos?</h6>
-                    <p>Tienes alguna pregunta sobre cómo funciona la aplicación? Aquí encontrarás todo lo que necesitas saber. 😊</p>
+                    <h2><strong>¡Hola, {currentUser.trainer.name}!</strong></h2>
+                    <h4>¿Estás listo para empezar a crear tus clases y ayudar a tus clientes a alcanzar sus objetivos?</h4>
                     <Button as={Link} to="/trainers/info">
                         Obtener más información
+                    </Button>
+                    <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`}>
+                        Empezar ya!
                     </Button>
                 </Card.ImgOverlay>
             </Card>

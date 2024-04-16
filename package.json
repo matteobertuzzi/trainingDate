@@ -96,6 +96,7 @@
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0",
 		"react-spring": "^9.7.3",
-		"stripe": "^14.23.0"
+		"stripe": "^14.23.0",
+		"swiper": "^11.1.1"
 	}
 }

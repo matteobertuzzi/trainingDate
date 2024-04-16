@@ -122,7 +122,7 @@ const HomeUserClasses = ({ filters }) => {
                             <Carousel.Item key={index}>
                                 <div className="row">
                                     {chunk.map(oneClass => (
-                                        <div className='col-4' key={oneClass.id}>
+                                        <div className='col-auto d-flex flex-row justify-content-center align-items-center gap-2' key={oneClass.id}>
                                             <Card className='my-3'>
                                                 <Card.Img variant="top" src={placeholderImageUrl} />
                                                 <Card.Header>Detalles de la Clase</Card.Header>
@@ -169,7 +169,7 @@ const HomeUserClasses = ({ filters }) => {
                 ) : (
                     <div className="row">
                         {filteredClasses.map(oneClass => (
-                            <div className='col-4 h-100' key={oneClass.id}>
+                            <div className='col-auto h-100' key={oneClass.id}>
                                 <Card className='my-3'>
                                     <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>
@@ -218,7 +218,7 @@ const HomeUserClasses = ({ filters }) => {
                             <Carousel.Item key={index}>
                                 <div className="row">
                                     {chunk.map(oneClass => (
-                                        <div className='col-4' key={oneClass.id}>
+                                        <div className='col-auto d-flex flex-row justify-content-center align-items-center' key={oneClass.id}>
                                             <Card className='my-3'>
                                                 <Card.Img variant="top" src={placeholderImageUrl} />
                                                 <Card.Header>Detalles de la Clase</Card.Header>
@@ -263,9 +263,9 @@ const HomeUserClasses = ({ filters }) => {
                         ))}
                     </Carousel>
                 ) : (
-                    <div className="row">
+                    <div className="row d-flex flex-row align-items-center justify-content-center">
                         {allClasses.map(oneClass => (
-                            <div className='col-4 h-100' key={oneClass.id}>
+                            <div className='col-xl-4 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
                                 <Card className='my-3'>
                                     <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>

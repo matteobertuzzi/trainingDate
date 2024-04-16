@@ -63,7 +63,7 @@ export const CreateClass = () => {
         setShowToast(true);
         setTimeout(() => {
             setShowToast(false);
-        }, 3000);
+        }, 5000);
     };
 
 

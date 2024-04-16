@@ -19,6 +19,7 @@ const AllClasses = () => {
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
     const [showAlert, setShowAlert] = useState(false);
+    const [searchCity, setSearchCity] = useState("");
     const [filters, setFilters] = useState({
         trainingLevel: '',
         trainingType: ''
@@ -142,7 +143,12 @@ const AllClasses = () => {
                                     <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
                                     <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
                                     <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
-                                    <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
+                                    <Card.Text><strong>Nivel de entrenamiento:</strong> {
+                                            classItem.training_level === "Advanced" ? "Avanzado" :
+                                                classItem.training_level === "Intermediate" ? "Intermedio" :
+                                                    classItem.training_level === "Beginner" ? "Principiante" :
+                                                        classItem.training_level
+                                        }</Card.Text>
                                 </Card.Body>
                                 <Card.Footer className='p-3'>
                                     {classItem.capacity < 1 ? (

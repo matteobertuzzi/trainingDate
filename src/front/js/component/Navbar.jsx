@@ -3,7 +3,7 @@ import { Dropdown, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, ListGrou
 import { LogInModal } from "./LogInModal.jsx";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
-import { faCartShopping, faDumbbell, faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faDumbbell, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BsFillPlusSquareFill, BsCalendarPlus } from "react-icons/bs";
 import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization.jsx"
@@ -27,8 +27,8 @@ export const MyNavbar = () => {
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-evenly p-2 mx-2">
         <Col>
-          <Navbar.Brand>
-            <Link to={"/"}>Training <FontAwesomeIcon icon={faDumbbell} className="text-decoration-none" />  Date</Link>
+          <Navbar.Brand className="text-dark">
+            <Link to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
           </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
@@ -68,7 +68,7 @@ export const MyNavbar = () => {
             >
               <Offcanvas.Header className="border-bottom" closeButton>
                 <Offcanvas.Title className="me-3" id="offcanvasNavbarLabel-expand-md">
-                  Training Date
+                  <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
@@ -88,7 +88,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link>
+                  <Nav.Link as={Link} to={"/allClasses"}>
                     Todas las clases
                   </Nav.Link>
 
@@ -122,7 +122,7 @@ export const MyNavbar = () => {
                 </Nav.Item>
                 <Nav.Item style={{ marginLeft: '10px' }}>
                   <Dropdown align="start" drop="down">
-                    <Dropdown.Toggle className="d-none d-md-block" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
+                    <Dropdown.Toggle className="d-none d-md-block text-dark" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
                       <BsFillPlusSquareFill />
                     </Dropdown.Toggle>
                     <Dropdown.Menu align="end" style={{ boxShadow: 'none', border: 'none' }}>
@@ -168,7 +168,7 @@ export const MyNavbar = () => {
             >
               <Offcanvas.Header className="border-bottom" closeButton>
                 <Offcanvas.Title className="me-3" id="offcanvasNavbarLabel-expand-md">
-                  Training Date
+                  <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>

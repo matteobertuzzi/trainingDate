@@ -29,7 +29,7 @@ const Homepage = () => {
     return (
         <>
             {isLogged && isUser ?
-                <div className='container'>
+                <div className='container-fluid'>
                     <div className='row'>
                         <UserHomepage />
                     </div>
@@ -38,8 +38,10 @@ const Homepage = () => {
                 </div>
                 :
                 (isLogged && isTrainer) ?
-                    <div className='container'>
-                        <TrainerHomepage />
+                    <div className='container-fluid'>
+                        <div className='row'>
+                            <TrainerHomepage />
+                        </div>
                     </div>
                     :
                     <UnloggedView />

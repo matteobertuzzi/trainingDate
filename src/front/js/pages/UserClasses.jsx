@@ -77,13 +77,13 @@ export const UserClasses = () => {
                     ))
                 ) : (
                     <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">
-                        <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases disponibles</Alert.Heading>
+                        <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases reservadas!</Alert.Heading>
                         <div className="d-flex flex-column justify-content-center align-items-center">
                             <p>
                                 Parece que aún no has reservado ninguna clase.
                             </p>
                             <p>¡No te preocupes! Puedes empezar ahora mismo reservando tu primera clase.</p>
-                            <Button as={Link} variant="primary" to={"/"}>Ver clases disponibles</Button>
+                            <Button as={Link} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
                         </div>
                     </Alert>
                 )}

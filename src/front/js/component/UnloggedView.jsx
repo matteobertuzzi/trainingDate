@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button, Accordion, Container, Card, Row, Col } from 'react-bootstrap';
 import { FaDumbbell } from 'react-icons/fa';
 import { LogInModal } from './LogInModal.jsx';
+import img1 from "/workspaces/sp54-final-project-g3/src/front/img/unlogged-view-img.jpg"
+import img2 from "/workspaces/sp54-final-project-g3/src/front/img/trainer-image-unlogged-view.png"
+import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-img-user.jpg"
 
 const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);
@@ -12,7 +15,7 @@ const UnloggedView = () => {
             <Card className="text-white" style={{ borderWidth: '0' }}>
                 <Card.Img
                     className="img-fluid rounded-0"
-                    src="https://www.shape.com/thmb/vMUCGBBuieN6Y5h0bgCqzt0Vf7o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/fb-interval-training-workouts-c93316d5efe14dee93c6d33ccdb6cd31.jpg"
+                    src={img1}
                     alt="Training Date"
                     style={{ opacity: '0.8' }}
                 />
@@ -88,7 +91,7 @@ const UnloggedView = () => {
             <Row className="d-flex justify-content-evenly align-items-center bg-light py-5">
                 <Col md={6} lg={4} className='d-flex justify-content-center align-items-center my-3'>
                     <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
-                        <Card.Img variant="top" src="https://hips.hearstapps.com/hmg-prod/images/mh-trainer-2-1533576998.png" />
+                        <Card.Img variant="top" src={img2} />
                         <Card.Body className="d-flex flex-column">
                             <Card.Title>Entrenador</Card.Title>
                             <Card.Text>
@@ -104,7 +107,7 @@ const UnloggedView = () => {
                 </Col>
                 <Col md={6} lg={4} className='d-flex justify-content-center align-items-center'>
                     <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
-                        <Card.Img className="img-fluid" variant="top" src="https://cvlifestyles.co.uk/wp-content/uploads/2019/02/personal-training.jpg" />
+                        <Card.Img className="img-fluid" variant="top" src={img3} />
                         <Card.Body className="d-flex flex-column">
                             <Card.Title>Usuario</Card.Title>
                             <Card.Text>
