@@ -30,7 +30,7 @@ const UserProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `/api/users/${userId}`;
+        const url = process.env.BACKEND_URL + `users/${userId}`;
         const response = await fetch(url, options);
         if (!response.ok) {
             console.error(`Error al obtener los datos del usuario. Estado HTTP ${response.status}`);

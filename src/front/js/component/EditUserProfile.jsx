@@ -62,7 +62,7 @@ function EditUserProfile({ user, onChangeSubmit }) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" type="submit">
+                    <Button variant="primary" type="submit" onClick={handleSubmit}>
                         Actualizar datos de usuario
                     </Button>
                     <Button variant="secondary" onClick={handleClose}>

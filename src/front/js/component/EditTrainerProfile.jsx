@@ -89,7 +89,7 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                     <Button variant="secondary" onClick={handleClose}>
                         Cerrar
                     </Button>
-                    <Button variant="primary" type="submit" className='my-3'>
+                    <Button variant="primary" type="submit" className='my-3' onClick={handleSubmit}>
                         Actualizar datos del entrenador
                     </Button>
                 </Modal.Footer>

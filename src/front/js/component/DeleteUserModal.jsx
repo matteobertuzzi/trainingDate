@@ -17,7 +17,7 @@ const DeletelUser = ({ show, onHide }) => {
         if (deleteUser) {
             setLogged(false)
         } else {
-            setLoginError('El usuariom no se puede cancelar, debido a que tiene clases pendientes');
+            setLoginError('El usuario no se puede cancelar, debido a que tiene clases pendientes');
         }
     }
     return (
