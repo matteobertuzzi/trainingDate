@@ -8,6 +8,7 @@ import MapModal from "./MapModal.jsx";
 import ClassModal from "./ClassModal.jsx";
 import HomeFilters from "./HomeFilters.jsx";
 import FilterAlert from "./FilterAlert.jsx";
+import Loading from '../component/Loading.jsx';
 
 const AllClasses = () => {
     const { store, actions } = useContext(Context);
@@ -45,13 +46,18 @@ const AllClasses = () => {
 
     const { createCheckoutSession } = actions;
 
+    if (!userClasses) {
+        return <Loading />;
+    }
+
+
     useEffect(() => {
         checkClasses();
         mergeClasses();
     }, []);
 
     const checkClasses = () => {
-        if (userClasses.length !== 0) {
+        if (userClasses.length !== 0 && userClasses) {
             userClasses.map((userClass) => {
                 for (let i = 0; i < allClasses.length; i++) {
                     if (allClasses[i].id === userClass.class) {
@@ -144,11 +150,11 @@ const AllClasses = () => {
                                     <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
                                     <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
                                     <Card.Text><strong>Nivel de entrenamiento:</strong> {
-                                            classItem.training_level === "Advanced" ? "Avanzado" :
-                                                classItem.training_level === "Intermediate" ? "Intermedio" :
-                                                    classItem.training_level === "Beginner" ? "Principiante" :
-                                                        classItem.training_level
-                                        }</Card.Text>
+                                        classItem.training_level === "Advanced" ? "Avanzado" :
+                                            classItem.training_level === "Intermediate" ? "Intermedio" :
+                                                classItem.training_level === "Beginner" ? "Principiante" :
+                                                    classItem.training_level
+                                    }</Card.Text>
                                 </Card.Body>
                                 <Card.Footer className='p-3'>
                                     {classItem.capacity < 1 ? (
@@ -156,20 +162,20 @@ const AllClasses = () => {
                                             <Button variant='danger' disabled>Clase completa!</Button>
                                         </div>
                                     ) : (
-                                        <div className='d-flex flex-column gap-2'>
+                                        <div className='d-flex flex-column gap-2 w-auto'>
                                             <ClassModal userClass={classItem} />
                                             {merge.find(mergedItem => mergedItem.class === classItem.id && mergedItem.stripe_status === 'Paid') ? (
-                                                <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                                <Button variant="success" className="btn-responsive w-auto" disabled>Clase pagada</Button>
                                             ) : (
                                                 <>
-                                                    <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                    <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive w-auto" onClick={() => {
                                                         handleInterested(classItem.isInterested, classItem.id, classItem.price);
                                                         classItem.isInterested = !classItem.isInterested;
                                                     }}>
                                                         {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                     </Button>
                                                     {classItem.isInterested === false ? (
-                                                        <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                        <Button className="btn-responsive w-auto" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                     ) : null}
                                                 </>
                                             )}

@@ -23,6 +23,12 @@ export const MyNavbar = () => {
     navigate("/")
   };
 
+  const sortedClasses = store.allClasses.sort((a, b) => {
+    const dateA = new Date(a.start_date);
+    const dateB = new Date(b.start_date);
+    return dateA - dateB;
+  });
+
   return (
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className=" justify-content-evenly p-2 mx-2">
@@ -146,8 +152,8 @@ export const MyNavbar = () => {
                   </Dropdown.Toggle>
                   <Dropdown.Menu align="end">
                     {trainerClasses.length > 0 ? (
-                      trainerClasses.map(oneClass => (
-                        <Dropdown.Item key={oneClass.id}>{oneClass.id}</Dropdown.Item>
+                      sortedClasses.map(oneClass => (
+                        <Dropdown.Item key={oneClass.id}>{oneClass.start_date}</Dropdown.Item>
                       ))
                     ) : (
                       <Dropdown.Item>No hay clases disponibles</Dropdown.Item>

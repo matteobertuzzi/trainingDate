@@ -169,7 +169,7 @@ const HomeUserClasses = ({ filters }) => {
                 ) : (
                     <div className="row d-flex flex-row align-items-center justify-content-center">
                         {filteredClasses.map(oneClass => (
-                            <div className='col-xl-4 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
+                            <div className='col-xl-4 col-lg-6 col-sm-8 col-sm-10 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
                                 <Card className='my-3'>
                                     <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>
@@ -191,14 +191,14 @@ const HomeUserClasses = ({ filters }) => {
                                                     <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
                                                 ) : (
                                                     <>
-                                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                        <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive  w-auto" onClick={() => {
                                                             handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
                                                             oneClass.isInterested = !oneClass.isInterested;
                                                         }}>
                                                             {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                         </Button>
                                                         {oneClass.isInterested === false ? (
-                                                            <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                            <Button className="btn-responsive  w-auto" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                         ) : null}
                                                     </>
                                                 )}
@@ -218,7 +218,7 @@ const HomeUserClasses = ({ filters }) => {
                             <Carousel.Item key={index}>
                                 <div className="row d-flex flex-row align-items-center justify-content-center">
                                     {chunk.map(oneClass => (
-                                        <div className='col-xl-3 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
+                                        <div className='col-xl-3 col-lg-6 col-sm-7 col-sm-10 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
                                             <Card className='my-3'>
                                                 <Card.Img variant="top" src={placeholderImageUrl} />
                                                 <Card.Header>Detalles de la Clase</Card.Header>
@@ -228,26 +228,26 @@ const HomeUserClasses = ({ filters }) => {
                                                         {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
                                                     </Card.Text>
                                                 </Card.Body>
-                                                <Card.Footer className='p-3'>
+                                                <Card.Footer className='p-3 w-auto'>
                                                     {oneClass.capacity < 1 ? (
                                                         <div className='d-flex justify-content-center align-items-center'>
-                                                            <Button variant='danger' disabled>Clase completa!</Button>
+                                                            <Button variant='danger' className='w-auto' disabled>Clase completa!</Button>
                                                         </div>
                                                     ) : (
                                                         <div className='d-flex flex-column gap-2'>
                                                             <ClassModal userClass={oneClass} />
                                                             {merge.find(mergedItem => mergedItem.class === oneClass.id && mergedItem.stripe_status === 'Paid') ? (
-                                                                <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
+                                                                <Button variant="success" className="btn-responsive w-auto" disabled>Clase pagada</Button>
                                                             ) : (
                                                                 <>
-                                                                    <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                                    <Button variant={oneClass.isInterested ? "primary" : "danger"} className="btn-responsive w-auto" onClick={() => {
                                                                         handleInterested(oneClass.isInterested, oneClass.id, oneClass.price);
                                                                         oneClass.isInterested = !oneClass.isInterested;
                                                                     }}>
                                                                         {oneClass.isInterested ? "Estoy interesado" : "No estoy interesado"}
                                                                     </Button>
                                                                     {oneClass.isInterested === false ? (
-                                                                        <Button className="btn-responsive" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
+                                                                        <Button className="btn-responsive w-auto" onClick={() => { handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>
                                                                     ) : null}
                                                                 </>
                                                             )}
@@ -275,7 +275,7 @@ const HomeUserClasses = ({ filters }) => {
                                             {oneClass.class_details ? oneClass.class_details : 'Clase de entrenamiento'}
                                         </Card.Text>
                                     </Card.Body>
-                                    <Card.Footer className='p-3'>
+                                    <Card.Footer className='p-3 w-auto'>
                                         {oneClass.capacity < 1 ? (
                                             <div className='d-flex justify-content-center align-items-center'>
                                                 <Button variant='danger' disabled>Clase completa!</Button>
