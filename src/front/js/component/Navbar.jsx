@@ -6,7 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { faDumbbell, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BsFillPlusSquareFill, BsCalendarPlus } from "react-icons/bs";
-import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization"
+import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization.jsx"
 
 
 export const MyNavbar = () => {

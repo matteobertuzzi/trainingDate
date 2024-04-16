@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button, Accordion, Container, Card, Row, Col } from 'react-bootstrap';
 import { FaDumbbell } from 'react-icons/fa';
 import { LogInModal } from './LogInModal.jsx';
-import img1 from "/workspaces/sp54-final-project-g3/src/front/img/unlogged-view-img"
-import img2 from "/workspaces/sp54-final-project-g3/src/front/img/trainer-image-unlogged-view"
-import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-img-user"
+import img1 from "/workspaces/sp54-final-project-g3/src/front/img/unlogged-view-img.jpg"
+import img2 from "/workspaces/sp54-final-project-g3/src/front/img/trainer-image-unlogged-view.png"
+import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-img-user.jpg"
 
 const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Container } from "react-bootstrap";
-import { LogInModal } from "/workspaces/sp54-final-project-g3/src/front/js/component/LogInModal";
+import { LogInModal } from "/workspaces/sp54-final-project-g3/src/front/js/component/LogInModal.jsx";
 
 
 export const SessionEnd = () => {
