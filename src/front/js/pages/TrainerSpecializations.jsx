@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Card, Alert, Button } from 'react-bootstrap';
 import { Context } from '../store/appContext';
-import Loading from '/workspaces/sp54-final-project-g3/src/front/js/component/Loading.jsx';
+import Loading from '/workspaces/sp54-final-project-g3/src/front/js/component/Loading';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { Link } from 'react-router-dom'
-import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization.jsx"
+import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization"
 import { IoIosWarning } from "react-icons/io";
 
 

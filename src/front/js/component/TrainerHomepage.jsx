@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Card, Button, Carousel } from 'react-bootstrap';
 import { Context } from '../store/appContext';
 import { Link } from 'react-router-dom';
-import personalTrainer from "/workspaces/sp54-final-project-g3/src/front/img/personal-trainer.jpg"
+import personalTrainer from "/workspaces/sp54-final-project-g3/src/front/img/personal-trainer"
 
 const TrainerHomepage = () => {
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
