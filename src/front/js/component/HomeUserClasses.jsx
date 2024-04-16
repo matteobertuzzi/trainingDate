@@ -120,7 +120,7 @@ const HomeUserClasses = ({ filters }) => {
                     <Carousel prevIcon={<BsChevronCompactLeft />} nextIcon={<BsChevronCompactRight />}>
                         {chunkedFilteredClasses.map((chunk, index) => (
                             <Carousel.Item key={index}>
-                                <div className="row">
+                                <div className="row d-flex flex-row align-items-center justify-content-center">
                                     {chunk.map(oneClass => (
                                         <div className='col-auto d-flex flex-row justify-content-center align-items-center gap-2' key={oneClass.id}>
                                             <Card className='my-3'>
@@ -167,9 +167,9 @@ const HomeUserClasses = ({ filters }) => {
                         ))}
                     </Carousel>
                 ) : (
-                    <div className="row">
+                    <div className="row d-flex flex-row align-items-center justify-content-center">
                         {filteredClasses.map(oneClass => (
-                            <div className='col-auto h-100' key={oneClass.id}>
+                            <div className='col-xl-4 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
                                 <Card className='my-3'>
                                     <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>
@@ -216,9 +216,9 @@ const HomeUserClasses = ({ filters }) => {
                     <Carousel prevIcon={<BsChevronCompactLeft />} nextIcon={<BsChevronCompactRight />}>
                         {chunkedClasses.map((chunk, index) => (
                             <Carousel.Item key={index}>
-                                <div className="row">
+                                <div className="row d-flex flex-row align-items-center justify-content-center">
                                     {chunk.map(oneClass => (
-                                        <div className='col-auto d-flex flex-row justify-content-center align-items-center' key={oneClass.id}>
+                                        <div className='col-xl-3 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
                                             <Card className='my-3'>
                                                 <Card.Img variant="top" src={placeholderImageUrl} />
                                                 <Card.Header>Detalles de la Clase</Card.Header>
@@ -265,8 +265,8 @@ const HomeUserClasses = ({ filters }) => {
                 ) : (
                     <div className="row d-flex flex-row align-items-center justify-content-center">
                         {allClasses.map(oneClass => (
-                            <div className='col-xl-4 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
-                                <Card className='my-3'>
+                            <div className='col-xl-3 col-md-6 col-sm-12 d-flex flex-row justify-content-center align-items-center h-100' key={oneClass.id}>
+                                <Card className='my-3 w-auto'>
                                     <Card.Img variant="top" src={placeholderImageUrl} />
                                     <Card.Header>Detalles de la Clase</Card.Header>
                                     <Card.Body>
