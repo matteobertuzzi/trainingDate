@@ -61,7 +61,6 @@ export const TrainerClasses = () => {
     const indexOfFirstClass = indexOfLastClass - classesPerPage;
     const currentClasses = activeTab === "past" ? pastClasses.slice(indexOfFirstClass, indexOfLastClass) : futureClasses.slice(indexOfFirstClass, indexOfLastClass);
 
-
     if (!currentUser || !currentUser.trainer) {
         return <Loading />;
     }

@@ -35,7 +35,7 @@ export const UserClasses = () => {
         }
     };
 
-    if (!currentUser || !currentUser.user) {
+    if (!currentUser || !currentUser.user || !userClasses) {
         return <Loading />;
     }
 
