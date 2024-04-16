@@ -62,7 +62,8 @@ export const UserClasses = () => {
                                             <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
                                             <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
                                             <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
-                                            <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
+                                            <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level === 'Beginner' ? 'Principiante' :
+                                                classItem.training_level === 'Intermediate' ? 'Intermedio' : classItem.training_level}</Card.Text>
                                         </section>
                                     </Card.Body>
                                     <Card.Footer>

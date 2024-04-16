@@ -144,11 +144,11 @@ const AllClasses = () => {
                                     <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
                                     <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
                                     <Card.Text><strong>Nivel de entrenamiento:</strong> {
-                                            classItem.training_level === "Advanced" ? "Avanzado" :
-                                                classItem.training_level === "Intermediate" ? "Intermedio" :
-                                                    classItem.training_level === "Beginner" ? "Principiante" :
-                                                        classItem.training_level
-                                        }</Card.Text>
+                                        classItem.training_level === "Advanced" ? "Avanzado" :
+                                            classItem.training_level === "Intermediate" ? "Intermedio" :
+                                                classItem.training_level === "Beginner" ? "Principiante" :
+                                                    classItem.training_level
+                                    }</Card.Text>
                                 </Card.Body>
                                 <Card.Footer className='p-3'>
                                     {classItem.capacity < 1 ? (
@@ -192,7 +192,8 @@ const AllClasses = () => {
                                     <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
                                     <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
                                     <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
-                                    <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level}</Card.Text>
+                                    <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level === 'Beginner' ? 'Principiante' :
+                                        classItem.training_level === 'Intermediate' ? 'Intermedio' : classItem.training_level}</Card.Text>
                                 </Card.Body>
                                 <Card.Footer className='p-3'>
                                     {classItem.capacity < 1 ? (
@@ -206,11 +207,11 @@ const AllClasses = () => {
                                                 <Button variant="success" className="btn-responsive" disabled>Clase pagada</Button>
                                             ) : (
                                                 <>
-                                                    <Button variant={classItem.isInterested ? "primary" : "danger"} className="btn-responsive" onClick={() => {
+                                                    <Button variant={classItem.isInterested === false ? "danger" : "primary"} className="btn-responsive" onClick={() => {
                                                         handleInterested(classItem.isInterested, classItem.id, classItem.price);
                                                         classItem.isInterested = !classItem.isInterested;
                                                     }}>
-                                                        {classItem.isInterested ? "Estoy interesado" : "No estoy interesado"}
+                                                        {classItem.isInterested === false ? "No estoy interesado" : "Estoy interesado"}
                                                     </Button>
                                                     {classItem.isInterested === false ? (
                                                         <Button className="btn-responsive" onClick={() => { handleCheckout(classItem.stripe_product_id, currentUser.user.stripe_customer_id) }}>Checkout!</Button>

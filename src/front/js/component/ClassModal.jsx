@@ -31,7 +31,8 @@ function ClassModal({ userClass }) {
                         <li><strong>Fecha de fin:</strong> {new Date(userClass.end_date).toLocaleDateString()}</li>
                         <li><strong>Dirección:</strong> {userClass.street_name} {userClass.street_number}, {userClass.postal_code}</li>
                         <li><strong>Precio:</strong> {userClass.price / 100} €</li>
-                        <li><strong>Nivel de entrenamiento:</strong> {userClass.training_level}</li>
+                        <li><strong>Nivel de entrenamiento:</strong> {userClass.training_level === 'Beginner' ? 'Principiante' :
+                            userClass.training_level === 'Intermediate' ? 'Intermedio' : userClass.training_level}</li>
                         <li><strong>Tipo de entrenamiento:</strong> {userClass.training_type === 1 ? 'Individual' : 'Grupal'}</li>
                     </ul>
                 </Modal.Body>
