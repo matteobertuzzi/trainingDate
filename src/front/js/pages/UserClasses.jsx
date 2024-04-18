@@ -15,26 +15,6 @@ export const UserClasses = () => {
     const [merge, setMerge] = useState([])
     const { id } = useParams();
 
-
-    useEffect(() => {
-        mergeClasses();
-    }, []);
-
-    const mergeClasses = () => {
-        const merged = [];
-
-        for (let i = 0; i < userClasses.length; i++) {
-            const userClass = userClasses[i];
-            const foundClass = allClasses.find(classItem => classItem.id === userClass.class);
-            if (foundClass) {
-                const mergedClass = { ...foundClass, ...userClass };
-                merged.push(mergedClass);
-                setMerge(merged)
-                console.log(merged)
-            }
-        }
-    };
-
     if (!currentUser || !currentUser.user || !userClasses) {
         return <Loading />;
     }
@@ -49,11 +29,11 @@ export const UserClasses = () => {
                 </Col>
             </Row>
             <Row xs={1} md={2} lg={3} className="d-flex justify-content-center g-4">
-                {merge.length !== 0 ? (
-                    merge.map((classItem) => (
+                {userClasses && userClasses.length > 0 ? (
+                    userClasses.map((classItem) => (
                         classItem.stripe_status === "Paid" ? (
                             <Col className="d-flex flex-column align-items-center justify-content-center gap-3" key={classItem.id}>
-                                <Card key={classItem.id} border="primary" style={{ width: '18rem' }}>
+                                <Card border="primary" style={{ width: '18rem' }}>
                                     <Card.Header>{classItem.class_name}</Card.Header>
                                     <Card.Body className="d-flex justify-content-between align-items-center">
                                         <section>
@@ -74,7 +54,18 @@ export const UserClasses = () => {
                                     </Card.Footer>
                                 </Card>
                             </Col>
-                        ) : ""
+                        ) : (
+                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">
+                                <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases reservadas!</Alert.Heading>
+                                <div className="d-flex flex-column justify-content-center align-items-center">
+                                    <p>
+                                        Parece que aún no has reservado ninguna clase.
+                                    </p>
+                                    <p>¡No te preocupes! Puedes empezar ahora mismo reservando tu primera clase.</p>
+                                    <Button as={Link} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
+                                </div>
+                            </Alert>
+                        )
                     ))
                 ) : (
                     <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">

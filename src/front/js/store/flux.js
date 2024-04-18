@@ -40,6 +40,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("availableAccount");
           localStorage.removeItem("userClasses");
+          localStorage.removeItem("favourites")
           setStore({ currentUser: null })
         } else {
           setStore({ logged: value })
@@ -123,6 +124,9 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         setStore({ userClasses: data.result })
         localStorage.setItem('userClasses', JSON.stringify(data.result))
+        const favourites = data.result.map(userClass => userClass.class);
+        setStore({ favourites: favourites });
+        localStorage.setItem('favourites', JSON.stringify(favourites))
       },
 
       getTrainerClasses: async () => {
@@ -219,9 +223,20 @@ const getState = ({ getStore, getActions, setStore }) => {
             getActions().getTrainerSpecializations()
           } else if (data.results.role == "users") {
             getActions().getUserClasses()
+            getActions().getFavourites()
           }
           getActions().setLogged(true);
         }
+      },
+
+      getFavourites: () => {
+        const userClassesFromLocalStorage = localStorage.getItem('userClasses');
+        const parseUserClasses = JSON.parse(userClassesFromLocalStorage);
+        console.log(parseUserClasses)
+        const favouritesFromLocalStorage = localStorage.getItem('favourites');
+        const parsedFavourites = JSON.parse(favouritesFromLocalStorage);
+        setStore({ favourites: parsedFavourites || [] });
+        setStore({ userClasses: parseUserClasses || [] })
       },
 
       loginUser: async (inputs, user_type) => {
@@ -469,8 +484,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         const availableAccountString = localStorage.getItem("availableAccount");
         const availableAccount = JSON.parse(availableAccountString);
         const userId = availableAccount.user.id;
-        const storageUserClasses = localStorage.getItem("userClasses")
-        const userClasses = JSON.parse(storageUserClasses)
 
         if (!token) {
           console.error("No access token found!");
@@ -493,19 +506,20 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!response.ok) return false
         const data = await response.json()
         console.log(data)
-        if (!getStore().userClasses.length) {
+        if (getStore().userClasses.length == 0) {
           setStore({ userClasses: data.results });
-          console.log(getStore().userClasses)
         } else {
-          setStore({ userClasses: [...data.user_classes].concat(data.results) });
+          setStore({ userClasses: data.user_classes });
         }
+        const favourites = data.user_classes.map(userClass => userClass.class);
+        setStore({ favourites: favourites });
+        localStorage.setItem("userClasses", JSON.stringify(data.user_classes));
+        localStorage.setItem("favourites", JSON.stringify(favourites));
       },
 
       deleteUserClass: async (userId, classId) => {
         const token = localStorage.getItem("accessToken");
         const storageAllClasses = localStorage.getItem("allClasses")
-        const allClasses = JSON.parse(storageAllClasses)
-        const updatedClasses = allClasses.filter((element) => element.id !== classId);
 
         if (!token) {
           console.error("No access token found!");
@@ -527,9 +541,11 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}users/${userId}/classes/${classId}`, options)
         if (!response.ok) return response.status
         const data = await response.json()
-        console.log(data)
-        localStorage.setItem('userClasses', JSON.stringify(updatedClasses));
-        setStore({ userClasses: updatedClasses });
+        setStore({ userClasses: data.classes_available });
+        const favourites = getStore().favourites.filter(id => id !== classId);
+        setStore({ favourites: favourites });
+        localStorage.setItem("userClasses", JSON.stringify(data.classes_available));
+        localStorage.setItem("favourites", JSON.stringify(favourites));
       },
 
       deleteTrainerClass: async (trainerId, classId) => {

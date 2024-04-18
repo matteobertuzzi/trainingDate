@@ -11,7 +11,7 @@ function ClassModal({ userClass }) {
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-                Ver clase
+                Detalles Clase
             </Button>
 
             <Modal

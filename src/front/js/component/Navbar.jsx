@@ -14,7 +14,7 @@ export const MyNavbar = () => {
   const navigate = useNavigate()
   const [modalShow, setModalShow] = useState(false);
   const { store, actions } = useContext(Context)
-  const { logged, currentUser, userClasses, trainerClasses } = store
+  const { logged, currentUser, userClasses, trainerClasses, favourites } = store
   const { setLogged, setUser, removeCartItem } = actions
 
 
@@ -42,32 +42,34 @@ export const MyNavbar = () => {
           <>
             <Col xs="auto" className="d-flex gap-3">
               <Nav className="d-flex flex-row justify-content-center" style={{ gap: '1rem' }}>
-                <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/profile`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
+                  <Nav.Link as={Link} to={`/user/${currentUser.user.id}/profile`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
                     Mi Perfil
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
+                  <Nav.Link as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
                     Mis Clases
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={"/allclassesdavide"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
+                  <Nav.Link as={Link} to={"/allclassesdavide"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
                     Todas las clases
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
+                  <Nav.Link as={Link} to={`user/${currentUser.user.id}/favourites`}>
+                    Favoritos<Badge className="position-absolute top-40 start-80 translate-middle badge rounded-pill text-dark" bg="secondary">{favourites.length}</Badge>
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
               <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
-                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
-                  <span>
-                    <FontAwesomeIcon icon={faHeart} /><Badge className="position-absolute top-40 start-80 translate-middle badge rounded-pill text-dark" bg="secondary">{userClasses.length}</Badge>
-                  </span>
-                </Nav.Item>
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
+                  <Button className="bg-danger d-flex flex-row align-items-center justify-content-center gap-2 border" onClick={handleLogout} >
+                    <span>LogOut</span><FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
+                  </Button>
                 </Nav.Item>
                 <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-md" />
               </Nav>
