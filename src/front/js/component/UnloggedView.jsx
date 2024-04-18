@@ -12,83 +12,69 @@ const UnloggedView = () => {
 
     return (
         <Container fluid className="p-0">
-            <Card className="text-white" style={{ borderWidth: '0' }}>
+            <Card className="text-white" style={{ borderWidth: '0', height: '40vh' }}>
                 <Card.Img
                     className="img-fluid rounded-0"
                     src={img1}
                     alt="Training Date"
-                    style={{ opacity: '0.8' }}
+                    style={{ opacity: '0.8', objectFit: 'cover', height: '100%' }}
                 />
                 <Card.ImgOverlay className="d-flex flex-column gap-2 justify-content-center align-items-center">
-                    <h2>¡Bienvenido a Training Date!</h2>
-                    <h3>Conecta con entrenadores y usuarios de toda España</h3>
-                    <FaDumbbell size={150} />
-                </Card.ImgOverlay>
-            </Card>
-            <Row className="bg-light py-5 px-3">
-                <Col md={4} className="text-center mb-3">
-                    <Card style={{ height: '100%' }}>
-                        <Card.Body className="d-flex flex-column justify-content-between">
-                            <div>
-                                <Card.Title>Para Entrenadores</Card.Title>
-                                <Card.Text>
-                                    Ofrece tus propias clases y entrena a usuarios de toda España. Para descubrir más información, haz clic en el botón abajo.
-                                </Card.Text>
-                            </div>
-                            <div className="my-3">
-                                <Link to='trainers/info'>
-                                    <Button variant="primary">Más Informaciones</Button>
-                                </Link>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col md={4} className="text-center mb-3">
-                    <Card style={{ backgroundColor: '#ffe8e5', height: '100%' }}>
-                        <Card.Body className="d-flex flex-column justify-content-between">
-                            <div>
-                                <Card.Title>¿Qué ofrecemos?</Card.Title>
-                                <Card.Text>
-                                    Acceso a una amplia variedad de clases, desde yoga hasta levantamiento de pesas. Interactúa con entrenadores expertos y encuentra la motivación que necesitas para alcanzar tu mejor versión.
-                                </Card.Text>
-                            </div>
-                            <div className="my-3">
-                                <Link to='/allClasses'>
-                                    <Button variant="primary">Explora clases</Button>
-                                </Link>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col md={4} className="text-center mb-3">
-                    <Card style={{ height: '100%' }}>
-                        <Card.Body className="d-flex flex-column justify-content-between">
-                            <div>
-                                <Card.Title>Para Usuarios</Card.Title>
-                                <Card.Text>
-                                    Descubre clases y entrenamientos adaptados a tus necesidades. Encuentra el entrenador perfecto para alcanzar tus objetivos de fitness. Para descubrir más información, haz clic en el botón abajo.
-                                </Card.Text>
-                            </div>
-                            <div className="my-3">
-                                <Link to='users/info'>
-                                    <Button variant="primary">Más Informaciones</Button>
-                                </Link>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-            <Row className="d-flex py-5 justify-content-center align-items-center">
-                <Card md={6} className="p-3 d-flex justify-content-center align-items-center" style={{ width: '80%' }}>
-                    <h4 className='text-center'>¿Ya estás registrado?</h4>
-                    <p className='text-center'>¡Bienvenido! Si ya estás registrado como entrenador o usuario, haz clic en el siguiente botón para iniciar tu sesión.</p>
-                    <div className='d-flex justify-content-center'>
-                        <Button onClick={() => setLoginModalShow(true)} style={{ marginTop: '10px', marginBottom: '10px' }}>Log in</Button>
+                    <div style={{ opacity: '0.8', backgroundColor: 'white', borderRadius: '10%', color: 'black', padding: '10px' }} className="d-flex justify-content-between">
+                        <div className='d-flex justify-content-center align-items-center' style={{ width: '30%' }}>
+                            <FaDumbbell size={100} />
+                        </div>
+                        <div className='d-flex flex-column my-2 justify-content-center align-items-center' style={{ width: '70%' }}>
+                            <h2 style={{ fontWeight: 'bold' }}>¡Bienvenido a Training Date!</h2>
+                            <h5 className='text-center'>"¿Listo para conectar con entrenadores y compañeros fitness de toda España?"</h5>
+                            <Link to='/signup'>
+                                <Button variant='primary' className='my-3' style={{ height: '50px', width: '200px', fontWeight: 'bold' }}>Regístrate Ahora</Button>
+                            </Link>
+                        </div>
                     </div>
-                    <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
-                </Card>
+                </Card.ImgOverlay>
+            </Card >
+            <Row className="bg-light py-5">
+                <Col md={12} className="text-center my-2">
+                    <h2>Descubre el Mundo del Fitness con Nosotros</h2>
+                    <p className="lead px-3">¿Listo para dar el siguiente paso en tu viaje fitness? Encuentra la motivación y el apoyo que necesitas para alcanzar tus objetivos. Conéctate con entrenadores y compañeros de fitness de toda España y descubre nuevas oportunidades para crecer y mejorar.</p>
+                </Col>
             </Row>
-            <Row className="d-flex justify-content-evenly align-items-center bg-light py-5">
+            <Row className="text-center mt-4">
+                <h2 style={{ fontWeight: 'bold', marginBottom: '30px', marginTop: '30px' }}>Para el usuario</h2>
+                <Col md={8} className='d-flex flex-column justify-content-center align-content-center'>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 1: Iniciar sesión y crear perfil</h4>
+                        <p>El primer paso es iniciar sesión en la aplicación y crear tu perfil de usuario. Puedes proporcionar detalles como tu nombre, dirección de correo electrónico, y otros datos relevantes.</p>
+                    </div>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 2: Explorar clases disponibles</h4>
+                        <p>Una vez que hayas creado tu perfil, puedes explorar todas las clases disponibles en la aplicación. Desde yoga hasta entrenamiento de fuerza, hay una variedad de opciones para elegir.</p>
+                    </div>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 3: Actualizar información y reservar clases</h4>
+                        <p>Puedes actualizar tu información de perfil en cualquier momento y reservar clases que te interesen. Además, puedes ver las clases que has reservado y administrar tus reservas desde tu perfil.</p>
+                    </div>
+                </Col>
+                <Col md={4} lg={4} className='d-flex justify-content-center align-items-center'>
+                    <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
+                        <Card.Img className="img-fluid" variant="top" src={img3} />
+                        <Card.Body className="d-flex flex-column">
+                            <Card.Title>Usuario</Card.Title>
+                            <Card.Text>
+                                ¿Buscas clases personalizadas? Regístrate como usuario y encuentra entrenadores y clases que se adapten a tus necesidades.
+                            </Card.Text>
+                            <div className='d-flex justify-content-center mt-auto'>
+                                <Link to='/signupUser'>
+                                    <Button variant="primary">Regístrate</Button>
+                                </Link>
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+            <Row className="text-center bg-light mt-4">
+                <h2 style={{ fontWeight: 'bold', marginBottom: '30px', marginTop: '30px' }}>Para el entrenador</h2>
                 <Col md={6} lg={4} className='d-flex justify-content-center align-items-center my-3'>
                     <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
                         <Card.Img variant="top" src={img2} />
@@ -105,22 +91,34 @@ const UnloggedView = () => {
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col md={6} lg={4} className='d-flex justify-content-center align-items-center'>
-                    <Card className="h-100" style={{ width: '90%', borderRadius: '10px' }}>
-                        <Card.Img className="img-fluid" variant="top" src={img3} />
-                        <Card.Body className="d-flex flex-column">
-                            <Card.Title>Usuario</Card.Title>
-                            <Card.Text>
-                                ¿Buscas clases personalizadas? Regístrate como usuario y encuentra entrenadores y clases que se adapten a tus necesidades.
-                            </Card.Text>
-                            <div className='d-flex justify-content-center mt-auto'>
-                                <Link to='/signupUser'>
-                                    <Button variant="primary">Regístrate</Button>
-                                </Link>
-                            </div>
-                        </Card.Body>
-                    </Card>
+                <Col md={8} className='d-flex flex-column justify-content-center align-content-center'>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 1: Envía tu certificado o título de estudio</h4>
+                        <p>EEl primer paso para convertirte en entrenador en nuestra plataforma es enviarnos tu certificado o título de estudio que demuestre tus habilidades y especializaciones relevantes. Este documento será revisado por nuestro equipo administrativo para verificar su autenticidad.</p>
+                    </div>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 2: Revisión y aprobación</h4>
+                        <p>Una vez que hayas enviado tu certificado, nuestro equipo administrativo lo revisará para asegurarse de que cumpla con nuestros requisitos. Si tu certificado es aprobado, recibirás una notificación por correo electrónico informándote sobre la aprobación.</p>
+                    </div>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 3: Inicia sesión y comienza a crear clases</h4>
+                        <p>Después de recibir la confirmación de que tu certificado ha sido aprobado, puedes iniciar sesión en nuestra plataforma como entrenador. Desde tu panel de control, tendrás la capacidad de crear clases y programas de entrenamiento personalizados para que los usuarios se inscriban.</p>
+                    </div>
+                    <div className='mx-5 my-2'>
+                        <h4 style={{ fontWeight: 'bold' }}>Paso 4: Interactúa con tus clientes</h4>
+                        <p>Una vez que hayas creado tus clases, podrás interactuar con tus clientes y gestionar sus inscripciones. Puedes comunicarte con ellos a través de mensajes directos, programar sesiones individuales o grupales y seguir su progreso.</p>
+                    </div>
                 </Col>
+            </Row>
+            <Row className="d-flex py-5 justify-content-center align-items-center">
+                <Card md={6} className="p-3 d-flex justify-content-center align-items-center" style={{ width: '80%' }}>
+                    <h4 className='text-center'>¿Ya estás registrado?</h4>
+                    <p className='text-center'>¡Bienvenido! Si ya estás registrado como entrenador o usuario, haz clic en el siguiente botón para iniciar tu sesión.</p>
+                    <div className='d-flex justify-content-center'>
+                        <Button onClick={() => setLoginModalShow(true)} style={{ marginTop: '10px', marginBottom: '10px' }}>Log in</Button>
+                    </div>
+                    <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
+                </Card>
             </Row>
             <Row className='d-flex flex-column justify-content-center align-items-center p-3'>
                 <Col className='pb-4'>
@@ -153,7 +151,7 @@ const UnloggedView = () => {
                     </Accordion>
                 </Col>
             </Row>
-        </Container>
+        </Container >
     );
 }
 
