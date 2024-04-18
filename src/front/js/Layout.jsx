@@ -29,6 +29,7 @@ import UserInfo from "./pages/UserInfo.jsx";
 import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
 import AllClasses from "./component/AllClasses.jsx";
 import { TrainerClassDetails } from "./pages/TrainerClassDetails.jsx";
+import { AllClassesDavide } from "./pages/AllClassesDavide.jsx"
 
 // Create your first component
 const Layout = () => {
@@ -43,6 +44,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <MyNavbar />
                     <Routes>
+                        <Route element={<AllClassesDavide />} path="/allclassesdavide" />
                         <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
                         <Route element={<UserInfo />} path='users/info' />
                         <Route element={<TrainerInfo />} path="trainers/info" />

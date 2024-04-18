@@ -10,6 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       trainerSpecializations: [],
       trainerClasses: [],
       userInTrainerClass: [],
+      favourites: [],
       allClasses: [],
       userClasses: [],
       clientSecret: [],
@@ -175,7 +176,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}trainers/${trainerId}/classes/${classId}`, options)
         if (!response) return response.status
         const data = await response.json()
-        setStore({userInTrainerClass : data})
+        setStore({ userInTrainerClass: data })
       },
 
       getAvailableAccount: async () => {
@@ -475,6 +476,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("No access token found!");
           return null;
         }
+
         const options = {
           method: 'POST',
           headers: {
@@ -488,12 +490,15 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         const response = await fetch(`${process.env.BACKEND_URL}users/${userId}/classes`, options)
-        if (!response.ok) return response.status
+        if (!response.ok) return false
         const data = await response.json()
-        console.log(data.results)
-        const updatedUserClasses = { ...userClasses, ...data.results };
-        setStore({ userClasses: updatedUserClasses });
-        localStorage.setItem('userClasses', JSON.stringify(updatedUserClasses));
+        console.log(data)
+        if (!getStore().userClasses.length) {
+          setStore({ userClasses: data.results });
+          console.log(getStore().userClasses)
+        } else {
+          setStore({ userClasses: [...data.user_classes].concat(data.results) });
+        }
       },
 
       deleteUserClass: async (userId, classId) => {

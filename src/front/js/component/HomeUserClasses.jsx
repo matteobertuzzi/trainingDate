@@ -310,7 +310,7 @@ const HomeUserClasses = ({ filters }) => {
             )}
             {
                 allClasses.length === 0 && (
-                    <FilterAlert location='userClasses' showAlert={setShowAlert} />
+                    <FilterAlert location='userClasses' show={setShowAlert} />
                 )
             }
         </>

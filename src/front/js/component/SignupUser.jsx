@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
-import { Button, Card, Col, Form, Container, Row } from 'react-bootstrap/';
+import { Button, Card, Col, Form, Container, Row, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap/';
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
 
 function SignupUser() {
@@ -10,6 +12,7 @@ function SignupUser() {
     const [validated, setValidated] = useState(false);
     const navigate = useNavigate()
     const { addUser } = actions
+    const [show, setShow] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
         name: '',
@@ -22,6 +25,11 @@ function SignupUser() {
         gender: 'Male'
     })
 
+    const handleClose = () => {
+        setShow(false)
+        navigate("/")
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -33,6 +41,7 @@ function SignupUser() {
             if (!validateLog) {
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
             } else {
+                setShow(true)
                 setInputs({
                     name: '',
                     last_name: '',
@@ -44,7 +53,6 @@ function SignupUser() {
                     gender: 'Male'
                 });
                 setLoginError(null)
-                navigate("/")
             }
         };
     }
@@ -121,12 +129,13 @@ function SignupUser() {
                                     value={inputs.email || ""}
                                     onChange={changeInput}
                                     name='email'
-                                    required />
+                                    required
+                                    isInvalid={inputs.email && !/^\S+@\S+\.\S+$/.test(inputs.email)} />
                                 <Form.Control.Feedback type="invalid">
                                     Por favor, proporciona un correo electrónico válido.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="user-password">
+                            <Form.Group className='d-flex flex-column' as={Col} md="3" controlId="user-password">
                                 <Form.Label>Contraseña</Form.Label>
                                 <Form.Control
                                     type="password"
@@ -134,9 +143,12 @@ function SignupUser() {
                                     value={inputs.password || ""}
                                     onChange={changeInput}
                                     name='password'
-                                    required />
-                                <Form.Control.Feedback type='invalid' >
-                                    Por favor, ingresa la contraseña.
+                                    required
+                                    pattern="^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,}$"
+                                    isInvalid={inputs.password && !/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,}$/.test(inputs.password)}
+                                />
+                                <Form.Control.Feedback type='invalid'>
+                                    La contraseña debe tener al menos 6 caracteres, incluyendo al menos un número, un carácter especial, y una letra.
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="user-phone-number">
@@ -147,7 +159,9 @@ function SignupUser() {
                                     value={inputs.phone_number || ""}
                                     onChange={changeInput}
                                     name='phone_number'
-                                    required />
+                                    required
+                                    pattern="[0-9]{9,}"
+                                    isInvalid={!/^([0-9]{9,})?$/.test(inputs.phone_number)} />
                                 <Form.Control.Feedback type="invalid">
                                     Por favor, proporciona un número de teléfono válido.
                                 </Form.Control.Feedback>
@@ -175,7 +189,9 @@ function SignupUser() {
                                     value={inputs.postal_code || ""}
                                     onChange={changeInput}
                                     name='postal_code'
-                                    required />
+                                    required
+                                    pattern="[0-9]{5}"
+                                    isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)} />
                                 <Form.Control.Feedback type="invalid">
                                     Por favor, proporciona un código postal.
                                 </Form.Control.Feedback>
@@ -188,7 +204,30 @@ function SignupUser() {
                     </Form>
                 </Card.Body>
             </Card>
-        </Container>
+            <Modal
+                show={show}
+                size="md"
+                centered
+                variant="success"
+                className='d-flex flex-column justify-content-center align-items-center'
+            >
+                <Modal.Header className='d-flex justify-content-center align-items-center'>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Registracion exitosa!
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='d-flex justify-content-center align-items-center'>
+                    <p>
+                        ¡Registro completado con éxito! Se le enviará un correo electrónico para confirmar su dirección.
+                    </p>
+                </Modal.Body>
+                <Modal.Footer className='d-flex justify-content-center align-items-center'>
+                    <Button onClick={handleClose}>
+                        Volver a la Home
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </Container >
     );
 }
 

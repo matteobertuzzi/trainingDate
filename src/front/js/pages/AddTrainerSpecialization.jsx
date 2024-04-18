@@ -7,8 +7,8 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)
     const { specializations, currentUser } = store
     const { postTrainerSpecialization } = actions
-    const [showToast, setShowToast] = useState(false);
     const [validated, setValidated] = useState(false);
+    const [exited, setExited] = useState(false)
     const [error, setError] = useState(null);
     const params = useParams()
     const { trainerId } = params
@@ -28,21 +28,9 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
         if (!postSpecialization) {
             setError('El entrenador ya tiene esta especialidad confirmada o pendiente de confirmar.')
         } else {
-            handleShowToast()
-            setInputs({
-                certification: "",
-                specialization_id: ""
-            })
+            setExited('Certificación enviada con éxito, le llegará un correo con el resultado de la revisión')
             setError(null);
-            onHide()
         }
-    };
-
-    const handleShowToast = () => {
-        setShowToast(true);
-        setTimeout(() => {
-            setShowToast(false);
-        }, 5000);
     };
 
     const handleChange = (e) => {
@@ -107,20 +95,13 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
                         </Form.Group>
                     </Row>
                     {error && <div className="text-danger mt-2">{error}</div>}
+                    {exited && <div className="text-success mt-2">{exited}</div>}
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSubmit} variant="success">Crear</Button>
                 <Button variant="danger" onClick={onHide}>Cerrar</Button>
             </Modal.Footer>
-            <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed top-0 start-50 translate-middle-x m-4" style={{ minWidth: '300px', backgroundColor: '#28a745', color: 'white' }}>
-                <Toast.Header className="d-flex justify-content-center align-items-center" closeButton={false}>
-                    <strong>¡Éxito!</strong>
-                </Toast.Header>
-                <Toast.Body className="d-flex justify-content-center align-items-center">
-                    Tu especialización ha sido enviada correctamente. Recibirás un correo de confirmación.
-                </Toast.Body>
-            </Toast>
         </Modal>
 
     )

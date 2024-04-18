@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Modal, Button, Col, Form, Row, Nav, CloseButton, FloatingLabel} from 'react-bootstrap/';
+import { Modal, Button, Col, Form, Row, Nav, CloseButton, FloatingLabel } from 'react-bootstrap/';
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { FaCheckCircle } from "react-icons/fa";
@@ -38,12 +38,13 @@ export const LogInModal = ({ show, onHide }) => {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            setValidated(true);
             const userType = activeTab === "users" ? "users" : "trainers";
             const validateLog = await loginUser(inputs, userType);
             if (!validateLog) {
+                setValidated(false);
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
             } else {
+                setValidated(true);
                 setLogged(true);
                 setInputs({
                     email: '',

@@ -37,12 +37,16 @@ export const CreateClass = () => {
         setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
     };
 
+    const isStartDateValid = () => {
+        return inputs.start_date <= inputs.end_date;
+    };
+
     const handleSubmit = async (event) => {
         console.log("handleSubmit() se está llamando.");
         event.preventDefault();
 
         const form = event.currentTarget;
-        if (form.checkValidity() === false || inputs.start_date >= inputs.end_date) {
+        if (form.checkValidity() === false || !isStartDateValid()) {
             event.stopPropagation();
         }
 
@@ -51,8 +55,8 @@ export const CreateClass = () => {
         if (!postClass) {
             setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
         } else {
-            setError(null);
             handleShowToast()
+            setError(null);
             await getTrainerClasses()
             await getAllClasses()
             navigate(`/trainer/${currentUser.trainer.id}/classes`)
@@ -63,7 +67,7 @@ export const CreateClass = () => {
         setShowToast(true);
         setTimeout(() => {
             setShowToast(false);
-        }, 5000);
+        }, 7000);
     };
 
 
@@ -93,7 +97,16 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="postal_code">
                                     <Form.Label>Código Postal:</Form.Label>
-                                    <Form.Control required type="number" placeholder="Código Postal" value={inputs.postal_code || ""} onChange={handleChange} name="postal_code" autoComplete="postal_code" />
+                                    <Form.Control
+                                        pattern="[0-9]{5}"
+                                        isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)}
+                                        required
+                                        type="number"
+                                        placeholder="Código Postal"
+                                        value={inputs.postal_code || ""}
+                                        onChange={handleChange}
+                                        name="postal_code"
+                                        autoComplete="postal_code" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige un código postal.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
@@ -128,15 +141,15 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="startClass">
                                     <Form.Label>Inicio clase:</Form.Label>
-                                    <Form.Control required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
-                                    <Form.Control.Feedback type="invalid">Por favor, elige una hora válida.</Form.Control.Feedback>
+                                    <Form.Control isInvalid={!isStartDateValid()} required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
+                                    <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6">
                                 <Form.Group controlId="endClass">
                                     <Form.Label>Fin de clase:</Form.Label>
                                     <Form.Control required type="datetime-local" value={inputs.end_date || ""} onChange={handleChange} name="end_date" />
-                                    <Form.Control.Feedback type="invalid">Por favor, elige una hora válida.</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -193,7 +206,7 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="capacity">
                                     <Form.Label>Capacidad alumnos:</Form.Label>
-                                    <Form.Control required type="number" value={inputs.capacity || ""} onChange={handleChange} name="capacity" />
+                                    <Form.Control min="1" required type="number" value={inputs.capacity || ""} onChange={handleChange} name="capacity" />
                                     <Form.Control.Feedback type="invalid">Por favor, ingresa una capacidad válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
@@ -201,7 +214,7 @@ export const CreateClass = () => {
                                 <Form.Group controlId="price">
                                     <Form.Label>Precio:</Form.Label>
                                     <InputGroup>
-                                        <Form.Control required type="number" aria-label="Precio" value={inputs.price || ""} onChange={handleChange} name="price" />
+                                        <Form.Control min="1" required type="number" aria-label="Precio" value={inputs.price || ""} onChange={handleChange} name="price" />
                                         <InputGroup.Text>€</InputGroup.Text>
                                         <Form.Control.Feedback type="invalid">Por favor, ingresa un precio válido.</Form.Control.Feedback>
                                     </InputGroup>

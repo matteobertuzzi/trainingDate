@@ -88,6 +88,7 @@
 		"bootswatch": "^5.3.3",
 		"cloudinary": "^2.1.0",
 		"cloudinary-react": "^1.8.1",
+		"font-awesome": "^4.7.0",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-bootstrap": "^2.10.2",

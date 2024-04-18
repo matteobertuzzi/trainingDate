@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
-import { Dropdown, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, ListGroup, Card, Button, Nav, Offcanvas } from 'react-bootstrap';
+import { Dropdown, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, Button, Nav, Offcanvas, Badge } from 'react-bootstrap';
 import { LogInModal } from "./LogInModal.jsx";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
-import { faDumbbell, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faDumbbell, faRightToBracket, faRightFromBracket, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BsFillPlusSquareFill, BsCalendarPlus } from "react-icons/bs";
 import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization.jsx"
@@ -14,8 +14,9 @@ export const MyNavbar = () => {
   const navigate = useNavigate()
   const [modalShow, setModalShow] = useState(false);
   const { store, actions } = useContext(Context)
-  const { logged, currentUser, cart, trainerClasses } = store
+  const { logged, currentUser, userClasses, trainerClasses } = store
   const { setLogged, setUser, removeCartItem } = actions
+
 
   const handleLogout = () => {
     setLogged(false);
@@ -52,7 +53,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={"/allClasses"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                  <Nav.Link className="d-none d-md-block" as={Link} to={"/allclassesdavide"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
                     Todas las clases
                   </Nav.Link>
                 </Nav.Item>
@@ -60,6 +61,11 @@ export const MyNavbar = () => {
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
               <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
+                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
+                  <span>
+                    <FontAwesomeIcon icon={faHeart} /><Badge className="position-absolute top-40 start-80 translate-middle badge rounded-pill text-dark" bg="secondary">{userClasses.length}</Badge>
+                  </span>
+                </Nav.Item>
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
                   <FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
                 </Nav.Item>
@@ -217,8 +223,10 @@ export const MyNavbar = () => {
             </Navbar.Offcanvas>
           </>
         ) : (
-          <Col xs="auto d-flex align-items-center justify-content-center gap-3">
-            <FontAwesomeIcon onClick={() => setLoginModalShow(true)} icon={faRightToBracket} className="text-success p-2" />
+          <Col xs="auto d-flex flex-row align-items-center justify-content-center gap-3">
+            <Button variant="success" onClick={() => setLoginModalShow(true)} className="d-flex flex-row gap-2 align-items-center justify-content-center">
+              <span>Login</span><FontAwesomeIcon icon={faRightToBracket} />
+            </Button>
           </Col>
         )}
         <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />

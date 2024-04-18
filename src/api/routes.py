@@ -27,8 +27,8 @@ cloudinary.config(
     api_secret=os.environ.get("API_SECRET")
 )
 
-# Obtiene la clave para el serializador, que sirve para crear token de tiempo limitado
 
+# Obtiene la clave para el serializador, que sirve para crear token de tiempo limitado
 s = URLSafeTimedSerializer(os.environ.get("URL_SAFE_TIMED_SERIALIZER"))
 stripe.api_key = os.environ.get("STRIPE_API_KEY")
 api = Blueprint('api', __name__)
@@ -529,7 +529,7 @@ def handle_signup_user():
     db.session.add(new_user)
     db.session.commit()
     token = s.dumps(new_user.email, salt='email-confirm')
-    confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/{token}"
+    confirm_url = f"{os.environ['BACKEND_URL']}confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -657,7 +657,7 @@ def handle_signup_trainer():
     db.session.add(new_trainer)
     db.session.commit()
     token = s.dumps(new_trainer.email, salt='email-confirm')
-    confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/{token}"
+    confirm_url = f"{os.environ['BACKEND_URL']}confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -1092,8 +1092,10 @@ def handle_user_classes(id):
                                      class_id=data["class_id"])
             db.session.add(new_class)
             db.session.commit()
+            user_classes = UsersClasses.query.filter_by(user_id=id).all()
             response_body["message"] = "Class added"
             response_body["results"] = new_class.serialize()
+            response_body["user_classes"] = [class_user.serialize() for class_user in user_classes]
             return response_body, 201
     response_body["message"] = 'Not allowed!'
     return response_body, 405
@@ -1364,8 +1366,8 @@ def handle_trainer_specializations(id):
                 db.session.add(new_trainer_specialization)
                 db.session.commit()
                 token = s.dumps(new_trainer_specialization.id, salt='email-confirm')
-                reject_url = f"{os.environ['BACKEND_URL']}api/reject/specialization/{token}"
-                confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/specialization/{token}"
+                reject_url = f"{os.environ['BACKEND_URL']}reject/specialization/{token}"
+                confirm_url = f"{os.environ['BACKEND_URL']}confirm/specialization/{token}"
                 subject = 'Confirm Specialization'
                 html_content = f'''
                     <!DOCTYPE html>
