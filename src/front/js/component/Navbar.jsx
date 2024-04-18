@@ -59,7 +59,7 @@ export const MyNavbar = () => {
                 </Nav.Item>
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
                   <Nav.Link as={Link} to={`user/${currentUser.user.id}/favourites`}>
-                    Favoritos<Badge className="position-absolute top-40 start-80 translate-middle badge rounded-pill text-dark" bg="secondary">{favourites.length}</Badge>
+                    Favoritos<Badge className={`position-absolute top-30 start-80 translate-middle badge rounded-pill  ${!favourites || favourites.length === 0 ? " bg-warning" : "bg-success"} text-dark`}>{favourites.length}</Badge>
                   </Nav.Link>
                 </Nav.Item>
               </Nav>

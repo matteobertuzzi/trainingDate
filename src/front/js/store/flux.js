@@ -55,8 +55,14 @@ const getState = ({ getStore, getActions, setStore }) => {
           return null
         }
         const data = await response.json()
-        setStore({ allClasses: data.results })
-        localStorage.setItem('allClasses', JSON.stringify(data.results))
+        const currentTime = new Date().getTime();
+
+        const filteredClasses = data.results.filter(oneClass => {
+          const classStartTime = new Date(oneClass.start_date).getTime();
+          return classStartTime > currentTime;
+        });
+        setStore({ allClasses: filteredClasses });
+        localStorage.setItem('allClasses', JSON.stringify(filteredClasses));
       },
 
       getTrainerSpecializations: async () => {

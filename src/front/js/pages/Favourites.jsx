@@ -22,11 +22,11 @@ export const Favourites = () => {
                         {allClasses && allClasses.length > 0 ? (
                             allClasses.map((oneClass) => (
                                 <React.Fragment key={oneClass.id}>
-                                    {favourites && favourites.includes(oneClass.id) && userClasses && userClasses.length > 0 && userClasses.some(item => item.stripe_status === "Cart") ? (
+                                    {favourites && favourites.includes(oneClass.id) ? (
                                         <ListGroup.Item className="d-flex flex-row justify-content-between align-items-center">
                                             <span>{oneClass.id}</span>
                                             <Button>Checkout</Button>
-                                            <Button  onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.id)} variant="danger">
+                                            <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.id)} variant="danger">
                                                 <span>Quitar de favoritos</span>
                                             </Button>
                                         </ListGroup.Item>
