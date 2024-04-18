@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Accordion, Container, Card, Row, Col } from 'react-bootstrap';
 import { FaDumbbell } from 'react-icons/fa';
 import { LogInModal } from './LogInModal.jsx';
+import ClassesCarousel from './ClassesCarousel.jsx';
 import img1 from "/workspaces/sp54-final-project-g3/src/front/img/unlogged-view-img.jpg"
 import img2 from "/workspaces/sp54-final-project-g3/src/front/img/trainer-image-unlogged-view.png"
 import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-img-user.jpg"
@@ -119,6 +120,9 @@ const UnloggedView = () => {
                     </div>
                     <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
                 </Card>
+            </Row>
+            <Row>
+                <ClassesCarousel />
             </Row>
             <Row className='d-flex flex-column justify-content-center align-items-center p-3'>
                 <Col className='pb-4'>
