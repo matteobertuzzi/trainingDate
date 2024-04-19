@@ -152,20 +152,6 @@ def webhook():
                         db.session.commit()
                         print(f"Clase de usuario actualizada: {user_class.serialize()}")
                         return jsonify(success=True)
-                        # Aquí se crea la transferencia al IBAN del entrenador
-                    # trainer_id = payment_intent['metadata'].get("trainer_id")
-                    #if trainer_id:
-                     #   trainer = db.session.query(Trainer).get(trainer_id)
-                      #  if trainer:
-                       #     transfer = stripe.Transfer.create(
-                        #        amount=user_class.amount,  # Monto a transferir
-                         #       currency=user_class.currency,  # Moneda
-                          #      destination=trainer.iban,  # IBAN del entrenador
-                           #     description='Pago de clase',  # Descripción opcional
-                            #    metadata={'class_id': class_id, 'user_id': user_id}  # Metadatos adicionales
-                            #)
-                            #print(f"Transferencia creada: {transfer}")
-                            # Aquí puedes manejar la respuesta de Stripe según tus necesidades
                 else:
                     print('No se encontró la clave "class_id" en los metadatos')
             else:
@@ -1281,6 +1267,9 @@ def handle_user_class(id, class_id):
             response_body["class"] = trainer_class.serialize()
             return response_body, 200
         if request.method == "DELETE":
+            if user_class.stripe_status == "Paid":
+                response_body["message"] = "Unable to cancel class, user have paid it"
+                return response_body, 400
             db.session.delete(user_class)
             db.session.commit()
             user_classes = UsersClasses.query.filter_by(user_id=id).all()

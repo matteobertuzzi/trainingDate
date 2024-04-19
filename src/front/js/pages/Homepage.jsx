@@ -33,8 +33,6 @@ const Homepage = () => {
                     <div className='row'>
                         <UserHomepage />
                     </div>
-                    <h3 className='text-center my-4' style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>Clases disponibles</h3>
-                    <HomeUserClasses filters={filters} />
                 </div>
                 :
                 (isLogged && isTrainer) ?

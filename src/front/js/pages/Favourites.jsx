@@ -14,6 +14,15 @@ export const Favourites = () => {
         return <Loading />;
     }
 
+    const handleCheckout = async (stripeProductId, stripeCustomerId, classId) => {
+        const checkout = await createCheckoutSession(stripeProductId, stripeCustomerId)
+        if (checkout) {
+            const updatedFavourites = favourites.filter(id => id !== classId);
+            localStorage.setItem('favourites', JSON.stringify(updatedFavourites));
+            setStore({ favourites: updatedFavourites });
+        }
+    }
+
     return (
         <Container className="min-vh-100">
             <Row>
@@ -25,7 +34,7 @@ export const Favourites = () => {
                                     {favourites && favourites.includes(oneClass.id) ? (
                                         <ListGroup.Item className="d-flex flex-row justify-content-between align-items-center">
                                             <span>{oneClass.id}</span>
-                                            <Button>Checkout</Button>
+                                            <Button onClick={() => handleCheckout(oneClass.stripe_product_id, currentUser.user.stripe_customer_id, oneClass.id)}>Checkout</Button>
                                             <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.id)} variant="danger">
                                                 <span>Quitar de favoritos</span>
                                             </Button>

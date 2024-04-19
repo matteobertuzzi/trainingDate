@@ -660,10 +660,13 @@ const getState = ({ getStore, getActions, setStore }) => {
           }
           const data = await response.json();
           window.location.href = data.sessionUrl;
+          return true;
         } catch (error) {
-          throw new Error(error.message || 'Failed to create checkout session');
+          console.error(error.message || 'Failed to create checkout session');
+          return false;
         }
       },
+
 
       getGeolocation: async (adr) => {
         const apiKey = process.env.GOOGLE_API_KEY;

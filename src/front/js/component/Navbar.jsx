@@ -16,7 +16,11 @@ export const MyNavbar = () => {
   const { store, actions } = useContext(Context)
   const { logged, currentUser, userClasses, trainerClasses, favourites } = store
   const { setLogged, setUser, removeCartItem } = actions
+  const [activeTab, setActiveTab] = useState(null);
 
+  const handleTabClick = (tabName) => {
+    setActiveTab(tabName);
+  };
 
   const handleLogout = () => {
     setLogged(false);
@@ -32,33 +36,104 @@ export const MyNavbar = () => {
 
   return (
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
-      <Container fluid className=" justify-content-evenly p-2 mx-2">
+      <Container fluid className=" justify-content-evenly mx-2">
         <Col>
           <Navbar.Brand className="text-dark">
-            <Link to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
+            <Link onClick={() => handleTabClick('')} to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
           </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
           <>
             <Col xs="auto" className="d-flex gap-3">
-              <Nav className="d-flex flex-row justify-content-center" style={{ gap: '1rem' }}>
-                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
-                  <Nav.Link as={Link} to={`/user/${currentUser.user.id}/profile`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+              <Nav variant="tabs" className="d-flex flex-row border-0">
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeTab === 'profile' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeTab === 'profile' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeTab === 'profile' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('profile')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={`/user/${currentUser.user.id}/profile`}
+                    style={{
+                      color: activeTab === 'profile' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeTab === 'profile' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
                     Mi Perfil
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
-                  <Nav.Link as={Link} to={`/user/${currentUser.user.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
-                    Mis Clases
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeTab === 'classes' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeTab === 'classes' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeTab === 'classes' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('classes')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={`/user/${currentUser.user.id}/classes`}
+                    style={{
+                      color: activeTab === 'classes' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeTab === 'profile' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >                      Mis Clases
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
-                  <Nav.Link as={Link} to={"/allclassesdavide"} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeTab === 'allClasses' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeTab === 'allClasses' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeTab === 'allClasses' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('allClasses')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={`/allclassesdavide`}
+                    style={{
+                      color: activeTab === 'allClasses' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeTab === 'allClasses' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
                     Todas las clases
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center">
-                  <Nav.Link as={Link} to={`user/${currentUser.user.id}/favourites`}>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeTab === 'favourites' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeTab === 'favourites' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeTab === 'favourites' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('favourites')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={`user/${currentUser.user.id}/favourites`}
+                    style={{
+                      color: activeTab === 'favourites' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeTab === 'favourites' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
                     Favoritos<Badge className={`position-absolute top-30 start-80 translate-middle badge rounded-pill  ${!favourites || favourites.length === 0 ? " bg-warning" : "bg-success"} text-dark`}>{favourites.length}</Badge>
                   </Nav.Link>
                 </Nav.Item>
@@ -71,7 +146,7 @@ export const MyNavbar = () => {
                     <span>LogOut</span><FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
                   </Button>
                 </Nav.Item>
-                <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-md" />
+                <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
               </Nav>
             </Col>
             <Navbar.Offcanvas

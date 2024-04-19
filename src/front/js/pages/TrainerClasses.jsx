@@ -128,7 +128,7 @@ export const TrainerClasses = () => {
                                     <Card.Text>Fecha fin: {classItem.end_date}</Card.Text>
                                     <Card.Text>Ciudad: {classItem.city}</Card.Text>
                                     <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
-                                    <Card.Text>Capacidad: {classItem.capacity} personas</Card.Text>
+                                    <Card.Text> Capacidad: {classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
                                     <Card.Text>
                                         Nivel entrenamiento: {
                                             classItem.training_level === "Advanced" ? "Avanzado" :
@@ -139,7 +139,7 @@ export const TrainerClasses = () => {
                                     </Card.Text>
                                 </section>
                                 <div className="d-flex flex-row gap-2 p-2 border-0">
-                                    <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
+                                    <Button className={classItem.capacity === 0 ? "d-none" : ""} variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
                                     <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
                                 </div>
                             </Card.Body>

@@ -29,9 +29,7 @@ const UserHomepage = () => {
                     </Button>
                 </Card.ImgOverlay>
             </Card>
-            <section className='d-flex justify-content-center align-items-center'>
-                <h2>Mira los tipo de entrenamientos disponibles en nuestra pagina</h2>
-            </section>
+            <h2>Mira los tipo de entrenamientos disponibles en nuestra pagina</h2>
             <div id="app" style={{ height: '100%' }}>
                 <Swiper
                     effect={'coverflow'}
@@ -50,8 +48,8 @@ const UserHomepage = () => {
                     className="swiper"
                     style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
                 >
-                    {specializations.map((specialization)=> (
-                        <SwiperSlide className="swiper-slide" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}> 
+                    {specializations.map((specialization) => (
+                        <SwiperSlide className="swiper-slide" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
                             <img className='w-100 d-block' src={specialization.logo_url} />
                         </SwiperSlide>
                     ))}
