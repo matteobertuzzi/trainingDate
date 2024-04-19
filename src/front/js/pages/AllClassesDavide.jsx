@@ -2,19 +2,23 @@ import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Card, Pagination, Alert, Button } from 'react-bootstrap';
 import MapModal from "/workspaces/sp54-final-project-g3/src/front/js/component/MapModal.jsx";
-
+import ClassModal from '../component/ClassModal.jsx';
+import { IoIosWarning } from "react-icons/io";
 
 
 export const AllClassesDavide = () => {
     const { store, actions } = useContext(Context);
-    const { currentUser, allClasses, userClasses } = store;
-    const { postUserClass } = actions
+    const { currentUser, allClasses, userClasses, favourites } = store;
+    const { postUserClass, deleteUserClass } = actions
 
+    const currentTime = new Date().getTime();
+
+    const filteredClasses = allClasses.filter(oneClass => new Date(oneClass.start_date).getTime() > currentTime);
 
     return (
-        <Container>
-            {allClasses ? (
-                allClasses.map((oneClass) => (
+        <Container className="min-vh-100 py-4 d-flex flex-column justify-content-center">
+            {filteredClasses.length > 0 ? (
+                filteredClasses.map((oneClass) => (
                     <Row className="d-flex align-items-center justify-content-center" key={oneClass.id}>
                         <Col lg={10}>
                             <Card>
@@ -27,21 +31,30 @@ export const AllClassesDavide = () => {
                                             <strong>Ciudad: </strong>{oneClass.city}
                                         </Card.Text>
                                         <Card.Text >
-                                            <strong>Capacidad: </strong>{oneClass.capacity}
+                                            <strong>Capacidad: </strong>{oneClass.capacity}<span> personas</span>
                                         </Card.Text>
                                         <Card.Text >
                                             <strong>Precio: </strong>{oneClass.price / 100}<span> €</span>
                                         </Card.Text>
                                     </section>
-                                    <section>
-                                        <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
-                                        <Button variant="danger">
-                                            {userClasses.find((userClass) => userClass.class_id === oneClass.id) ? (
-                                                <span>No estoy interesado</span>
-                                            ) : (
-                                                <span onClick={async () => await postUserClass(oneClass.price, oneClass.id)}>Estoy interesado</span>
-                                            )}
-                                        </Button>
+                                    <section className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                        {oneClass.capacity < 1 ? (
+                                            <Button disabled className="bg-danger">Clase completa</Button>
+                                        ) : (
+                                            <>
+                                                <ClassModal userClass={oneClass} />
+                                                <MapModal className='mx-3' addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                                                {favourites && favourites.includes && favourites.includes(oneClass.id) ? (
+                                                    <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.id)} variant="danger">
+                                                        <span>No estoy interesado</span>
+                                                    </Button>
+                                                ) : (
+                                                    <Button onClick={async () => await postUserClass(oneClass.price, oneClass.id)} variant="success">
+                                                        <span>Estoy interesado</span>
+                                                    </Button>
+                                                )}
+                                            </>
+                                        )}
                                     </section>
                                 </Card.Body>
                             </Card>

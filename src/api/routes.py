@@ -1283,6 +1283,8 @@ def handle_user_class(id, class_id):
         if request.method == "DELETE":
             db.session.delete(user_class)
             db.session.commit()
+            user_classes = UsersClasses.query.filter_by(user_id=id).all()
+            response_body["classes_available"] = [user_class.serialize() for user_class in user_classes]
             response_body["message"] = "User unenrolled successfully"
             response_body["class"] = trainer_class.serialize()
             return response_body, 200
