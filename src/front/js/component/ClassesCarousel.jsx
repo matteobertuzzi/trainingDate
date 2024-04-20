@@ -31,7 +31,7 @@ const ClassesCarousel = () => {
                 pagination={true}
                 modules={[EffectCoverflow, Pagination]}
                 className="swiper"
-                style={{ width: '100%', paddingTop: '30px', paddingBottom: '30px' }}
+                style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
             >
                 {allClasses.map((oneClass) => (
                     <SwiperSlide className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>

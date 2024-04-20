@@ -30,3 +30,6 @@ body{
     object-fit: cover;
   }
   
+  .swiper-pagination-bullet-active {
+    background:#e95420 !important;
+  }
