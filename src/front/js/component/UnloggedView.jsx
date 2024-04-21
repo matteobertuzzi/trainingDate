@@ -23,11 +23,11 @@ const UnloggedView = () => {
                         style={{ opacity: '0.8', objectFit: 'cover', height: '100%', width: '100%' }}
                     />
                     <Card.ImgOverlay className="d-flex align-items-center">
-                        <Container className="text-center text-md-left mx-md-3" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black', padding: '10px', width: '90%', maxWidth: '600px', maxHeight: '40vh' }}>
-                            <h2 className='mt-3' style={{ fontWeight: 'bold', fontSize: '36px', color: '#333333', textTransform: 'uppercase', letterSpacing: '2px', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)', lineHeight: '1' }}>¡Bienvenido a Training Date!</h2>
-                            <h5 className='my-2'>¿Listo para conectar con entrenadores y compañeros fitness de toda España?</h5>
+                        <Container className="text-center text-md-left mx-md-3 my-3 col-12 col-md-6 col-lg-4" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black', padding: '5x', maxWidth: '400px' }}>
+                            <h2 className='mt-3' style={{ fontWeight: 'normal', fontSize: '32px', color: '#333333', textTransform: 'uppercase', letterSpacing: '1px', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)', lineHeight: '1' }}>¡Bienvenido a Training Date!</h2>
+                            <h5 className='my-2' style={{ fontWeight: 'normal' }}>Conecta con el Fitness</h5>
                             <Link to='/signup'>
-                                <Button variant='primary' className='my-3' style={{ height: '50px', width: '200px', fontWeight: 'bold', fontSize: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
+                                <Button variant='primary' className='my-3' style={{ height: '40px', width: '160px', fontWeight: 'normal', fontSize: '16px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
                                     onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
                                     onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                                 >
