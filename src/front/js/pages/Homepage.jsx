@@ -42,7 +42,7 @@ const Homepage = () => {
                         </div>
                     </div>
                     :
-                    <UnloggedView />
+                        <UnloggedView />
             }
         </>
     );
