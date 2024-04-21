@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap/';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+
 
 
 function ClassModal({ userClass }) {
@@ -10,10 +13,10 @@ function ClassModal({ userClass }) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button className='d-none d-md-block' variant="primary" onClick={handleShow}>
                 Detalles Clase
             </Button>
-
+            <FontAwesomeIcon onClick={handleShow} size="2x" className="d-block d-md-none" icon={faCircleInfo} />
             <Modal
                 show={show}
                 onHide={handleClose}
@@ -21,7 +24,7 @@ function ClassModal({ userClass }) {
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{userClass.class_name}</Modal.Title>
+                    <Modal.Title>Detalles clase: {userClass.class_name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <ul>

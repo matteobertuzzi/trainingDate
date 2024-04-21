@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/appContext.js';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import { Button, Modal } from 'react-bootstrap/';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 // Define libraries as a static variable outside the component
 const libraries = ['places'];
@@ -54,9 +56,10 @@ function MapModal({ addressData }) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button className='d-none d-md-block' variant="primary" onClick={handleShow}>
                 Ver en el mapa
             </Button>
+            <FontAwesomeIcon onClick={handleShow} size="2x" className="d-block d-md-none" icon={faLocationDot} />
 
             <Modal
                 show={show}

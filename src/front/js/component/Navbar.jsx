@@ -140,11 +140,15 @@ export const MyNavbar = () => {
               </Nav>
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
-              <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
+              <Nav className="d-flex flex-row justify-content-center align-items-center gap-3">
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
                   <Button className="bg-danger d-flex flex-row align-items-center justify-content-center gap-2 border" onClick={handleLogout} >
                     <span>LogOut</span><FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
                   </Button>
+                </Nav.Item>
+                <Nav.Item>
+                  <FontAwesomeIcon as={Link} to={`user/${currentUser.user.id}/favourites`} size="2x" className="d-md-none" icon={faHeart} />
+                  <Badge className={`position-absolute d-md-none top-30 start-80 translate-middle badge rounded-pill  ${!favourites || favourites.length === 0 ? " bg-warning" : "bg-success"} text-dark`}>{favourites.length}</Badge>
                 </Nav.Item>
                 <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
               </Nav>
