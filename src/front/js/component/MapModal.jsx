@@ -56,10 +56,9 @@ function MapModal({ addressData }) {
 
     return (
         <>
-            <Button className='d-none d-md-block' variant="primary" onClick={handleShow}>
-                Ver en el mapa
+            <Button onClick={handleShow} className='btn btn-outline-dark'>
+                <FontAwesomeIcon size="2x" icon={faLocationDot} />
             </Button>
-            <FontAwesomeIcon onClick={handleShow} size="2x" className="d-block d-md-none" icon={faLocationDot} />
 
             <Modal
                 show={show}

@@ -27,9 +27,8 @@ import AccountAlreadyConfirmedPage from "./pages/AccountAlreadyConfirmed.jsx";
 import TrainerInfo from "./pages/TrainerInfo.jsx";
 import UserInfo from "./pages/UserInfo.jsx";
 import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
-import AllClasses from "./component/AllClasses.jsx";
 import { TrainerClassDetails } from "./pages/TrainerClassDetails.jsx";
-import { AllClassesDavide } from "./pages/AllClassesDavide.jsx"
+import { AllClasses } from "./pages/AllClasses.jsx"
 import { Favourites } from "./pages/Favourites.jsx";
 
 // Create your first component
@@ -46,7 +45,7 @@ const Layout = () => {
                     <MyNavbar />
                     <Routes>
                         <Route element={<Favourites />} path="user/:id/favourites" />
-                        <Route element={<AllClassesDavide />} path="/allclassesdavide" />
+                        <Route element={<AllClasses />} path="/allClasses" />
                         <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
                         <Route element={<UserInfo />} path='users/info' />
                         <Route element={<TrainerInfo />} path="trainers/info" />
@@ -67,7 +66,6 @@ const Layout = () => {
                         <Route element={<TrainerClasses />} path='/trainer/:id/classes' />
                         <Route element={<UserClasses />} path='/user/:id/classes' />
                         <Route element={<TrainerHomepage />} path='/trainer/homepage' />
-                        <Route element={<AllClasses />} path='/allClasses' />
                         <Route element={<TrainerClassDetails />} path='/trainer/:trainerId/class/:classId' />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>

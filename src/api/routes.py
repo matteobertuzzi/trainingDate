@@ -1289,8 +1289,13 @@ def handle_show_classes():
     if not all_classes:
         response_body['message'] = 'No classes available.'
         return response_body, 404
+    classes_with_specializations = []
+    for cls in all_classes:
+        specialization = db.session.query(Specializations).filter_by(id=cls.training_type).first()
+        classes_with_specializations.append({'class_details': cls.serialize(),
+                                             'specialization': specialization.serialize() if specialization else None})
     response_body['message'] = 'List of classes available.'
-    response_body['results'] = [single_class.serialize() for single_class in all_classes]
+    response_body['results'] = classes_with_specializations
     return response_body, 200
 
 

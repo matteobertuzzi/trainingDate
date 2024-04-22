@@ -104,7 +104,7 @@ export const MyNavbar = () => {
                   <Nav.Link
                     className="border-0"
                     as={Link}
-                    to={`/allclassesdavide`}
+                    to={`/allClasses`}
                     style={{
                       color: activeTab === 'allClasses' ? '#ffffff' : '',
                       transition: 'color 0.2s',

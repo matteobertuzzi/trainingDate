@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal } from 'react-bootstrap/';
+import { Button, Modal, ListGroup } from 'react-bootstrap/';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,10 +13,9 @@ function ClassModal({ userClass }) {
 
     return (
         <>
-            <Button className='d-none d-md-block' variant="primary" onClick={handleShow}>
-                Detalles Clase
+            <Button onClick={handleShow} variant="btn btn-outline-info">
+                <FontAwesomeIcon size="2x" icon={faCircleInfo} />
             </Button>
-            <FontAwesomeIcon onClick={handleShow} size="2x" className="d-block d-md-none" icon={faCircleInfo} />
             <Modal
                 show={show}
                 onHide={handleClose}
@@ -24,27 +23,49 @@ function ClassModal({ userClass }) {
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Detalles clase: {userClass.class_name}</Modal.Title>
+                    <Modal.Title>Detalles clase: {userClass.class_details.class_name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <ul>
-                        <li><strong>Capacidad:</strong> {userClass.capacity}</li>
-                        <li><strong>Ciudad:</strong> {userClass.city}</li>
-                        <li><strong>Fecha de inicio:</strong> {new Date(userClass.start_date).toLocaleDateString()}</li>
-                        <li><strong>Fecha de fin:</strong> {new Date(userClass.end_date).toLocaleDateString()}</li>
-                        <li><strong>Dirección:</strong> {userClass.street_name} {userClass.street_number}, {userClass.postal_code}</li>
-                        <li><strong>Precio:</strong> {userClass.price / 100} €</li>
-                        <li><strong>Nivel de entrenamiento:</strong> {userClass.training_level === 'Beginner' ? 'Principiante' :
-                            userClass.training_level === 'Intermediate' ? 'Intermedio' : userClass.training_level}</li>
-                        <li><strong>Tipo de entrenamiento:</strong> {userClass.training_type === 1 ? 'Individual' : 'Grupal'}</li>
-                    </ul>
+                    <ListGroup >
+                        <ListGroup.Item className='d-flex flex-column'>
+                            <span className='d-flex flex-row gap-2'><strong>Capacidad:</strong> {userClass.class_details.capacity} personas</span>
+                            <span className='d-flex flex-row gap-2'><strong>Precio:</strong> {userClass.class_details.price / 100} €</span>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-column'>
+                            <span className='d-flex flex-row gap-2'>
+                                <strong>Ciudad:</strong> {userClass.class_details.city}
+                            </span>
+                            <span className='d-flex flex-row gap-2'>
+                                <strong>Dirección:</strong> {userClass.class_details.street_name}, {userClass.class_details.street_number}, {userClass.class_details.postal_code}
+                            </span>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-column'>
+                            <span className='d-flex flex-row gap-2'>
+                                <strong>Inicio clase:</strong>{" "}
+                                {new Date(userClass.class_details.start_date).toLocaleString()}
+                            </span>
+                            <span className='d-flex flex-row gap-2'>
+                                <strong>Fin clase:</strong>{" "}
+                                {new Date(userClass.class_details.end_date).toLocaleString()}
+                            </span>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-column'>
+                            <span className='d-flex flex-row gap-2'>
+                                <strong>Nivel de entrenamiento:</strong> {userClass.class_details.training_level === 'Beginner' ? 'Principiante' :
+                                    userClass.class_details.training_level === 'Intermediate' ? 'Intermedio' : userClass.class_details.training_level === 'Advanced' == "Avanzado"}
+                            </span>
+                            <span className='d-flex flex-row gap-2'>
+                                <strong>Tipo de entrenamiento:</strong> {userClass.specialization.name}
+                            </span>
+                        </ListGroup.Item>
+                    </ListGroup >
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center'>
                     <Button variant="secondary" onClick={handleClose}>
                         Cerrar
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal >
         </>
     );
 }

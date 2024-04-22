@@ -56,9 +56,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const data = await response.json()
         const currentTime = new Date().getTime();
-
         const filteredClasses = data.results.filter(oneClass => {
-          const classStartTime = new Date(oneClass.start_date).getTime();
+          const classStartTime = new Date(oneClass.class_details.start_date).getTime();
           return classStartTime > currentTime;
         });
         setStore({ allClasses: filteredClasses });
@@ -238,7 +237,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       getFavourites: () => {
         const userClassesFromLocalStorage = localStorage.getItem('userClasses');
         const parseUserClasses = JSON.parse(userClassesFromLocalStorage);
-        console.log(parseUserClasses)
         const favouritesFromLocalStorage = localStorage.getItem('favourites');
         const parsedFavourites = JSON.parse(favouritesFromLocalStorage);
         setStore({ favourites: parsedFavourites || [] });

@@ -34,21 +34,9 @@ export const UserClasses = () => {
                         classItem.stripe_status === "Paid" ? (
                             <Col className="d-flex flex-column align-items-center justify-content-center gap-3" key={classItem.id}>
                                 <Card border="primary" style={{ width: '18rem' }}>
-                                    <Card.Header>{classItem.class_name}</Card.Header>
-                                    <Card.Body className="d-flex justify-content-between align-items-center">
-                                        <section>
-                                            <Card.Text><strong>Ciudad:</strong> {classItem.city}</Card.Text>
-                                            <Card.Text><strong>Código Postal:</strong> {classItem.postal_code}</Card.Text>
-                                            <Card.Text><strong>Calle:</strong> {classItem.street_name}</Card.Text>
-                                            <Card.Text><strong>Precio:</strong> {classItem.price / 100}<span>€</span></Card.Text>
-                                            <Card.Text><strong>Capacidad:</strong> {classItem.capacity}</Card.Text>
-                                            <Card.Text><strong>Nivel de entrenamiento:</strong> {classItem.training_level === 'Beginner' ? 'Principiante' :
-                                                classItem.training_level === 'Intermediate' ? 'Intermedio' : classItem.training_level}</Card.Text>
-                                        </section>
-                                    </Card.Body>
+                                    <Card.Header>{classItem.id}</Card.Header>
                                     <Card.Footer>
                                         <div className='d-flex flex-column gap-2'>
-                                            <ClassModal userClass={classItem} />
                                             <MapModal className='mx-3' addressData={[classItem.city, classItem.postal_code, classItem.street_name, classItem.street_number]} />
                                         </div>
                                     </Card.Footer>
