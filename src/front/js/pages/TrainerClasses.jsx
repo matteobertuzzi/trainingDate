@@ -121,28 +121,28 @@ export const TrainerClasses = () => {
                 {currentClasses.map(classItem => (
                     <Col key={classItem.id} className="d-flex flex-row gap-2 justify-content-center align-items-center">
                         <Card border="primary" style={{ width: '18rem' }}>
-                            <Card.Header>{classItem.class_name ? classItem.class_name : "Nombre clase"}</Card.Header>
+                            <Card.Header><strong>{classItem.class_name ? classItem.class_name : "Nombre clase"}</strong></Card.Header>
                             <Card.Body className="d-flex justify-content-between align-items-center flex-column">
                                 <section>
-                                    <Card.Text>Fecha inicio: {classItem.start_date}</Card.Text>
-                                    <Card.Text>Fecha fin: {classItem.end_date}</Card.Text>
-                                    <Card.Text>Ciudad: {classItem.city}</Card.Text>
-                                    <Card.Text>Precio: {classItem.price / 100}<span>€</span></Card.Text>
-                                    <Card.Text> Capacidad: {classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
+                                    <Card.Text><strong>Fecha inicio: </strong>{classItem.start_date}</Card.Text>
+                                    <Card.Text><strong>Fecha fin: </strong>{classItem.end_date}</Card.Text>
+                                    <Card.Text><strong>Ciudad: </strong>{classItem.city}</Card.Text>
+                                    <Card.Text><strong>Precio: </strong>{classItem.price / 100}<span>€</span></Card.Text>
+                                    <Card.Text><strong>Capacidad: </strong>{classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
                                     <Card.Text>
-                                        Nivel entrenamiento: {
-                                            classItem.training_level === "Advanced" ? "Avanzado" :
-                                                classItem.training_level === "Intermediate" ? "Intermedio" :
-                                                    classItem.training_level === "Beginner" ? "Principiante" :
+                                        <strong>Nivel entrenamiento: </strong>{
+                                            classItem.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
+                                                classItem.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
+                                                    classItem.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
                                                         classItem.training_level
                                         }
                                     </Card.Text>
                                 </section>
-                                <div className="d-flex flex-row gap-2 p-2 border-0">
-                                    <Button className={classItem.capacity === 0 ? "d-none" : ""} variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Delete</Button>
-                                    <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
-                                </div>
                             </Card.Body>
+                            <Card.Footer className="d-flex flex-row align-items-center justify-content-evenly gap-2 p-3">
+                                <Button className={classItem.capacity === 0 ? "d-none" : ""} variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Cancelar</Button>
+                                <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
+                            </Card.Footer>
                         </Card>
                     </Col>
                 ))}
