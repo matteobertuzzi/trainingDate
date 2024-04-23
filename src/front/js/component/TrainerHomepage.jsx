@@ -74,8 +74,8 @@ const TrainerHomepage = () => {
                     style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px', marginBottom: '50px' }}
                 >
                     <SwiperSlide className="swiper-slide" style={{ width: '300px', height: '300px' }}>
-                        <img className='w-100 h-100 object-fit-cover' src={editProfile} alt="Edit Profile" />
-                        <Button as={Link} to={`/trainer/${currentUser.trainer.id}/profile`} className='mt-2'>Actualizar perfil</Button>
+                        <img className='w-100 h-100 object-fit-cover' src={editProfile} alt="Informaciones" />
+                        <Button as={Link} to={'trainers/info'} className='mt-2'>Descubrir app</Button>
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide" style={{ width: '300px', height: '300px' }}>
                         <img className='w-100 h-100 object-fit-cover' src={newClass} alt="New Class" />
