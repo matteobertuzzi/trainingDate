@@ -665,7 +665,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
 
-
       getGeolocation: async (adr) => {
         const apiKey = process.env.GOOGLE_API_KEY;
         const address = adr;
