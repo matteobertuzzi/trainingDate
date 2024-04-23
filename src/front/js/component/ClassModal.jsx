@@ -27,6 +27,13 @@ function ClassModal({ userClass }) {
                 </Modal.Header>
                 <Modal.Body>
                     <ListGroup >
+                        {userClass.trainer ? (
+                            <ListGroup.Item className='d-flex flex-column'>
+                                <span className='d-flex flex-row gap-2'><strong>Nombre entrenador:</strong> {userClass.trainer.name}</span>
+                                <span className='d-flex flex-row gap-2'><strong>Apellido:</strong> {userClass.trainer.last_name}</span>
+                            </ListGroup.Item>
+
+                        ) : ""}
                         <ListGroup.Item className='d-flex flex-column'>
                             <span className='d-flex flex-row gap-2'><strong>Capacidad:</strong> {userClass.class_details.capacity} personas</span>
                             <span className='d-flex flex-row gap-2'><strong>Precio:</strong> {userClass.class_details.price / 100} €</span>

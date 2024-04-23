@@ -28,67 +28,70 @@ export const Favourites = () => {
         <Container className="min-vh-100">
             <h1>Lista de favoritos</h1>
             <Row className="d-flex justify-content-center align-items-center">
-                {allClasses && allClasses.length > 0 && favourites.length > 0 ? (
-                    allClasses.map((oneClass) => (
-                        <Col key={oneClass.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-1" xl={2} lg={3} md={5} sm={8} xs={10}>
-                            {favourites.includes(oneClass.class_details.id) ? (
-                                <Card>
-                                    <Card.Header>
-                                        <span>{oneClass.class_details.id}</span>
-                                    </Card.Header>
-                                    <Card.Body className="d-flex flex-column justify-content-between align-items-start">
-                                        <Card.Text>
-                                            <strong>Ciudad: </strong>{oneClass.class_details.city}
-                                        </Card.Text>
-                                        <Card.Text >
-                                            <strong>Precio: </strong>{oneClass.class_details.price / 100}<span> €</span>
-                                        </Card.Text>
-                                        <Card.Text >
-                                            <strong>Inicio: </strong> {new Date(oneClass.class_details.start_date).toLocaleDateString()}
-                                        </Card.Text>
-                                        <Card.Text className="d-none d-md-block">
-                                            <strong>Capacidad: </strong>{oneClass.class_details.capacity}<span> personas</span>
-                                        </Card.Text>
-                                        <Card.Text >
-                                            <strong>Nivel entrenamiento: </strong>
-                                            {oneClass.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                oneClass.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                    oneClass.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
-                                                        ""}
-                                        </Card.Text>
-                                        <Card.Text >
-                                            <strong>Tipo entrenamiento: </strong>{oneClass.specialization.name}
-                                        </Card.Text>
-                                        {oneClass.class_details.additional_info && (
+                {userClasses && userClasses.length > 0 ? (
+                    userClasses.some(oneClass => oneClass.user_class.stripe_status === "Reject" || oneClass.user_class.stripe_status === "Cart") ? (
+                        userClasses.map((oneClass) => (
+                            <Col key={oneClass.trainer_class.class_details.id} className={`d-flex flex-row align-items-center justify-content-center mb-1 ${oneClass.user_class.stripe_status === "Paid" ? 'd-none' : ''}`} lg={3} md={5} sm={8} xs={10}>
+                                {favourites.includes(oneClass.user_class.class) && oneClass.user_class.stripe_status !== "Paid" ? (
+                                    <Card>
+                                        <Card.Header>
+                                            <span>{oneClass.trainer_class.class_details.id}</span>
+                                        </Card.Header>
+                                        <Card.Body className="d-flex flex-column justify-content-between align-items-start">
                                             <Card.Text>
-                                                <strong>Información adicional: </strong>{oneClass.class_details.additional_info}
+                                                <strong>Ciudad: </strong>{oneClass.trainer_class.class_details.city}
                                             </Card.Text>
-                                        )}
-
-                                    </Card.Body>
-                                    <Card.Footer>
-                                        <Button onClick={() => handleCheckout(oneClass.class_details.stripe_product_id, currentUser.user.stripe_customer_id, oneClass.class_details.id)}>Checkout</Button>
-                                        <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.class_details.id)} variant="danger">
-                                            <span>Quitar de favoritos</span>
-                                        </Button>
-                                    </Card.Footer>
-                                </Card>
-                            ) : null}
+                                            <Card.Text >
+                                                <strong>Precio: </strong>{oneClass.trainer_class.class_details.price / 100}<span> €</span>
+                                            </Card.Text>
+                                            <Card.Text >
+                                                <strong>Inicio: </strong> {new Date(oneClass.trainer_class.class_details.start_date).toLocaleDateString()}
+                                            </Card.Text>
+                                            <Card.Text className="d-none d-md-block">
+                                                <strong>Capacidad: </strong>{oneClass.trainer_class.class_details.capacity}<span> personas</span>
+                                            </Card.Text>
+                                            <Card.Text >
+                                                <strong>Nivel entrenamiento: </strong>
+                                                {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
+                                                    oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
+                                                        oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                                            ""}
+                                            </Card.Text>
+                                            <Card.Text >
+                                                <strong>Tipo entrenamiento: </strong>{oneClass.trainer_class.specialization.name}
+                                            </Card.Text>
+                                            {oneClass.trainer_class.class_details.additional_info && (
+                                                <Card.Text>
+                                                    <strong>Información adicional: </strong>{oneClass.trainer_class.class_details.additional_info}
+                                                </Card.Text>
+                                            )}
+                                        </Card.Body>
+                                        <Card.Footer>
+                                            <Button onClick={() => handleCheckout(oneClass.trainer_class.class_details.stripe_product_id, currentUser.user.stripe_customer_id, oneClass.trainer_class.class_details.id)}>Checkout</Button>
+                                            <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.trainer_class.class_details.id)} variant="danger">
+                                                <span>Quitar de favoritos</span>
+                                            </Button>
+                                        </Card.Footer>
+                                    </Card>
+                                ) : null}
+                            </Col>
+                        ))
+                    ) : (
+                        <Col className="d-flex justify-content-center align-items-center m-4">
+                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                                <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases favoritas!</Alert.Heading>
+                                <div className="d-flex flex-column justify-content-center align-items-center">
+                                    <p>
+                                        Parece que aún no has seleccionado ninguna clase favorita.
+                                    </p>
+                                    <p>¡No te preocupes! Selecciona ahora tus clases favoritas!</p>
+                                    <Button as={Link} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
+                                </div>
+                            </Alert>
                         </Col>
-                    ))
-                ) : (
-                    <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">
-                        <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases favoritas!</Alert.Heading>
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                            <p>
-                                Parece que aún no has seleccionado ninguna clase favorita.
-                            </p>
-                            <p>¡No te preocupes! Selecciona ahora tu clases favoritas!</p>
-                            <Button as={Link} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
-                        </div>
-                    </Alert>
-                )}
+                    )
+                ) : null}
             </Row>
-        </Container >
+        </Container>
     )
 }

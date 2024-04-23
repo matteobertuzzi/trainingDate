@@ -87,8 +87,13 @@ export const AllClasses = () => {
                     <HomeFilters location='allClasses' />
                 </Offcanvas.Body>
             </Navbar.Offcanvas>
-            <Container className="min-vh-100 py-4 d-flex flex-column justify-content-center gap-2">
+            <Container className="min-vh-100 my-2 d-flex flex-column justify-content-center gap-2">
                 <Row className="d-flex justify-content-center align-items-center">
+                    <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column border rounded justify-content-center align-items-center p-3">
+                        <h4>Descubre todas las clases disponibles!</h4>
+                    </Col>
+                </Row>
+                <Row className="d-flex justify-content-center align-items-center mt-2">
                     {currentClasses.length === 0 ? (
                         <Col className="d-flex justify-content-center align-items-center m-4">
                             <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
@@ -100,38 +105,32 @@ export const AllClasses = () => {
                         </Col>
                     ) : (
                         currentClasses.map((oneClass) => (
-                            <Col className="d-flex flex-row align-items-center justify-content-center mb-1" lg={3} md={5} sm={8} xs={10}>
+                            <Col className={`d-flex flex-row align-items-center justify-content-center mb-1 ${favourites.includes(oneClass.class_details.id) ? 'd-none' : ''}`} lg={4} md={5} sm={8} xs={10}>
                                 <Card className={`d-flex flex-column ${favourites.includes(oneClass.class_details.id) ? 'border-3 border-success' : ''}`}>
-                                    <Card.Img variant="top" src={oneClass.specialization.logo_url} />
-                                    <Card.Body className="d-flex flex-column justify-content-between align-items-start">
-                                        <Card.Text>
+                                    <Card.Img className="img-fluid w-100" variant="top" src={oneClass.specialization.logo} />
+                                    <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: '55%', filter: 'brightness(90%)' }}>
+                                        {oneClass.specialization.name}
+                                    </Card.ImgOverlay>
+                                    <Card.Body className="d-flex flex-column gap-1 justify-content-between align-items-start">
+                                        <Card.Text className="m-0 p-0">
                                             <strong>Ciudad: </strong>{oneClass.class_details.city}
                                         </Card.Text>
-                                        <Card.Text >
+                                        <Card.Text className="m-0 p-0">
                                             <strong>Precio: </strong>{oneClass.class_details.price / 100}<span> €</span>
                                         </Card.Text>
-                                        <Card.Text >
+                                        <Card.Text className="m-0 p-0">
                                             <strong>Inicio: </strong> {new Date(oneClass.class_details.start_date).toLocaleDateString()}
                                         </Card.Text>
-                                        <Card.Text className="d-none d-md-block">
+                                        <Card.Text className="m-0 p-0">
                                             <strong>Capacidad: </strong>{oneClass.class_details.capacity}<span> personas</span>
                                         </Card.Text>
-                                        <Card.Text >
+                                        <Card.Text className="m-0 p-0">
                                             <strong>Nivel entrenamiento: </strong>
                                             {oneClass.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
                                                 oneClass.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
                                                     oneClass.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
                                                         ""}
                                         </Card.Text>
-                                        <Card.Text >
-                                            <strong>Tipo entrenamiento: </strong>{oneClass.specialization.name}
-                                        </Card.Text>
-                                        {oneClass.class_details.additional_info && (
-                                            <Card.Text>
-                                                <strong>Información adicional: </strong>{oneClass.class_details.additional_info}
-                                            </Card.Text>
-                                        )}
-
                                     </Card.Body>
                                     <Card.Footer className="d-flex flex-row align-items-center justify-content-evenly gap-2 p-3">
                                         {oneClass.class_details.capacity < 1 ? (

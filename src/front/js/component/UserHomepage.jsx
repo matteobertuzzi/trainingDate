@@ -50,7 +50,7 @@ const UserHomepage = () => {
                 >
                     {specializations.map((specialization) => (
                         <SwiperSlide className="swiper-slide" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
-                            <img className='w-100 d-block' src={specialization.logo_url} />
+                            <img className='w-100 d-block' src={specialization.logo} />
                         </SwiperSlide>
                     ))}
                 </Swiper>

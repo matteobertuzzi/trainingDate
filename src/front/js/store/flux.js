@@ -127,9 +127,10 @@ const getState = ({ getStore, getActions, setStore }) => {
           return null
         }
         const data = await response.json();
-        setStore({ userClasses: data.result })
-        localStorage.setItem('userClasses', JSON.stringify(data.result))
-        const favourites = data.result.map(userClass => userClass.class);
+        setStore({ userClasses: data.results })
+        localStorage.setItem('userClasses', JSON.stringify(data.results))
+        const favourites = data.results.map(userClass => userClass.user_class.class);
+        console.log(favourites)
         setStore({ favourites: favourites });
         localStorage.setItem('favourites', JSON.stringify(favourites))
       },
@@ -511,11 +512,11 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json()
         console.log(data)
         if (getStore().userClasses.length == 0) {
-          setStore({ userClasses: data.results });
+          setStore({ userClasses: data.user_classes });
         } else {
           setStore({ userClasses: data.user_classes });
         }
-        const favourites = data.user_classes.map(userClass => userClass.class);
+        const favourites = data.user_classes.map(userClass => userClass.user_class.class);
         setStore({ favourites: favourites });
         localStorage.setItem("userClasses", JSON.stringify(data.user_classes));
         localStorage.setItem("favourites", JSON.stringify(favourites));
@@ -545,6 +546,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}users/${userId}/classes/${classId}`, options)
         if (!response.ok) return response.status
         const data = await response.json()
+        console.log(data)
         setStore({ userClasses: data.classes_available });
         const favourites = getStore().favourites.filter(id => id !== classId);
         setStore({ favourites: favourites });

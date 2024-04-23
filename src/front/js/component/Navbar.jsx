@@ -134,7 +134,9 @@ export const MyNavbar = () => {
                       textShadow: activeTab === 'favourites' ? '1px 1px 2px #427388' : 'none',
                     }}
                   >
-                    Favoritos<Badge className={`position-absolute top-30 start-80 translate-middle badge rounded-pill  ${!favourites || favourites.length === 0 ? " bg-warning" : "bg-success"} text-dark`}>{favourites.length}</Badge>
+                    Favoritos<Badge className={`position-absolute top-30 start-80 translate-middle badge rounded-pill ${!favourites || !userClasses || favourites.filter(fav => userClasses.find(cls => cls.trainer_class.class_details.id === fav && cls.user_class.stripe_status === 'Cart')).length === 0 ? " bg-warning" : "bg-success"} text-dark`}>
+                      {favourites && userClasses && favourites.filter(fav => userClasses.find(cls => cls.trainer_class.class_details.id === fav && cls.user_class.stripe_status === 'Cart')).length}
+                    </Badge>
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
