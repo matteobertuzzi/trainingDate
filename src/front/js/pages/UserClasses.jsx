@@ -11,7 +11,8 @@ import ClassModal from "../component/ClassModal.jsx";
 
 export const UserClasses = () => {
     const { store, actions } = useContext(Context);
-    const { currentUser, userClasses, allClasses } = store;
+    const { currentUser, userClasses, allClasses, activeNavTab } = store;
+    const { setActiveNavTab } = actions
     const { id } = useParams();
 
     if (!currentUser || !currentUser.user || !userClasses) {
@@ -19,18 +20,13 @@ export const UserClasses = () => {
     }
 
     return (
-        <Container className="min-vh-100 my-4 d-flex flex-column gap-2">
-            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
-                <Col>
-                    <Link to={"/"}>
-                        <RiArrowGoBackLine /> Volver atrás
-                    </Link>
-                </Col>
-            </Row>
+        <Container className="min-vh-100 my-2 d-flex flex-column gap-2">
             <Row className="d-flex justify-content-center align-items-center">
-                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column border rounded justify-content-center align-items-center p-3">
-                    <h5>El Camino hacia una Vida Más Saludable</h5>
-                    <h6>Descubre tus clases confirmadas!</h6>
+                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h4>El Camino hacia una Vida Más Saludable</h4>
+                        <h5>Descubre tus clases confirmadas!</h5>
+                    </div>
                 </Col>
             </Row>
             {userClasses.length > 0 ? (
@@ -39,10 +35,12 @@ export const UserClasses = () => {
                         classItem.user_class.stripe_status === "Paid" ? (
                             <Col className="d-flex flex-column align-items-center justify-content-center gap-2" key={classItem.user_class.id}>
                                 <Card border="primary" style={{ width: '18rem' }}>
-                                    <Card.Img className="img-fluid w-100" variant="top" src={classItem.trainer_class.specialization.logo} />
-                                    <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: '55%', filter: 'brightness(90%)' }}>
-                                        {classItem.trainer_class.specialization.name}
-                                    </Card.ImgOverlay>
+                                    <div className="position-relative">
+                                        <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
+                                        <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
+                                            <span className="text-white">{classItem.trainer_class.specialization.name}</span>
+                                        </Card.ImgOverlay>
+                                    </div>
                                     <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
                                         <Card.Text className="m-0 p-0">
                                             <strong>Ciudad: </strong>{classItem.trainer_class.class_details.city}
@@ -64,7 +62,7 @@ export const UserClasses = () => {
                                                         ""}
                                         </Card.Text>
                                     </Card.Body>
-                                    <Card.Footer>
+                                    <Card.Footer className="d-flex flex-row align-items-center justify-content-center gap-4 p-3">
                                         <div className='d-flex flex-row gap-2 justify-content-evenly align-items-center'>
                                             <ClassModal userClass={classItem.trainer_class} />
                                             <MapModal className='mx-3' addressData={[classItem.trainer_class.class_details.city, classItem.trainer_class.class_details.postal_code, classItem.trainer_class.class_details.street_name, classItem.trainer_class.class_details.street_number]} />
@@ -83,7 +81,7 @@ export const UserClasses = () => {
                             Parece que aún no has reservado ninguna clase.
                         </p>
                         <p>¡No te preocupes! Puedes empezar ahora mismo reservando tu primera clase.</p>
-                        <Button as={Link} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
+                        <Button as={Link} onClick={() => setActiveNavTab("allClasses")} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
                     </div>
                 </Alert>
             )}

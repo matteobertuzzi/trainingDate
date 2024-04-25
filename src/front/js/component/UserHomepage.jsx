@@ -29,7 +29,13 @@ const UserHomepage = () => {
                     </Button>
                 </Card.ImgOverlay>
             </Card>
-            <h2>Mira los tipo de entrenamientos disponibles en nuestra pagina</h2>
+            <Row className="d-flex justify-content-center align-items-center">
+                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
+                    <div className="border rounded w-auto gap-3 p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 15px rgba(255, 165, 0, 0.5)' }}>
+                        <h5>Descubre todas las disciplinas disponibles</h5><Link to={"/"}>Ver mas...</Link>
+                    </div>
+                </Col>
+            </Row>
             <div id="app" style={{ height: '100%' }}>
                 <Swiper
                     effect={'coverflow'}
@@ -46,7 +52,7 @@ const UserHomepage = () => {
                     pagination={true}
                     modules={[EffectCoverflow, Pagination]}
                     className="swiper"
-                    style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
+                    style={{ width: '100%', paddingTop: '20px', paddingBottom: '50px' }}
                 >
                     {specializations.map((specialization) => (
                         <SwiperSlide className="swiper-slide" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>

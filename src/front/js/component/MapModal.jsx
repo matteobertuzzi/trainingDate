@@ -56,7 +56,7 @@ function MapModal({ addressData }) {
 
     return (
         <>
-            <Button onClick={handleShow} className='btn btn-outline-dark'>
+            <Button onClick={handleShow} variant="btn btn-outline-primary">
                 <FontAwesomeIcon size="2x" icon={faLocationDot} />
             </Button>
 

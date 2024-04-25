@@ -28,9 +28,8 @@ function ClassModal({ userClass }) {
                 <Modal.Body>
                     <ListGroup >
                         {userClass.trainer ? (
-                            <ListGroup.Item className='d-flex flex-column'>
-                                <span className='d-flex flex-row gap-2'><strong>Nombre entrenador:</strong> {userClass.trainer.name}</span>
-                                <span className='d-flex flex-row gap-2'><strong>Apellido:</strong> {userClass.trainer.last_name}</span>
+                            <ListGroup.Item>
+                                <span className='d-flex flex-row gap-2'><strong>Entrenador:</strong> {userClass.trainer.name} {userClass.trainer.last_name}</span>
                             </ListGroup.Item>
 
                         ) : ""}

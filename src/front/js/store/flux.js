@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       { title: "SECOND", background: "white", initial: "white" }],
       currentUser: null,
       logged: false,
+      activeNavTab: [],
       specializations: [],
       trainerSpecializations: [],
       trainerClasses: [],
@@ -25,6 +26,9 @@ const getState = ({ getStore, getActions, setStore }) => {
     },
 
     actions: {
+      setActiveNavTab: (tabName) => {
+        setStore({ activeNavTab: tabName })
+      },
 
       setUser: (value) => {
         setStore({ currentUser: value })
@@ -516,7 +520,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         } else {
           setStore({ userClasses: data.user_classes });
         }
-        const favourites = data.user_classes.map(userClass => userClass.user_class.class);
+        const favourites = data.user_classes.map(userClass => userClass);
         setStore({ favourites: favourites });
         localStorage.setItem("userClasses", JSON.stringify(data.user_classes));
         localStorage.setItem("favourites", JSON.stringify(favourites));
