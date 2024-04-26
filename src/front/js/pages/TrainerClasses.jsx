@@ -61,9 +61,15 @@ export const TrainerClasses = () => {
     const indexOfFirstClass = indexOfLastClass - classesPerPage;
     const currentClasses = activeTab === "past" ? pastClasses.slice(indexOfFirstClass, indexOfLastClass) : futureClasses.slice(indexOfFirstClass, indexOfLastClass);
 
+    const handleTabChange = (selectedKey) => {
+        setActiveTab(selectedKey);
+        setActivePage(1);
+    };
+
     if (!currentUser || !currentUser.trainer) {
         return <Loading />;
     }
+
 
     return (
         <Container className="min-vh-100 my-4">
@@ -80,7 +86,7 @@ export const TrainerClasses = () => {
                 </Col>
             </Row>
             <h1 className="text-center mb-4">Mis Clases</h1>
-            <Nav className="d-flex flex-row justify-content-center align-items-center" variant="tabs" activeKey={activeTab} onSelect={(selectedKey) => setActiveTab(selectedKey)}>
+            <Nav className="d-flex flex-row justify-content-center align-items-center" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
                 <Nav.Item>
                     <Nav.Link eventKey="past">Pasadas</Nav.Link>
                 </Nav.Item>

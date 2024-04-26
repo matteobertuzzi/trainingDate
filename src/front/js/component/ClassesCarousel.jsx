@@ -14,6 +14,14 @@ const ClassesCarousel = () => {
     const { store, actions } = useContext(Context);
     const { allClasses } = store;
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
     return (
         <div className="carousel-container">
             <Swiper
@@ -34,11 +42,12 @@ const ClassesCarousel = () => {
                 style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
             >
                 {allClasses.map((oneClass) => (
-                    <SwiperSlide className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
-                        <h2>{oneClass.class_name}</h2>
+                    <SwiperSlide className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', paddingBottom: '10px', paddingTop: '10px' }}>
+                        <h4><strong>{oneClass.class_details.class_name}</strong></h4>
                         <img className='w-100 d-block' src='https://www.regymenfitness.com/wp-content/uploads/2021/12/Sportive-serious-people-liftin-1080x675.jpg' />
-                        <div className='my-3'>
-                            <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                        <div className="footer-details mt-2">
+                            <p><strong>Fecha: </strong>{formatDate(oneClass.class_details.start_date)}</p>
+                            <MapModal addressData={[oneClass.class_details.city, oneClass.class_details.postal_code, oneClass.class_details.street_name, oneClass.class_details.street_number]} />
                         </div>
                     </SwiperSlide>
                 ))}
