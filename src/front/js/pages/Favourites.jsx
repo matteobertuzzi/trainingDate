@@ -36,16 +36,16 @@ export const Favourites = () => {
                     </div>
                 </Col>
             </Row>
-            <Row className="d-flex justify-content-center align-items-center">
+            <Row className="d-flex justify-content-center mt-3 g-4">
                 {(userClasses && userClasses.some(oneClass => oneClass.user_class.stripe_status !== 'Paid')) ? (
                     userClasses.map((oneClass) => (
                         oneClass.user_class.stripe_status !== "Paid" ? (
-                            <Col key={oneClass.trainer_class.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-1" lg={3} md={5} sm={8} xs={10}>
-                                <Card>
+                            <Col key={oneClass.trainer_class.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-1" xl={3} lg={4} md={6} sm={8} xs={10}>
+                                <Card className="d-flex flex-column">
                                     <div className="position-relative">
                                         <Card.Img className="img-fluid w-100 position-relative" variant="top" src={oneClass.trainer_class.specialization.logo} />
                                         <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                            <span className="text-white">{oneClass.trainer_class.specialization.name}</span>
+                                            <span className="text-white">{oneClass.trainer_class.specialization.name.charAt(0).toUpperCase() + oneClass.trainer_class.specialization.name.slice(1)}</span>
                                         </Card.ImgOverlay>
                                     </div>
                                     <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
@@ -62,14 +62,14 @@ export const Favourites = () => {
                                             <strong>Capacidad: </strong>{oneClass.trainer_class.class_details.capacity}<span> personas</span>
                                         </Card.Text>
                                         <Card.Text className="m-0 p-0">
-                                            <strong>Nivel entrenamiento: </strong>
+                                            <strong>Difficultad: </strong>
                                             {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
                                                 oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
                                                     oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
                                                         ""}
                                         </Card.Text>
                                     </Card.Body>
-                                    <Card.Footer className="d-flex flex-row align-items-center justify-content-evenly gap-2 p-3">
+                                    <Card.Footer className="d-flex w-100 flex-row align-items-center justify-content-evenly gap-1 p-3">
                                         <ClassModal userClass={oneClass.trainer_class} />
                                         <Button variant="btn btn-outline-success" className="d-flex align-items-center justify-content-center gap-1" onClick={() => handleCheckout(oneClass.trainer_class.class_details.stripe_product_id, currentUser.user.stripe_customer_id, oneClass.trainer_class.class_details.id)}>
                                             <span>Checkout</span><FontAwesomeIcon icon={faCreditCard} />
@@ -83,8 +83,8 @@ export const Favourites = () => {
                         ) : null
                     ))
                 ) : (
-                    <Col className="d-flex justify-content-center align-items-center m-4">
-                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                    <Col className="d-flex justify-content-center align-items-center m-4 w-auto">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center">
                             <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases favoritas!</Alert.Heading>
                             <div className="d-flex flex-column justify-content-center align-items-center">
                                 <p>Parece que aún no has seleccionado ninguna clase favorita.</p>

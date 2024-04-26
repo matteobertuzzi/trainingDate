@@ -37,7 +37,7 @@ export const CreateClass = () => {
         setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
     };
 
-    const isStartDateValid = () => {
+    const isDateValid = () => {
         return inputs.start_date <= inputs.end_date;
     };
 
@@ -46,7 +46,7 @@ export const CreateClass = () => {
         event.preventDefault();
 
         const form = event.currentTarget;
-        if (form.checkValidity() === false || !isStartDateValid()) {
+        if (form.checkValidity() === false || !isDateValid()) {
             event.stopPropagation();
         }
 
@@ -141,14 +141,14 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="startClass">
                                     <Form.Label>Inicio clase:</Form.Label>
-                                    <Form.Control isInvalid={!isStartDateValid()} required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
+                                    <Form.Control isInvalid={!isDateValid()} required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6">
                                 <Form.Group controlId="endClass">
                                     <Form.Label>Fin de clase:</Form.Label>
-                                    <Form.Control required type="datetime-local" value={inputs.end_date || ""} onChange={handleChange} name="end_date" />
+                                    <Form.Control isInvalid={!isDateValid()} required type="datetime-local" value={inputs.end_date || ""} onChange={handleChange} name="end_date" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>

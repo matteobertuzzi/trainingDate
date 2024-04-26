@@ -34,11 +34,11 @@ const ClassesCarousel = () => {
                 style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
             >
                 {allClasses.map((oneClass) => (
-                    <SwiperSlide className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
-                        <h2>{oneClass.class_name}</h2>
+                    <SwiperSlide key={oneClass.class_details.id} className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
+                        <h2>{oneClass.class_details.class_name}</h2>
                         <img className='w-100 d-block' src='https://www.regymenfitness.com/wp-content/uploads/2021/12/Sportive-serious-people-liftin-1080x675.jpg' />
                         <div className='my-3'>
-                            <MapModal addressData={[oneClass.city, oneClass.postal_code, oneClass.street_name, oneClass.street_number]} />
+                            <MapModal addressData={[oneClass.class_details.city, oneClass.class_details.postal_code, oneClass.class_details.street_name, oneClass.class_details.street_number]} />
                         </div>
                     </SwiperSlide>
                 ))}

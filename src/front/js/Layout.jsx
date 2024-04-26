@@ -30,6 +30,7 @@ import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
 import { TrainerClassDetails } from "./pages/TrainerClassDetails.jsx";
 import { AllClasses } from "./pages/AllClasses.jsx"
 import { Favourites } from "./pages/Favourites.jsx";
+import { AllSpecializations } from "./pages/AllSpecializations.jsx"
 
 // Create your first component
 const Layout = () => {
@@ -67,6 +68,7 @@ const Layout = () => {
                         <Route element={<UserClasses />} path='/user/:id/classes' />
                         <Route element={<TrainerHomepage />} path='/trainer/homepage' />
                         <Route element={<TrainerClassDetails />} path='/trainer/:trainerId/class/:classId' />
+                        <Route element={<AllSpecializations />} path="/allSpecializations" />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />

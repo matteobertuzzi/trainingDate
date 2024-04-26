@@ -3,7 +3,7 @@ import { Dropdown, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, Button, 
 import { LogInModal } from "./LogInModal.jsx";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
-import { faDumbbell, faRightToBracket, faRightFromBracket, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faDumbbell, faRightToBracket, faRightFromBracket, faHeart, faHouse } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BsFillPlusSquareFill, BsCalendarPlus } from "react-icons/bs";
 import { AddTrainerSpecialization } from "/workspaces/sp54-final-project-g3/src/front/js/pages/AddTrainerSpecialization.jsx"
@@ -45,6 +45,29 @@ export const MyNavbar = () => {
           <>
             <Col xs="auto" className="d-flex gap-3">
               <Nav variant="tabs" className="d-flex flex-row border-0">
+              <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'home' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'home' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'home' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('home')}
+                >
+                  <Nav.Link
+                    className="border-0 d-flex flex-row justify-content-center align-items-center gap-1"
+                    as={Link}
+                    to={`/`}
+                    style={{
+                      color: activeNavTab === 'home' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faHouse} /><span>Home</span>
+                  </Nav.Link>
+                </Nav.Item>
                 <Nav.Item
                   className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
                   style={{
@@ -150,7 +173,7 @@ export const MyNavbar = () => {
                   </Button>
                 </Nav.Item>
                 <Nav.Item as={Link} to={`user/${currentUser.user.id}/favourites`}>
-                  <FontAwesomeIcon size="2x" className="d-md-none" icon={faHeart} />
+                  <FontAwesomeIcon size="2x" className="d-md-none text-warning" icon={faHeart} />
                   <Badge className={`position-absolute d-md-none top-30 start-80 translate-middle badge rounded-pill ${!userClasses || userClasses.find(cls => cls.user_class.stripe_status !== 'Paid') ? "bg-success" : "bg-warning"} text-dark`}>
                     {userClasses ? userClasses.filter(cls => cls.user_class.stripe_status !== 'Paid').length : 0}
                   </Badge>
@@ -159,6 +182,7 @@ export const MyNavbar = () => {
               </Nav>
             </Col>
             <Navbar.Offcanvas
+              style={{ boxShadow: 'inset 0 0 50px rgba(255, 165, 0, 0.5)' }}
               id="offcanvasNavbar-expand-md"
               aria-labelledby="offcanvasNavbarLabel-expand-md"
               placement="end"
@@ -169,27 +193,31 @@ export const MyNavbar = () => {
                   <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
-              <Offcanvas.Body>
-                <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">
-                  <Nav.Link as={Link} to={`/`}>
+              <Offcanvas.Body className="d-flex flex-column justify-content-start align-items-center mt-2 gap-3 pe-3">
+                <Nav>
+                  <Nav.Link onClick={() => handleTabClick('home')} className="border-b" as={Link} to={`/`}>
                     Homepage
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link as={Link} to={`user/${currentUser.user.id}/profile`}>
+                  <Nav.Link onClick={() => handleTabClick('profile')} as={Link} to={`user/${currentUser.user.id}/profile`}>
                     Mi Perfil
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link as={Link} to={`user/${currentUser.user.id}/classes`}>
+                  <Nav.Link onClick={() => handleTabClick('classes')} as={Link} to={`user/${currentUser.user.id}/classes`}>
                     Mis Classes
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link as={Link} to={"/allClasses"}>
+                  <Nav.Link as={Link} onClick={() => handleTabClick('allClasses')} to={"/allClasses"}>
                     Todas las clases
                   </Nav.Link>
-
+                </Nav>
+                <Nav>
+                  <Nav.Link as={Link} to={"/allSpecializations"}>
+                    Disciplinas
+                  </Nav.Link>
                 </Nav>
                 <Nav>
                   <Nav.Link onClick={handleLogout} className="text-danger d-flex align-items-center gap-2" >
@@ -259,6 +287,7 @@ export const MyNavbar = () => {
               </Nav>
             </Col>
             <Navbar.Offcanvas
+              style={{ boxShadow: 'inset 0 0 50px rgba(255, 165, 0, 0.5)' }}
               id="offcanvasNavbar-expand-md"
               aria-labelledby="offcanvasNavbarLabel-expand-md"
               placement="end"

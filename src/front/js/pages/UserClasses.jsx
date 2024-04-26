@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
-import { Container, Row, Col, Card, Image, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Button, Alert, Pagination } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import { useParams, Link } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
@@ -14,6 +14,13 @@ export const UserClasses = () => {
     const { currentUser, userClasses, allClasses, activeNavTab } = store;
     const { setActiveNavTab } = actions
     const { id } = useParams();
+    const [activePage, setActivePage] = useState(1);
+
+    const paginate = (pageNumber) => setActivePage(pageNumber);
+    const classesPerPage = 4;
+    const indexOfLastClass = activePage * classesPerPage;
+    const indexOfFirstClass = indexOfLastClass - classesPerPage;
+    const paginatedClasses = userClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").slice(indexOfFirstClass, indexOfLastClass);
 
     if (!currentUser || !currentUser.user || !userClasses) {
         return <Loading />;
@@ -30,47 +37,45 @@ export const UserClasses = () => {
                 </Col>
             </Row>
             {userClasses.length > 0 ? (
-                <Row xs={1} md={2} lg={3} className="d-flex justify-content-center mt-3 g-4">
-                    {userClasses.map((classItem) => (
-                        classItem.user_class.stripe_status === "Paid" ? (
-                            <Col className="d-flex flex-column align-items-center justify-content-center gap-2" key={classItem.user_class.id}>
-                                <Card border="primary" style={{ width: '18rem' }}>
-                                    <div className="position-relative">
-                                        <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
-                                        <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                            <span className="text-white">{classItem.trainer_class.specialization.name}</span>
-                                        </Card.ImgOverlay>
+                <Row className="d-flex justify-content-center mt-3 g-4">
+                    {paginatedClasses.map((classItem) => (
+                        <Col className="d-flex flex-column align-items-center justify-content-evenly" key={classItem.user_class.id} xl={3} lg={4} md={6} sm={8} xs={10}>
+                            <Card border="primary">
+                                <div className="position-relative">
+                                    <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
+                                    <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
+                                        <span className="text-white">{classItem.trainer_class.specialization.name}</span>
+                                    </Card.ImgOverlay>
+                                </div>
+                                <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
+                                    <Card.Text className="m-0 p-0">
+                                        <strong>Ciudad: </strong>{classItem.trainer_class.class_details.city}
+                                    </Card.Text>
+                                    <Card.Text className="m-0 p-0">
+                                        <strong>Precio: </strong>{classItem.trainer_class.class_details.price / 100}<span> €</span>
+                                    </Card.Text>
+                                    <Card.Text className="m-0 p-0">
+                                        <strong>Inicio: </strong> {new Date(classItem.trainer_class.class_details.start_date).toLocaleDateString()}
+                                    </Card.Text>
+                                    <Card.Text className="m-0 p-0">
+                                        <strong>Capacidad: </strong>{classItem.trainer_class.class_details.capacity}<span> personas</span>
+                                    </Card.Text>
+                                    <Card.Text className="m-0 p-0">
+                                        <strong>Difficultad: </strong>
+                                        {classItem.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
+                                            classItem.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
+                                                classItem.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                                    ""}
+                                    </Card.Text>
+                                </Card.Body>
+                                <Card.Footer className="d-flex flex-row align-items-center justify-content-center gap-4 p-3">
+                                    <div className='d-flex flex-row gap-2 justify-content-evenly align-items-center'>
+                                        <ClassModal userClass={classItem.trainer_class} />
+                                        <MapModal className='mx-3' addressData={[classItem.trainer_class.class_details.city, classItem.trainer_class.class_details.postal_code, classItem.trainer_class.class_details.street_name, classItem.trainer_class.class_details.street_number]} />
                                     </div>
-                                    <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
-                                        <Card.Text className="m-0 p-0">
-                                            <strong>Ciudad: </strong>{classItem.trainer_class.class_details.city}
-                                        </Card.Text>
-                                        <Card.Text className="m-0 p-0">
-                                            <strong>Precio: </strong>{classItem.trainer_class.class_details.price / 100}<span> €</span>
-                                        </Card.Text>
-                                        <Card.Text className="m-0 p-0">
-                                            <strong>Inicio: </strong> {new Date(classItem.trainer_class.class_details.start_date).toLocaleDateString()}
-                                        </Card.Text>
-                                        <Card.Text className="m-0 p-0">
-                                            <strong>Capacidad: </strong>{classItem.trainer_class.class_details.capacity}<span> personas</span>
-                                        </Card.Text>
-                                        <Card.Text className="m-0 p-0">
-                                            <strong>Difficultad: </strong>
-                                            {classItem.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                classItem.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                    classItem.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
-                                                        ""}
-                                        </Card.Text>
-                                    </Card.Body>
-                                    <Card.Footer className="d-flex flex-row align-items-center justify-content-center gap-4 p-3">
-                                        <div className='d-flex flex-row gap-2 justify-content-evenly align-items-center'>
-                                            <ClassModal userClass={classItem.trainer_class} />
-                                            <MapModal className='mx-3' addressData={[classItem.trainer_class.class_details.city, classItem.trainer_class.class_details.postal_code, classItem.trainer_class.class_details.street_name, classItem.trainer_class.class_details.street_number]} />
-                                        </div>
-                                    </Card.Footer>
-                                </Card>
-                            </Col>
-                        ) : null
+                                </Card.Footer>
+                            </Card>
+                        </Col>
                     ))}
                 </Row>
             ) : (
@@ -85,6 +90,15 @@ export const UserClasses = () => {
                     </div>
                 </Alert>
             )}
+            <Row>
+                <Pagination className="d-flex justify-content-center align-items-center mt-4">
+                    {Array.from({ length: Math.ceil(userClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").length / classesPerPage) }).map((_, index) => (
+                        <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                            {index + 1}
+                        </Pagination.Item>
+                    ))}
+                </Pagination>
+            </Row>
         </Container>
     )
 

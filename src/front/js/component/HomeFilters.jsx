@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Context } from '../store/appContext';
 import { Form, Button, Navbar, Nav, Col, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 const HomeFilters = ({ onFilterSubmit }) => {
     const { store, actions } = useContext(Context);
@@ -28,7 +30,6 @@ const HomeFilters = ({ onFilterSubmit }) => {
         const { name, value } = event.target;
         setInputs(prevInputs => {
             const updatedInputs = { ...prevInputs, [name]: value };
-            console.log(updatedInputs);
             return updatedInputs;
         });
     };
@@ -41,13 +42,19 @@ const HomeFilters = ({ onFilterSubmit }) => {
             startDate: '',
             searchCity: ''
         });
-        onFilterSubmit(event, inputs);
+        const emptyFilters = {
+            trainingType: '',
+            trainingLevel: '',
+            startDate: '',
+            searchCity: ''
+        };
+        onFilterSubmit(event, emptyFilters);
     };
 
     return (
         <Navbar expand="lg" className="py-2">
             <Nav className="d-flex flex-column gap-2 ">
-                <Form onSubmit={handleFormSubmit} className="d-flex flex-column gap-3 align-items-between justify-content-center p-3">
+                <Form onSubmit={handleFormSubmit} className="d-flex flex-column w-auto gap-3 align-items-between justify-content-center p-3">
                     <Form.Group controlId="searchCity">
                         <span>Busca por ciudad:</span>
                         <Form.Control

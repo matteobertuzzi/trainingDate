@@ -6,7 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       { title: "SECOND", background: "white", initial: "white" }],
       currentUser: null,
       logged: false,
-      activeNavTab: [],
+      activeNavTab: ["home"],
       specializations: [],
       trainerSpecializations: [],
       trainerClasses: [],
@@ -134,7 +134,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ userClasses: data.results })
         localStorage.setItem('userClasses', JSON.stringify(data.results))
         const favourites = data.results.map(userClass => userClass.user_class.class);
-        console.log(favourites)
         setStore({ favourites: favourites });
         localStorage.setItem('favourites', JSON.stringify(favourites))
       },
