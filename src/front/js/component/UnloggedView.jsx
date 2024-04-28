@@ -38,12 +38,16 @@ const UnloggedView = () => {
                     </Card.ImgOverlay>
                 </Card>
             </Row>
-            <Row className='bg-light'>
-                <div className='d-flex justify-content-around align-items-center' style={{ width: '90%' }}>
-                    <h2 className='mt-3'>Descubre nuestras Clases</h2>
-                    <RegisterPopup />
-                </div>
-                <ClassesCarousel />
+            <Row className='bg-light pt-3'>
+                <Col className="d-flex flex-row justify-content-center align-items-center p-3 w-auto">
+                    <div className="border rounded p-4 d-flex flex-row gap-3 justify-content-center w-auto align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h3>Descubre nuestras Clases</h3>
+                        <RegisterPopup />
+                    </div>
+                </Col>
+                <Col>
+                    <ClassesCarousel />
+                </Col>
             </Row>
             <Row>
                 <Carousel className='my-4'>

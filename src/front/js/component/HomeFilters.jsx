@@ -7,6 +7,7 @@ import { faFilter } from '@fortawesome/free-solid-svg-icons';
 const HomeFilters = ({ onFilterSubmit }) => {
     const { store, actions } = useContext(Context);
     const specializations = store.specializations;
+    const [activeButton, setActiveButton] = useState("filter")
     const [inputs, setInputs] = useState({
         trainingType: '',
         trainingLevel: '',
@@ -23,6 +24,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
             startDate: '',
             searchCity: ''
         });
+        setActiveButton('reset')
     };
 
     const handleChange = (event) => {
@@ -49,6 +51,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
             searchCity: ''
         };
         onFilterSubmit(event, emptyFilters);
+        setActiveButton('filter')
     };
 
     return (
@@ -108,13 +111,17 @@ const HomeFilters = ({ onFilterSubmit }) => {
                             <option value='Advanced'>Avanzado</option>
                         </Form.Select>
                     </Form.Group>
-                    <div className="d-flex flex-column flex-sm-row align-items-center gap-3">
-                        <Button onClick={handleFormSubmit} variant="primary" type="submit" className="btn-sm">
-                            Filtrar clases
-                        </Button>
-                        <Button variant="danger" type="reset" onClick={handleFilterReset} className='btn-sm'>
-                            Restablecer filtros
-                        </Button>
+                    <div className="d-flex flex-column flex-sm-row align-items-center justify-content-center">
+                        {activeButton === 'filter' && (
+                            <Button onClick={handleFormSubmit} variant="primary" type="submit" className="btn-sm">
+                                Filtrar clases
+                            </Button>
+                        )}
+                        {activeButton === 'reset' && (
+                            <Button variant="danger" type="reset" onClick={handleFilterReset} className='btn-sm'>
+                                Restablecer filtros
+                            </Button>
+                        )}
                     </div>
                 </Form>
             </Nav>

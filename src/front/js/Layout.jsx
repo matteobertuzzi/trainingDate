@@ -48,7 +48,7 @@ const Layout = () => {
                         <Route element={<Favourites />} path="user/:id/favourites" />
                         <Route element={<AllClasses />} path="/allClasses" />
                         <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
-                        <Route element={<UserInfo />} path='users/info' />
+                        <Route element={<UserInfo />} path='/users/info' />
                         <Route element={<TrainerInfo />} path="trainers/info" />
                         <Route element={<AccountAlreadyConfirmedPage />} path="account/already/confirmed" />
                         <Route element={<CancelCheckout />} path="checkout/cancel" />

@@ -10,7 +10,7 @@ function RegisterPopup() {
 
     return (
         <>
-            <span className='mt-3' style={{ textDecoration: 'underline', cursor: 'pointer', color: '#e95420' }} onClick={handleShow}>
+            <span style={{ textDecoration: 'underline', cursor: 'pointer', color: '#e95420' }} onClick={handleShow}>
                 Todas las clases
             </span>
 

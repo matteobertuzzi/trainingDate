@@ -128,22 +128,19 @@ export const TrainerClasses = () => {
                     <Col key={classItem.id} className="d-flex flex-row gap-2 justify-content-center align-items-center">
                         <Card border="primary" style={{ width: '18rem' }}>
                             <Card.Header><strong>{classItem.class_name ? classItem.class_name : "Nombre clase"}</strong></Card.Header>
-                            <Card.Body className="d-flex justify-content-between align-items-center flex-column">
-                                <section>
-                                    <Card.Text><strong>Fecha inicio: </strong>{classItem.start_date}</Card.Text>
-                                    <Card.Text><strong>Fecha fin: </strong>{classItem.end_date}</Card.Text>
-                                    <Card.Text><strong>Ciudad: </strong>{classItem.city}</Card.Text>
-                                    <Card.Text><strong>Precio: </strong>{classItem.price / 100}<span>€</span></Card.Text>
-                                    <Card.Text><strong>Capacidad: </strong>{classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
-                                    <Card.Text>
-                                        <strong>Nivel entrenamiento: </strong>{
-                                            classItem.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                classItem.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                    classItem.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
-                                                        classItem.training_level
-                                        }
-                                    </Card.Text>
-                                </section>
+                            <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
+                                <Card.Text className="m-0 p-0"><strong>Fecha inicio: </strong>{new Date(classItem.start_date).toLocaleDateString()}</Card.Text>
+                                <Card.Text className="m-0 p-0"><strong>Fecha fin: </strong>{new Date(classItem.end_date).toLocaleDateString()}</Card.Text>
+                                <Card.Text className="m-0 p-0"><strong>Precio: </strong>{classItem.price / 100}<span>€</span></Card.Text>
+                                <Card.Text className="m-0 p-0"><strong>Capacidad: </strong>{classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
+                                <Card.Text>
+                                    <strong>Difficultad: </strong>{
+                                        classItem.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
+                                            classItem.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
+                                                classItem.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                                    classItem.training_level
+                                    }
+                                </Card.Text>
                             </Card.Body>
                             <Card.Footer className="d-flex flex-row align-items-center justify-content-evenly gap-2 p-3">
                                 <Button className={classItem.capacity === 0 ? "d-none" : ""} variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Cancelar</Button>

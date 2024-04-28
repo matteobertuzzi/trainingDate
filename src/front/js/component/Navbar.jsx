@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Dropdown, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, Button, Nav, Offcanvas, Badge } from 'react-bootstrap';
+import { Dropdown, DropdownButton, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, Button, Nav, Offcanvas, Badge } from 'react-bootstrap';
 import { LogInModal } from "./LogInModal.jsx";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -35,17 +35,17 @@ export const MyNavbar = () => {
 
   return (
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
-      <Container fluid className=" justify-content-evenly mx-2">
+      <Container fluid className="justify-content-evenly mx-2">
         <Col>
           <Navbar.Brand className="text-dark">
-            <Link onClick={() => handleTabClick('')} to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
+            <Link onClick={() => handleTabClick('home')} to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
           </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
           <>
             <Col xs="auto" className="d-flex gap-3">
               <Nav variant="tabs" className="d-flex flex-row border-0">
-              <Nav.Item
+                <Nav.Item
                   className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
                   style={{
                     transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
@@ -166,17 +166,19 @@ export const MyNavbar = () => {
               </Nav>
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
-              <Nav className="d-flex flex-row justify-content-center align-items-center gap-3">
+              <Nav variant="tabs" className="d-flex flex-row border-0 gap-2">
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
                   <Button className="bg-danger d-flex flex-row align-items-center justify-content-center gap-2 border" onClick={handleLogout} >
                     <span>LogOut</span><FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
                   </Button>
                 </Nav.Item>
-                <Nav.Item as={Link} to={`user/${currentUser.user.id}/favourites`}>
-                  <FontAwesomeIcon size="2x" className="d-md-none text-warning" icon={faHeart} />
-                  <Badge className={`position-absolute d-md-none top-30 start-80 translate-middle badge rounded-pill ${!userClasses || userClasses.find(cls => cls.user_class.stripe_status !== 'Paid') ? "bg-success" : "bg-warning"} text-dark`}>
-                    {userClasses ? userClasses.filter(cls => cls.user_class.stripe_status !== 'Paid').length : 0}
-                  </Badge>
+                <Nav.Item className="d-flex justify-content-center align-items-center" as={Link} to={`user/${currentUser.user.id}/favourites`}>
+                  <div className="position-relative">
+                    <FontAwesomeIcon size="2x" className="d-md-none text-warning" icon={faHeart} />
+                    <Badge className={`position-absolute d-md-none top-30 start-90 translate-middle badge rounded-pill ${!userClasses || userClasses.find(cls => cls.user_class.stripe_status !== 'Paid') ? "bg-success" : "bg-warning"} text-dark`}>
+                      {userClasses ? userClasses.filter(cls => cls.user_class.stripe_status !== 'Paid').length : 0}
+                    </Badge>
+                  </div>
                 </Nav.Item>
                 <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
               </Nav>
@@ -231,18 +233,68 @@ export const MyNavbar = () => {
           <>
             <Col xs="auto" className="d-flex gap-3">
               <Nav className="d-flex flex-row justify-content-center" style={{ gap: '1rem' }}>
-                <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/trainer/${currentUser.trainer.id}/profile`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'profile' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'profile' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'profile' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('profile')}
+                >
+                  <Nav.Link
+                    className="d-none d-md-block"
+                    as={Link}
+                    to={`/trainer/${currentUser.trainer.id}/profile`}
+                    style={{
+                      color: activeNavTab === 'profile' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
+                    }}>
                     Mi Perfil
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/trainer/${currentUser.trainer.id}/classes`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'classes' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'classes' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'classes' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('classes')}
+                >
+                  <Nav.Link
+                    className="d-none d-md-block"
+                    as={Link} to={`/trainer/${currentUser.trainer.id}/classes`}
+                    style={{
+                      color: activeNavTab === 'classes' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'classes' ? '1px 1px 2px #427388' : 'none',
+                    }}>
                     Mis Clases
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link className="d-none d-md-block" as={Link} to={`/trainer/${currentUser.trainer.id}/specializations`} style={{ textDecoration: 'none', transition: 'color 0.3s' }}>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'specializations' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'specializations' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'specializations' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('specializations')}
+                >
+                  <Nav.Link
+                    className="d-none d-md-block"
+                    as={Link}
+                    to={`/trainer/${currentUser.trainer.id}/specializations`}
+                    style={{
+                      color: activeNavTab === 'specializations' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'specializations' ? '1px 1px 2px #427388' : 'none',
+                    }}>
                     Mis Especializaciones
                   </Nav.Link>
                 </Nav.Item>
@@ -267,21 +319,18 @@ export const MyNavbar = () => {
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
               <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
                 <Dropdown drop="down">
-                  <Dropdown.Toggle className="d-flex justify-content-center align-items-center" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
-                    <BsCalendarPlus />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu align="end">
-                    {trainerClasses.length > 0 ? (
-                      sortedClasses.map(oneClass => (
-                        <Dropdown.Item key={oneClass.id}>{oneClass.start_date}</Dropdown.Item>
-                      ))
-                    ) : (
-                      <Dropdown.Item>No hay clases disponibles</Dropdown.Item>
-                    )}
-                  </Dropdown.Menu>
+                  <DropdownButton title={`Clases Diarias ${<BsCalendarPlus />}`} variant="info" className="d-flex justify-content-center align-items-center gap-1" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
+                  </DropdownButton>
+                  {trainerClasses.length > 0 ? (
+                    sortedClasses.map(oneClass => (
+                      <Dropdown.Item key={oneClass.id}>{oneClass.start_date}</Dropdown.Item>
+                    ))
+                  ) : (
+                    <Dropdown.Item>No hay clases disponibles</Dropdown.Item>
+                  )}
                 </Dropdown>
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} />
+                  <Button variant="danger" className="d-flex flex-row gap-2 border justify-content-center align-items-center"><span>LogOut</span><FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} /></Button>
                 </Nav.Item>
                 <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
               </Nav>
@@ -338,11 +387,176 @@ export const MyNavbar = () => {
             </Navbar.Offcanvas>
           </>
         ) : (
-          <Col xs="auto d-flex flex-row align-items-center justify-content-center gap-3">
-            <Button variant="success" onClick={() => setLoginModalShow(true)} className="d-flex flex-row gap-2 align-items-center justify-content-center">
-              <span>Login</span><FontAwesomeIcon icon={faRightToBracket} />
-            </Button>
-          </Col>
+          <>
+            <Col xs="auto" className="d-flex">
+              <Nav variant="tabs" className="d-flex flex-row justify-content-center border-0" style={{ gap: '1rem' }}>
+                <Nav.Item
+                  className="p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded"
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'home' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'home' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'home' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('home')}
+                >
+                  <Nav.Link
+                    className="border-0 d-flex flex-row justify-content-center align-items-center gap-1"
+                    as={Link}
+                    to={`/`}
+                    style={{
+                      color: activeNavTab === 'home' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faHouse} /><span>Home</span>
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex flex-row justify-content-center rounded w-100`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'aboutUs' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'aboutUs' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'aboutUs' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('aboutUs')}
+                >
+                  <Nav.Link
+                    className="border-0 d-flex flex-row w-100"
+                    as={Link}
+                    to={"/"}
+                    style={{
+                      color: activeNavTab === 'aboutUs' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'aboutUs' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    Sobre nosotros
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'user' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'user' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'user' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('user')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={'/users/info'}
+                    style={{
+                      color: activeNavTab === 'user' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'user' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    Usuario
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'trainer' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'trainer' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'trainer' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('trainer')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={'/trainers/info'}
+                    style={{
+                      color: activeNavTab === 'trainer' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'trainer' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    Entrenador
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item
+                  className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'specialization' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'specialization' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'specialization' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('specialization')}
+                >
+                  <Nav.Link
+                    className="border-0"
+                    as={Link}
+                    to={"/allSpecializations"}
+                    style={{
+                      color: activeNavTab === 'specialization' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'specialization' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    Disciplinas
+                  </Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Col>
+            <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
+              <Button variant="success" onClick={() => setLoginModalShow(true)} className="d-flex flex-row gap-2 align-items-center justify-content-center">
+                <span>Login</span><FontAwesomeIcon icon={faRightToBracket} />
+              </Button>
+              <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
+            </Col>
+            <Navbar.Offcanvas
+              style={{ boxShadow: 'inset 0 0 50px rgba(255, 165, 0, 0.5)' }}
+              id="offcanvasNavbar-expand-md"
+              aria-labelledby="offcanvasNavbarLabel-expand-md"
+              placement="end"
+              className="d-md-none w-auto p-2 d-flex flex-columns justify-content-center align-items-center"
+            >
+              <Offcanvas.Header className="border-bottom" closeButton>
+                <Offcanvas.Title className="me-3" id="offcanvasNavbarLabel-expand-md">
+                  <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
+                </Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body className="d-flex flex-column justify-content-start align-items-center mt-2 gap-3 pe-3">
+                <Nav className="bg-black text-white">
+                  <span>Todavia no te has registrado? Hazlo ahora</span>
+                </Nav>
+                <Nav>
+                  <Nav.Link onClick={() => handleTabClick('home')} className="border-b" as={Link} to={`/`}>
+                    Homepage
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link onClick={() => handleTabClick('profile')} as={Link} to={"/"}>
+                    Sobre nosotros
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link onClick={() => handleTabClick('user')} as={Link} to={"/users/info"}>
+                    Usuario
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link as={Link} onClick={() => handleTabClick('trainer')} to={"/trainers/info"}>
+                    Entrenador
+                  </Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link as={Link} to={"/allSpecializations"}>
+                    Disciplinas
+                  </Nav.Link>
+                </Nav>
+              </Offcanvas.Body>
+            </Navbar.Offcanvas>
+          </>
         )}
         <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
       </Container>

@@ -42,8 +42,8 @@ const ClassesCarousel = () => {
                 style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
             >
                 {allClasses.map((oneClass) => (
-                    <SwiperSlide className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', paddingBottom: '10px', paddingTop: '10px' }}>
-                        <h4><strong>{oneClass.class_details.class_name}</strong></h4>
+                    <SwiperSlide key={oneClass.class_details.id} className="swiper-slide d-flex flex-column align-items-center" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', paddingBottom: '10px', paddingTop: '10px' }}>
+                        <h4><strong>{oneClass.class_details.id}</strong></h4>
                         <img className='w-100 d-block' src='https://www.regymenfitness.com/wp-content/uploads/2021/12/Sportive-serious-people-liftin-1080x675.jpg' />
                         <div className="footer-details mt-2">
                             <p><strong>Fecha: </strong>{formatDate(oneClass.class_details.start_date)}</p>

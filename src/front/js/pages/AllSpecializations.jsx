@@ -22,8 +22,8 @@ export const AllSpecializations = () => {
             </Row>
             <Row className="d-flex flex-row h-100 gap-2 align-items-center justify-content-center">
                 {specializations.map((specialization) => (
-                    <Col>
-                        <Card key={specialization.id} className="h-100">
+                    <Col key={specialization.id}>
+                        <Card className="h-100">
                             <Card.Img className="img-fluid" src={specialization.logo} style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }} />
                             <Card.Body className="d-flex justify-content-center align-items-center">
                                 <Button className="d-flex flex-row justify-content-center align-items-center gap-2" variant="info" onClick={() => setShowModal(true)}>
