@@ -11,6 +11,7 @@ import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-i
 
 const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);
+    const [registerModal, setRegisterModal] = useState(false)
 
     return (
         <Container fluid >
@@ -42,7 +43,8 @@ const UnloggedView = () => {
                 <Col className="d-flex flex-row justify-content-center align-items-center p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-row gap-3 justify-content-center w-auto align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h3>Descubre nuestras Clases</h3>
-                        <RegisterPopup />
+                        <Button onClick={() => setRegisterModal(true)}>Ver todas las clases...</Button>
+                        <RegisterPopup show={registerModal} onHide={() => setRegisterModal(false)} />
                     </div>
                 </Col>
                 <Col>

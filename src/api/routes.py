@@ -1125,8 +1125,15 @@ def handle_trainer_classes(id):
         if not trainer_classes:
             response_body["message"] = "Trainer has no classes available"
             return response_body, 400
+        classes_with_specializations = []
+        for class_trainer in trainer_classes:
+            class_specialization = Specializations.query.filter_by(id=class_trainer.training_type).first()
+            if class_specialization:
+                serialized_class = class_trainer.serialize()
+                serialized_class["specialization"] = class_specialization.serialize()
+                classes_with_specializations.append(serialized_class)
         response_body["message"] = "Trainer classes"
-        response_body["classes"] = [class_trainer.serialize() for class_trainer in trainer_classes]
+        response_body["classes"] = classes_with_specializations
         return response_body, 200
     if request.method == "POST":
         if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):

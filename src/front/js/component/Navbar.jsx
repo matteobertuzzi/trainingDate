@@ -231,8 +231,31 @@ export const MyNavbar = () => {
           </>
         ) : logged && currentUser.role === "trainers" ? (
           <>
-            <Col xs="auto" className="d-flex gap-3">
-              <Nav className="d-flex flex-row justify-content-center" style={{ gap: '1rem' }}>
+            <Col xs="auto" className="d-flex">
+              <Nav className="d-flex flex-row border-0">
+                <Nav.Item
+                  className="p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded"
+                  style={{
+                    transition: 'box-shadow 1.25s cubic-bezier(0.19, 1, 0.22, 1), border-color 1.25s cubic-bezier(0.19, 1, 0.22, 1)',
+                    boxShadow: activeNavTab === 'home' ? 'inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2)' : '',
+                    borderColor: activeNavTab === 'home' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.5)',
+                    outlineOffset: activeNavTab === 'home' ? '15px' : '0px',
+                  }}
+                  onClick={() => handleTabClick('home')}
+                >
+                  <Nav.Link
+                    className="border-0 d-flex flex-row justify-content-center align-items-center gap-1"
+                    as={Link}
+                    to={`/`}
+                    style={{
+                      color: activeNavTab === 'home' ? '#ffffff' : '',
+                      transition: 'color 0.2s',
+                      textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faHouse} /><span>Home</span>
+                  </Nav.Link>
+                </Nav.Item>
                 <Nav.Item
                   className={`p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded`}
                   style={{
@@ -298,7 +321,7 @@ export const MyNavbar = () => {
                     Mis Especializaciones
                   </Nav.Link>
                 </Nav.Item>
-                <Nav.Item style={{ marginLeft: '10px' }}>
+                <Nav.Item className="d-flex justify-content-center align-items-center" style={{ marginLeft: '10px' }}>
                   <Dropdown align="start" drop="down">
                     <Dropdown.Toggle className="d-none d-md-block text-dark" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
                       <BsFillPlusSquareFill />
@@ -319,7 +342,7 @@ export const MyNavbar = () => {
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
               <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
                 <Dropdown drop="down">
-                  <DropdownButton title={`Clases Diarias ${<BsCalendarPlus />}`} variant="info" className="d-flex justify-content-center align-items-center gap-1" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
+                  <DropdownButton title="Clases Diarias" variant="info" className="d-flex justify-content-center align-items-center gap-1" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
                   </DropdownButton>
                   {trainerClasses.length > 0 ? (
                     sortedClasses.map(oneClass => (
@@ -347,8 +370,8 @@ export const MyNavbar = () => {
                   <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
-              <Offcanvas.Body>
-                <Nav className="justify-content-end gap-3 flex-grow-1 pe-3">
+              <Offcanvas.Body className="d-flex flex-column justify-content-start align-items-center mt-2 gap-3 pe-3">
+                <Nav>
                   <Nav.Link as={Link} to={`/`}>
                     Homepage
                   </Nav.Link>
@@ -389,7 +412,7 @@ export const MyNavbar = () => {
         ) : (
           <>
             <Col xs="auto" className="d-flex">
-              <Nav variant="tabs" className="d-flex flex-row justify-content-center border-0" style={{ gap: '1rem' }}>
+              <Nav className="d-flex flex-row border-0">
                 <Nav.Item
                   className="p-2 d-none d-md-block d-flex justify-content-center align-items-center rounded"
                   style={{
@@ -426,7 +449,7 @@ export const MyNavbar = () => {
                   <Nav.Link
                     className="border-0 d-flex flex-row w-100"
                     as={Link}
-                    to={"/"}
+                    to={"/aboutUs"}
                     style={{
                       color: activeNavTab === 'aboutUs' ? '#ffffff' : '',
                       transition: 'color 0.2s',
@@ -525,10 +548,11 @@ export const MyNavbar = () => {
                   <Link to={"/"} style={{ textDecoration: 'none' }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
                 </Offcanvas.Title>
               </Offcanvas.Header>
+              <Nav className="bg-black text-white p-1 rounded">
+                <p className="mb-0">Todavia no te has registrado?</p>
+                <Link className="d-flex flex-row justify-content-center align-items-center gap-1" to={"/signup"}><span></span> <FontAwesomeIcon icon={faRightToBracket} /></Link>
+              </Nav>
               <Offcanvas.Body className="d-flex flex-column justify-content-start align-items-center mt-2 gap-3 pe-3">
-                <Nav className="bg-black text-white">
-                  <span>Todavia no te has registrado? Hazlo ahora</span>
-                </Nav>
                 <Nav>
                   <Nav.Link onClick={() => handleTabClick('home')} className="border-b" as={Link} to={`/`}>
                     Homepage

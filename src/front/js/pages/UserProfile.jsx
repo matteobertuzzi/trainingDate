@@ -53,9 +53,15 @@ const UserProfile = () => {
         <Container className="min-vh-100 mb-3 mt-4 flex-column">
             <Row>
                 <Col className='d-flex flex-row justify-content-center align-items-center gap-2 mb-2'>
-                    <EditUserProfile user={user} onChangeSubmit={fetchUser} />
-                    <Button variant="danger" onClick={() => setModalShow(true)} >Cancelar perfil</Button>
-                    <DeleteUserModal show={modalShow} onHide={() => setModalShow(false)} />
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h4 className="text-center mb-2">Perfil</h4>
+                        <h5 className="text-center">Aquí puedes visualizar los datos de tu perfil y modificarlos.</h5>
+                        <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <EditUserProfile user={user} onChangeSubmit={fetchUser} />
+                            <Button variant="danger" onClick={() => setModalShow(true)} >Cancelar perfil</Button>
+                        </div>
+                        <DeleteUserModal show={modalShow} onHide={() => setModalShow(false)} />
+                    </div>
                 </Col>
             </Row>
             <Row className="p-3">

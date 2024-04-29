@@ -44,7 +44,7 @@ export const UserClasses = () => {
                                 <div className="position-relative">
                                     <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
                                     <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                        <span className="text-white">{classItem.trainer_class.specialization.name}</span>
+                                        <span className="text-white">{classItem.trainer_class.specialization.name.charAt(0).toUpperCase() + classItem.trainer_class.specialization.name.slice(1)}</span>
                                     </Card.ImgOverlay>
                                 </div>
                                 <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">

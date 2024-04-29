@@ -15,7 +15,6 @@ const TrainerHomepage = () => {
     const [modalShow, setModalShow] = useState(false);
     const [activeTab, setActiveTab] = useState(null);
 
-    // Define a function to calculate font sizes based on screen width
     const getFontSize = () => {
         const screenWidth = window.innerWidth;
         if (screenWidth <= 768) {

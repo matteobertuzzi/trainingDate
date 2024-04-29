@@ -5,6 +5,7 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import { RiArrowGoBackLine } from "react-icons/ri";
 
+
 export const TrainerClassDetails = () => {
     const { store, actions } = useContext(Context)
     const { currentUser, userInTrainerClass } = store
@@ -20,17 +21,16 @@ export const TrainerClassDetails = () => {
     }
 
     return (
-        <Container className="my-4">
-            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
-                <Col>
-                    <Link to={`/trainer/${currentUser.trainer.id}/classes`}>
-                        <RiArrowGoBackLine /> Volver atrás
-                    </Link>
-                </Col>
-            </Row>
+        <Container className="mt-4">
             <Row>
                 <Col className="d-flex justify-content-center align-items-center">
-                    <h1>Detalles de la Clase</h1>
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h4 className="text-center mb-2">Detalles de la Clase</h4>
+                        <h5 className="text-center">Aquí puedes ver los detalles de la clase y los usuarios apuntados.</h5>
+                        <Link to={`/trainer/${currentUser.trainer.id}/classes`}>
+                            <RiArrowGoBackLine /> Volver a mis clases
+                        </Link>
+                    </div>
                 </Col>
             </Row>
             <Row className="d-flex flex-row justify-content-center align-items-center gap-2">
