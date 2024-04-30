@@ -30,7 +30,7 @@ export const UserClasses = () => {
         <Container className="min-vh-100 my-2 d-flex flex-column gap-2">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
-                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h4>El Camino hacia una Vida Más Saludable</h4>
                         <h5>Descubre tus clases confirmadas!</h5>
                     </div>

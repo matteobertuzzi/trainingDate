@@ -18,6 +18,7 @@ const TrainerHomepage = () => {
 
     const handleDetails = async (classId) => {
         await actions.getTrainerClassDetails(classId)
+        setActiveTab("classes")
     }
 
     useEffect(() => {
@@ -40,20 +41,22 @@ const TrainerHomepage = () => {
                     style={{ objectFit: 'cover', filter: 'brightness(70%)', height: '500px' }}
                 />
                 <Card.ImgOverlay className='d-flex w-auto  flex-column align-items-center justify-content-center mx-3' style={{ textAlign: 'center', color: 'white' }}>
-                    <h3><strong>¡Hola, {currentUser.trainer.name}!</strong></h3>
-                    <p>¿Estás listo para empezar a crear tus clases y ayudar a tus clientes a alcanzar sus objetivos?</p>
-                    <Button as={Link} to="/trainers/info">
-                        Obtener más información
-                    </Button>
-                    <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='my-3'>
-                        Empezar ya!
-                    </Button>
+                    <div className="text-center p-3 rounded" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black' }}>
+                        <h3><strong>¡Hola, {currentUser.trainer.name}!</strong></h3>
+                        <p>¿Estás listo para empezar a crear tus clases y ayudar a tus clientes a alcanzar sus objetivos?</p>
+                        <Button as={Link} to="/trainers/info" className='w-auto me-2'>
+                            Obtener más información
+                        </Button>
+                        <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='my-3'>
+                            Empezar ya!
+                        </Button>
+                    </div>
                 </Card.ImgOverlay>
             </Card>
             <Row className='d-flex justify-content-center align-items-center m-0'>
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
-                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
-                        <h3>Classes diarias</h3>
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h3>¡Tu agenda de entrenamiento diaria!</h3>
                     </div>
                 </Col>
             </Row>
@@ -89,7 +92,7 @@ const TrainerHomepage = () => {
                                 <span className="d-flex flex-row gap-1"><strong>Capacidad: </strong>{todayClass.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${todayClass.capacity} personas`}</span>
                             </div>
                             <div className='d-flex justify-content-center align-items-center w-100 border-top p-3'>
-                            <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${todayClass.id}`} onClick={() => handleDetails(todayClass.id)}>Detalles</Button>
+                                <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${todayClass.id}`} onClick={() => handleDetails(todayClass.id)}>Detalles</Button>
                             </div>
                         </SwiperSlide>
                     ))}
@@ -97,9 +100,10 @@ const TrainerHomepage = () => {
             ) : (
                 <Row className='d-flex justify-content-center align-items-center m-0'>
                     <Col className='d-flex justify-content-center'>
-                        <Alert className='d-flex flex-column justify-content-center align-items-center mx-2' bvariant="danger">
-                            <Alert.Heading className='d-flex justify-content-center align-items-center'>Alerta</Alert.Heading>
-                            <p>No hay clases. Haz clic en el botón de abajo para agregar una nueva clase.</p>
+                        <Alert className='d-flex flex-column justify-content-center align-items-center mx-2' variant="danger">
+                            <Alert.Heading className='mb-3'>¡Atención!</Alert.Heading>
+                            <p className="text-center">No hay clases programadas para este día. ¿Por qué no creas una nueva clase ahora mismo?</p>
+                            <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} variant="outline-danger" className="mt-3">Crear nueva clase</Button>
                         </Alert>
                     </Col>
                 </Row>

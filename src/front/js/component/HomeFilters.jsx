@@ -57,6 +57,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
     return (
         <Navbar expand="lg" className="py-2">
             <Nav className="d-flex flex-column gap-2 ">
+                <h2 className='d-flex text-center justify-content-center align-items-center d-none d-md-block'>Filtros</h2>
                 <Form onSubmit={handleFormSubmit} className="d-flex flex-column w-auto gap-3 align-items-between justify-content-center p-3">
                     <Form.Group controlId="searchCity">
                         <span>Busca por ciudad:</span>

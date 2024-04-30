@@ -17,10 +17,13 @@ const UserInfo = () => {
         <Container className="my-4">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
-                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h3 className="mb-4">Información del usuario</h3>
                         <p>
-                            En esta página, se explica cómo inscribirse como usuario y las funciones que puedes utilizar en nuestra aplicación. Desde la creación de tu cuenta hasta la gestión de tus preferencias, aquí encontrarás todo lo necesario para comenzar a disfrutar de nuestra plataforma al máximo.
+                            En esta página, se explica cómo inscribirse como usuario y las funciones que puedes utilizar en nuestra aplicación.
+                        </p>
+                        <p>
+                            Encontrarás todo lo necesario para comenzar a disfrutar de nuestra plataforma al máximo.
                         </p>
                     </div>
                 </Col>

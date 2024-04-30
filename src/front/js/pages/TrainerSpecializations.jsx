@@ -11,7 +11,7 @@ import { IoIosWarning } from "react-icons/io";
 const TrainerSpecializations = () => {
     const { store, actions } = useContext(Context)
     const { currentUser } = store
-    const [ modalShow, setModalShow ] = useState(false);
+    const [modalShow, setModalShow] = useState(false);
 
     if (!currentUser || !currentUser.specializations) {
         return <Loading />;
@@ -21,12 +21,15 @@ const TrainerSpecializations = () => {
         <Container className="min-vh-100 my-4">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
-                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h4 className="text-center mb-2">Mis Especializaciones</h4>
                         <h5 className="text-center">Aquí puedes encontrar tus especializaciones confirmadas.</h5>
-                        <Button onClick={() => setModalShow(true)} className='w-auto'>
-                            Crea nueva especialización
-                        </Button>
+                        <div className='d-flex flex-column flex-sm-row gap-2'>
+                            <Button variant="success" onClick={() => setModalShow(true)} className='w-auto'>
+                                Crea nueva especialización
+                            </Button>
+                            <Button as={Link} to={"/allSpecializations"}>Ver disciplinas disponibles</Button>
+                        </div>
                     </div>
                     <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
                 </Col>

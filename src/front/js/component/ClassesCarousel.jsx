@@ -48,7 +48,7 @@ const ClassesCarousel = () => {
             >
                 {viewClasses.map((oneClass) => (
                     <SwiperSlide key={oneClass.class_details.id} className="swiper-slide d-flex flex-column align-items-start rounded" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px' }}>
-                        <img className='w-100 d-block rounded' src={oneClass.specialization.logo} style={{ borderTopLeftRadius: '2%', borderTopRightRadius: '2%' }} />
+                        <img className='w-100 d-block' src={oneClass.specialization.logo} style={{ borderTopLeftRadius: '2%', borderTopRightRadius: '2%' }} />
                         <div className="footer-details p-3">
                             <span className="d-flex flex-row gap-1"><strong>Ciudad: </strong><p className="mb-0">{oneClass.class_details.city}</p></span>
                             <span className="d-flex flex-row gap-1"><strong>Fecha: </strong><p className="mb-0">{formatDate(oneClass.class_details.start_date)}</p></span>
