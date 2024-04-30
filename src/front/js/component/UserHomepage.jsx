@@ -56,8 +56,8 @@ const UserHomepage = () => {
                     style={{ width: '100%', paddingTop: '20px', paddingBottom: '50px' }}
                 >
                     {limitedSpecializations.map((specialization) => (
-                        <SwiperSlide key={specialization.id} className="swiper-slide" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
-                            <Card.Img className="img-fluid w-100 h-100" variant="top" src={specialization.logo} />
+                        <SwiperSlide key={specialization.id} className="swiper-slide rounded" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
+                            <Card.Img className="img-fluid w-100 h-100 rounded" variant="top" src={specialization.logo} />
                             <Card.ImgOverlay className='h-100 d-flex justify-content-center align-items-center'>
                                 <div className='bg-white rounded p-1'>
                                     <span className="text-success"> {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}</span>

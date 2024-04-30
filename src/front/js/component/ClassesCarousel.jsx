@@ -47,8 +47,8 @@ const ClassesCarousel = () => {
                 style={{ width: '100%', paddingTop: '50px', paddingBottom: '50px' }}
             >
                 {viewClasses.map((oneClass) => (
-                    <SwiperSlide key={oneClass.class_details.id} className="swiper-slide d-flex flex-column align-items-start" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px' }}>
-                        <img className='w-100 d-block' src={oneClass.specialization.logo} />
+                    <SwiperSlide key={oneClass.class_details.id} className="swiper-slide d-flex flex-column align-items-start rounded" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px' }}>
+                        <img className='w-100 d-block rounded' src={oneClass.specialization.logo} style={{ borderTopLeftRadius: '2%', borderTopRightRadius: '2%' }} />
                         <div className="footer-details p-3">
                             <span className="d-flex flex-row gap-1"><strong>Ciudad: </strong><p className="mb-0">{oneClass.class_details.city}</p></span>
                             <span className="d-flex flex-row gap-1"><strong>Fecha: </strong><p className="mb-0">{formatDate(oneClass.class_details.start_date)}</p></span>
@@ -61,7 +61,7 @@ const ClassesCarousel = () => {
                         </div>
                     </SwiperSlide>
                 ))}
-                <SwiperSlide onClick={() => setModalShow(true)} className="swiper-slide d-flex flex-column justify-content-center align-items-center" style={{ backgroundColor: '#F06B27', backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', cursor: 'pointer' }}>
+                <SwiperSlide onClick={() => setModalShow(true)} className="swiper-slide rounded d-flex flex-column justify-content-center align-items-center" style={{ backgroundColor: '#F06B27', backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', cursor: 'pointer' }}>
                     <h2 className="mb-3">Ver Más</h2>
                     <FontAwesomeIcon icon={faPlus} size="3x" />
                 </SwiperSlide>

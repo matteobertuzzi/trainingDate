@@ -340,18 +340,7 @@ export const MyNavbar = () => {
               </Nav>
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
-              <Nav className="d-flex flex-row justify-content-center align-items-center gap-2">
-                <Dropdown drop="down">
-                  <DropdownButton title="Clases Diarias" variant="info" className="d-flex justify-content-center align-items-center gap-1" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
-                  </DropdownButton>
-                  {trainerClasses.length > 0 ? (
-                    sortedClasses.map(oneClass => (
-                      <Dropdown.Item key={oneClass.id}>{oneClass.start_date}</Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item>No hay clases disponibles</Dropdown.Item>
-                  )}
-                </Dropdown>
+              <Nav className="d-flex flex-row justify-content-center align-items-center">
                 <Nav.Item className="p-2 d-none d-md-block d-flex justify-content-center align-items-center" onClick={handleLogout}>
                   <Button variant="danger" className="d-flex flex-row gap-2 border justify-content-center align-items-center"><span>LogOut</span><FontAwesomeIcon icon={faRightFromBracket} style={{ color: "#ad0101", }} /></Button>
                 </Nav.Item>
@@ -550,7 +539,7 @@ export const MyNavbar = () => {
               </Offcanvas.Header>
               <Nav className="bg-black text-white p-1 rounded">
                 <p className="mb-0">Todavia no te has registrado?</p>
-                <Link className="d-flex flex-row justify-content-center align-items-center gap-1" to={"/signup"}><span></span> <FontAwesomeIcon icon={faRightToBracket} /></Link>
+                <Link className="d-flex flex-row justify-content-center align-items-center gap-1" to={"/signup"}><span>Hazlo ahora</span> <FontAwesomeIcon icon={faRightToBracket} /></Link>
               </Nav>
               <Offcanvas.Body className="d-flex flex-column justify-content-start align-items-center mt-2 gap-3 pe-3">
                 <Nav>
