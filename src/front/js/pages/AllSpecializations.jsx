@@ -9,6 +9,7 @@ export const AllSpecializations = () => {
     const { store, actions } = useContext(Context)
     const { specializations } = store
     const [showModal, setShowModal] = useState(false)
+    const [spec, setSpec] = useState();
 
     return (
         <Container className="my-4">
@@ -26,12 +27,15 @@ export const AllSpecializations = () => {
                         <Card className="h-100">
                             <Card.Img className="img-fluid" src={specialization.logo} style={{ height: '200px', objectFit: 'cover', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }} />
                             <Card.Body className="d-flex justify-content-center align-items-center">
-                                <Button className="d-flex flex-row justify-content-center align-items-center gap-2" variant="info" onClick={() => setShowModal(true)}>
+                                <Button className="d-flex flex-row justify-content-center align-items-center gap-2" variant="info" onClick={() => {
+                                    setShowModal(true);
+                                    setSpec(specialization);
+                                }}>
                                     {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}<FontAwesomeIcon icon={faCircleInfo} />
                                 </Button>
                             </Card.Body>
                         </Card>
-                        <SpecializationModal show={showModal} onHide={() => setShowModal(false)} specialization={specialization} />
+                        <SpecializationModal show={showModal} onHide={() => setShowModal(false)} specialization={spec ? spec : specialization} />
                     </Col>
                 ))}
             </Row>
