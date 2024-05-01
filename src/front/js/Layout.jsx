@@ -30,6 +30,8 @@ import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
 import { TrainerClassDetails } from "./pages/TrainerClassDetails.jsx";
 import { AllClasses } from "./pages/AllClasses.jsx"
 import { Favourites } from "./pages/Favourites.jsx";
+import { AllSpecializations } from "./pages/AllSpecializations.jsx"
+import { AboutUs } from "./pages/AboutUs.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -44,10 +46,11 @@ const Layout = () => {
                 <ScrollToTop>
                     <MyNavbar />
                     <Routes>
+                        <Route element={<AboutUs />} path="/aboutUs" />
                         <Route element={<Favourites />} path="user/:id/favourites" />
                         <Route element={<AllClasses />} path="/allClasses" />
                         <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
-                        <Route element={<UserInfo />} path='users/info' />
+                        <Route element={<UserInfo />} path='/users/info' />
                         <Route element={<TrainerInfo />} path="trainers/info" />
                         <Route element={<AccountAlreadyConfirmedPage />} path="account/already/confirmed" />
                         <Route element={<CancelCheckout />} path="checkout/cancel" />
@@ -67,6 +70,7 @@ const Layout = () => {
                         <Route element={<UserClasses />} path='/user/:id/classes' />
                         <Route element={<TrainerHomepage />} path='/trainer/homepage' />
                         <Route element={<TrainerClassDetails />} path='/trainer/:trainerId/class/:classId' />
+                        <Route element={<AllSpecializations />} path="/allSpecializations" />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />

@@ -1052,14 +1052,12 @@ def handle_user_classes(id):
             for user_cls in user_classes:
                 trainer_cls = TrainersClasses.query.filter_by(id=user_cls.class_id).first()
                 trainer = Trainers.query.filter_by(id=trainer_cls.trainer_id).first()
-                trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} if trainer else None
-                print(trainer_details)
+                trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} 
                 specialization = db.session.query(Specializations).filter_by(id=trainer_cls.training_type).first()
-                classes_with_trainers.append({
-                    'user_class': user_cls.serialize(),
-                    'trainer_class': {'class_details': trainer_cls.serialize(),
-                                      'specialization': specialization.serialize() if specialization else None},
-                                      'trainer': trainer_details})
+                classes_with_trainers.append({'user_class': user_cls.serialize(),
+                                            'trainer_class': {'class_details': trainer_cls.serialize(),
+                                                              'specialization': specialization.serialize() if specialization else None,
+                                                              'trainer': trainer_details}})
             response_body['message'] = 'List of classes available.'
             response_body['results'] = classes_with_trainers
             return response_body, 200
@@ -1095,13 +1093,13 @@ def handle_user_classes(id):
                 trainer = Trainers.query.filter_by(id=trainer_class.trainer_id).first()
                 trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} if trainer else None
                 trainer_class_info = {'class_details': trainer_class.serialize(),
-                                      'specialization': db.session.query(Specializations).filter_by(id=trainer_class.training_type).first().serialize() if trainer_class else None}
+                                      'specialization': db.session.query(Specializations).filter_by(id=trainer_class.training_type).first().serialize() if trainer_class else None,
+                                      'trainer' : trainer_details}
                 user_class_info = user_class.serialize()
                 classes_with_trainers.append({'user_class': user_class_info,
-                                              'trainer_class': trainer_class_info,
-                                              'trainer' : trainer_details})
+                                              'trainer_class': trainer_class_info})
             trainer_class = {'class_details': trainer_class.serialize(),
-                             'specialization': db.session.query(Specializations).filter_by(id=trainer_class.training_type).first().serialize()}  
+                             'specialization': db.session.query(Specializations).filter_by(id=trainer_class.training_type).first().serialize()}
             response_body["message"] = "Class added"
             response_body["results"] = {"user_class": new_class.serialize(),
                                         "trainer_class": trainer_class}
@@ -1127,8 +1125,15 @@ def handle_trainer_classes(id):
         if not trainer_classes:
             response_body["message"] = "Trainer has no classes available"
             return response_body, 400
+        classes_with_specializations = []
+        for class_trainer in trainer_classes:
+            class_specialization = Specializations.query.filter_by(id=class_trainer.training_type).first()
+            if class_specialization:
+                serialized_class = class_trainer.serialize()
+                serialized_class["specialization"] = class_specialization.serialize()
+                classes_with_specializations.append(serialized_class)
         response_body["message"] = "Trainer classes"
-        response_body["classes"] = [class_trainer.serialize() for class_trainer in trainer_classes]
+        response_body["classes"] = classes_with_specializations
         return response_body, 200
     if request.method == "POST":
         if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
@@ -1303,11 +1308,11 @@ def handle_user_class(id, class_id):
                 trainer = Trainers.query.filter_by(id=trainer_cls.trainer_id).first()
                 trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} if trainer else None
                 trainer_class_info = {'class_details': trainer_cls.serialize(),
-                                      'specialization': db.session.query(Specializations).filter_by(id=trainer_cls.training_type).first().serialize() if trainer_cls else None}
+                                      'specialization': db.session.query(Specializations).filter_by(id=trainer_cls.training_type).first().serialize() if trainer_cls else None,
+                                      'trainer' : trainer_details}
                 user_class_info = user_cls.serialize()
                 classes_with_trainers.append({'user_class': user_class_info,
-                                              'trainer_class': trainer_class_info,
-                                              'trainer' : trainer_details})
+                                              'trainer_class': trainer_class_info})
             response_body["message"] = "User unenrolled successfully"
             response_body["classes_available"] = classes_with_trainers
             return response_body, 200

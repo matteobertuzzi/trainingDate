@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Context } from '../store/appContext';
 import { Form, Button, Navbar, Nav, Col, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 const HomeFilters = ({ onFilterSubmit }) => {
     const { store, actions } = useContext(Context);
     const specializations = store.specializations;
+    const [activeButton, setActiveButton] = useState("filter")
     const [inputs, setInputs] = useState({
         trainingType: '',
         trainingLevel: '',
@@ -21,6 +24,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
             startDate: '',
             searchCity: ''
         });
+        setActiveButton('reset')
     };
 
     const handleChange = (event) => {
@@ -28,7 +32,6 @@ const HomeFilters = ({ onFilterSubmit }) => {
         const { name, value } = event.target;
         setInputs(prevInputs => {
             const updatedInputs = { ...prevInputs, [name]: value };
-            console.log(updatedInputs);
             return updatedInputs;
         });
     };
@@ -41,13 +44,21 @@ const HomeFilters = ({ onFilterSubmit }) => {
             startDate: '',
             searchCity: ''
         });
-        onFilterSubmit(event, inputs);
+        const emptyFilters = {
+            trainingType: '',
+            trainingLevel: '',
+            startDate: '',
+            searchCity: ''
+        };
+        onFilterSubmit(event, emptyFilters);
+        setActiveButton('filter')
     };
 
     return (
         <Navbar expand="lg" className="py-2">
             <Nav className="d-flex flex-column gap-2 ">
-                <Form onSubmit={handleFormSubmit} className="d-flex flex-column gap-3 align-items-between justify-content-center p-3">
+                <h2 className='d-flex text-center justify-content-center align-items-center d-none d-md-block'>Filtros</h2>
+                <Form onSubmit={handleFormSubmit} className="d-flex flex-column w-auto gap-3 align-items-between justify-content-center p-3">
                     <Form.Group controlId="searchCity">
                         <span>Busca por ciudad:</span>
                         <Form.Control
@@ -101,13 +112,17 @@ const HomeFilters = ({ onFilterSubmit }) => {
                             <option value='Advanced'>Avanzado</option>
                         </Form.Select>
                     </Form.Group>
-                    <div className="d-flex flex-column flex-sm-row align-items-center gap-3">
-                        <Button onClick={handleFormSubmit} variant="primary" type="submit" className="btn-sm">
-                            Filtrar clases
-                        </Button>
-                        <Button variant="danger" type="reset" onClick={handleFilterReset} className='btn-sm'>
-                            Restablecer filtros
-                        </Button>
+                    <div className="d-flex flex-column flex-sm-row align-items-center justify-content-center">
+                        {activeButton === 'filter' && (
+                            <Button onClick={handleFormSubmit} variant="primary" type="submit" className="btn-sm">
+                                Filtrar clases
+                            </Button>
+                        )}
+                        {activeButton === 'reset' && (
+                            <Button variant="danger" type="reset" onClick={handleFilterReset} className='btn-sm'>
+                                Restablecer filtros
+                            </Button>
+                        )}
                     </div>
                 </Form>
             </Nav>

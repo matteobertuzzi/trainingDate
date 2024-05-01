@@ -4,12 +4,15 @@ import { Context } from "../store/appContext";
 import { Container, Row, Col, Alert, Button, Card } from 'react-bootstrap/';
 import Loading from '../component/Loading.jsx';
 import { IoIosWarning } from "react-icons/io";
+import ClassModal from '../component/ClassModal.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeartCircleMinus, faCreditCard } from '@fortawesome/free-solid-svg-icons';
 
 export const Favourites = () => {
     const { id } = useParams()
     const { store, actions } = useContext(Context)
-    const { userClasses, currentUser, allClasses, favourites } = store
-    const { createCheckoutSession, deleteUserClass } = actions
+    const { userClasses, currentUser, favourites } = store
+    const { createCheckoutSession, deleteUserClass, setActiveNavTab } = actions
 
     if (!currentUser || !currentUser.user || !userClasses) {
         return <Loading />;
@@ -25,73 +28,74 @@ export const Favourites = () => {
     }
 
     return (
-        <Container className="min-vh-100">
-            <h1>Lista de favoritos</h1>
+        <Container className="min-vh-100 my-2">
             <Row className="d-flex justify-content-center align-items-center">
-                {userClasses && userClasses.length > 0 ? (
-                    userClasses.some(oneClass => oneClass.user_class.stripe_status === "Reject" || oneClass.user_class.stripe_status === "Cart") ? (
-                        userClasses.map((oneClass) => (
-                            <Col key={oneClass.trainer_class.class_details.id} className={`d-flex flex-row align-items-center justify-content-center mb-1 ${oneClass.user_class.stripe_status === "Paid" ? 'd-none' : ''}`} lg={3} md={5} sm={8} xs={10}>
-                                {favourites.includes(oneClass.user_class.class) && oneClass.user_class.stripe_status !== "Paid" ? (
-                                    <Card>
-                                        <Card.Header>
-                                            <span>{oneClass.trainer_class.class_details.id}</span>
-                                        </Card.Header>
-                                        <Card.Body className="d-flex flex-column justify-content-between align-items-start">
-                                            <Card.Text>
-                                                <strong>Ciudad: </strong>{oneClass.trainer_class.class_details.city}
-                                            </Card.Text>
-                                            <Card.Text >
-                                                <strong>Precio: </strong>{oneClass.trainer_class.class_details.price / 100}<span> €</span>
-                                            </Card.Text>
-                                            <Card.Text >
-                                                <strong>Inicio: </strong> {new Date(oneClass.trainer_class.class_details.start_date).toLocaleDateString()}
-                                            </Card.Text>
-                                            <Card.Text className="d-none d-md-block">
-                                                <strong>Capacidad: </strong>{oneClass.trainer_class.class_details.capacity}<span> personas</span>
-                                            </Card.Text>
-                                            <Card.Text >
-                                                <strong>Nivel entrenamiento: </strong>
-                                                {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                    oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                        oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
-                                                            ""}
-                                            </Card.Text>
-                                            <Card.Text >
-                                                <strong>Tipo entrenamiento: </strong>{oneClass.trainer_class.specialization.name}
-                                            </Card.Text>
-                                            {oneClass.trainer_class.class_details.additional_info && (
-                                                <Card.Text>
-                                                    <strong>Información adicional: </strong>{oneClass.trainer_class.class_details.additional_info}
-                                                </Card.Text>
-                                            )}
-                                        </Card.Body>
-                                        <Card.Footer>
-                                            <Button onClick={() => handleCheckout(oneClass.trainer_class.class_details.stripe_product_id, currentUser.user.stripe_customer_id, oneClass.trainer_class.class_details.id)}>Checkout</Button>
-                                            <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.trainer_class.class_details.id)} variant="danger">
-                                                <span>Quitar de favoritos</span>
-                                            </Button>
-                                        </Card.Footer>
-                                    </Card>
-                                ) : null}
+                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
+                    <div className="border rounded w-auto p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 15px rgba(255, 165, 0, 0.5)' }}>
+                        <h4>Lista de favoritos</h4>
+                    </div>
+                </Col>
+            </Row>
+            <Row className="d-flex justify-content-center mt-3 g-4">
+                {(userClasses && userClasses.some(oneClass => oneClass.user_class.stripe_status !== 'Paid')) ? (
+                    userClasses.map((oneClass) => (
+                        oneClass.user_class.stripe_status !== "Paid" ? (
+                            <Col key={oneClass.trainer_class.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-1" xl={3} lg={4} md={6} sm={8} xs={10}>
+                                <Card className="d-flex flex-column">
+                                    <div className="position-relative">
+                                        <Card.Img className="img-fluid w-100 position-relative" variant="top" src={oneClass.trainer_class.specialization.logo} />
+                                        <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
+                                            <span className="text-white">{oneClass.trainer_class.specialization.name.charAt(0).toUpperCase() + oneClass.trainer_class.specialization.name.slice(1)}</span>
+                                        </Card.ImgOverlay>
+                                    </div>
+                                    <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
+                                        <Card.Text className="m-0 p-0">
+                                            <strong>Ciudad: </strong>{oneClass.trainer_class.class_details.city}
+                                        </Card.Text>
+                                        <Card.Text className="m-0 p-0">
+                                            <strong>Precio: </strong>{oneClass.trainer_class.class_details.price / 100}<span> €</span>
+                                        </Card.Text>
+                                        <Card.Text className="m-0 p-0">
+                                            <strong>Inicio: </strong> {new Date(oneClass.trainer_class.class_details.start_date).toLocaleDateString()}
+                                        </Card.Text>
+                                        <Card.Text className="m-0 p-0">
+                                            <strong>Capacidad: </strong>{oneClass.trainer_class.class_details.capacity}<span> personas</span>
+                                        </Card.Text>
+                                        <Card.Text className="m-0 p-0">
+                                            <strong>Difficultad: </strong>
+                                            {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
+                                                oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
+                                                    oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                                        ""}
+                                        </Card.Text>
+                                    </Card.Body>
+                                    <Card.Footer className="d-flex w-100 flex-row align-items-center justify-content-evenly gap-1 p-3">
+                                        <ClassModal userClass={oneClass.trainer_class} />
+                                        <Button variant="btn btn-outline-success" className="d-flex align-items-center justify-content-center gap-1" onClick={() => handleCheckout(oneClass.trainer_class.class_details.stripe_product_id, currentUser.user.stripe_customer_id, oneClass.trainer_class.class_details.id)}>
+                                            <span>Checkout</span><FontAwesomeIcon icon={faCreditCard} />
+                                        </Button>
+                                        <Button onClick={async () => await deleteUserClass(currentUser.user.id, oneClass.trainer_class.class_details.id)} variant="btn btn-outline-danger">
+                                            <FontAwesomeIcon size="2x" icon={faHeartCircleMinus} />
+                                        </Button>
+                                    </Card.Footer>
+                                </Card>
                             </Col>
-                        ))
-                    ) : (
-                        <Col className="d-flex justify-content-center align-items-center m-4">
-                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
-                                <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases favoritas!</Alert.Heading>
-                                <div className="d-flex flex-column justify-content-center align-items-center">
-                                    <p>
-                                        Parece que aún no has seleccionado ninguna clase favorita.
-                                    </p>
-                                    <p>¡No te preocupes! Selecciona ahora tus clases favoritas!</p>
-                                    <Button as={Link} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
-                                </div>
-                            </Alert>
-                        </Col>
-                    )
-                ) : null}
+                        ) : null
+                    ))
+                ) : (
+                    <Col className="d-flex justify-content-center align-items-center m-4 w-auto">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center">
+                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases favoritas!</Alert.Heading>
+                            <div className="d-flex flex-column justify-content-center align-items-center">
+                                <p>Parece que aún no has seleccionado ninguna clase favorita.</p>
+                                <p>¡No te preocupes! Selecciona ahora tus clases favoritas!</p>
+                                <Button as={Link} onClick={() => setActiveNavTab("allClasses")} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
+                            </div>
+                        </Alert>
+                    </Col>
+                )}
             </Row>
         </Container>
+
     )
 }

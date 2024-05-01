@@ -37,7 +37,7 @@ export const CreateClass = () => {
         setInputs((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
     };
 
-    const isStartDateValid = () => {
+    const isDateValid = () => {
         return inputs.start_date <= inputs.end_date;
     };
 
@@ -46,7 +46,7 @@ export const CreateClass = () => {
         event.preventDefault();
 
         const form = event.currentTarget;
-        if (form.checkValidity() === false || !isStartDateValid()) {
+        if (form.checkValidity() === false || !isDateValid()) {
             event.stopPropagation();
         }
 
@@ -76,11 +76,13 @@ export const CreateClass = () => {
     }
 
     return (
-        <Container className="d-flex flex-column min-vh-100 mb-3">
-            <Row className='m-3 d-flex flex-row  gap-2'>
-                <Link to={"/"}>
-                    <RiArrowGoBackLine /> Volver atrás
-                </Link>
+        <Container className="d-flex flex-column min-vh-100 my-4">
+            <Row className="d-flex justify-content-center align-items-center">
+                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h3>Rellena el formulario para crear la clase!</h3>
+                    </div>
+                </Col>
             </Row>
             {currentUser.trainer ? (
                 <Form noValidate validated={validated} onSubmit={handleSubmit} className="w-100 w-md-75 border rounded p-3">
@@ -97,42 +99,12 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="postal_code">
                                     <Form.Label>Código Postal:</Form.Label>
-                                    <Form.Control
-                                        pattern="[0-9]{5}"
-                                        isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)}
-                                        required
-                                        type="number"
-                                        placeholder="Código Postal"
-                                        value={inputs.postal_code || ""}
-                                        onChange={handleChange}
-                                        name="postal_code"
-                                        autoComplete="postal_code" />
-                                    <Form.Control.Feedback type="invalid">Por favor, elige un código postal.</Form.Control.Feedback>
+                                    <Form.Control pattern="[0-9]{5}" isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)} required type="number" placeholder="Código Postal" value={inputs.postal_code || ""} onChange={handleChange} name="postal_code" autoComplete="postal_code" />
+                                    <Form.Control.Feedback type="invalid">Por favor, elige un código postal válido.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <Row className="mb-3">
-                            <Col md="6">
-                                <Form.Group controlId="streetName">
-                                    <Form.Label>Calle:</Form.Label>
-                                    <Form.Control required type="text" placeholder="Calle" value={inputs.street_name || ""} onChange={handleChange} name="street_name" />
-                                    <Form.Control.Feedback type="invalid">Por favor, elige un nombre de calle.</Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-                            <Col md="2">
-                                <Form.Group controlId="streetNumber">
-                                    <Form.Label>Número:</Form.Label>
-                                    <Form.Control required type="number" placeholder="Número" value={inputs.street_number || ""} onChange={handleChange} name="street_number" />
-                                    <Form.Control.Feedback type="invalid">Por favor, proporciona un número.</Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-                            <Col md="4">
-                                <Form.Group controlId="additionalInfo">
-                                    <Form.Label>Información adicional:</Form.Label>
-                                    <Form.Control type="textarea" placeholder="Bloque, puerta, piso" value={inputs.additional_info || ""} onChange={handleChange} name="additional_info" />
-                                </Form.Group>
-                            </Col>
-                        </Row>
+                        {/* Agrega más campos relacionados con la dirección aquí */}
                     </fieldset>
 
                     <fieldset>
@@ -141,14 +113,14 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="startClass">
                                     <Form.Label>Inicio clase:</Form.Label>
-                                    <Form.Control isInvalid={!isStartDateValid()} required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
+                                    <Form.Control isInvalid={!isDateValid()} required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6">
                                 <Form.Group controlId="endClass">
                                     <Form.Label>Fin de clase:</Form.Label>
-                                    <Form.Control required type="datetime-local" value={inputs.end_date || ""} onChange={handleChange} name="end_date" />
+                                    <Form.Control isInvalid={!isDateValid()} required type="datetime-local" value={inputs.end_date || ""} onChange={handleChange} name="end_date" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
@@ -230,8 +202,8 @@ export const CreateClass = () => {
                     </Row>
                     <Row className="mb-3">
                         <Col className="d-flex justify-content-end">
-                            <Button type="submit" className="me-2">Crear Clase</Button>
-                            <Link to="/" className="btn btn-danger">Volver a la Home</Link>
+                            <Button type="submit" variant="success" className="me-2">Crear Clase</Button>
+                            <Link to={`/trainers/${currentUser.trainer.id}/create/class`} className="btn btn-danger">Volver a mis clases</Link>
                         </Col>
                     </Row>
                     <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed top-0 start-50 translate-middle-x m-4" style={{ minWidth: '300px', backgroundColor: '#28a745', color: 'white' }}>

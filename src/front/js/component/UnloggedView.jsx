@@ -11,21 +11,23 @@ import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-i
 
 const UnloggedView = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);
+    const [registerModal, setRegisterModal] = useState(false)
 
     return (
         <Container fluid >
             <Row className="justify-content-center">
-                <Card className="text-white w-100" style={{ borderWidth: '0', height: '40vh', padding: '0%' }}>
+                <Card className="text-white w-100" style={{ borderWidth: '0', height: '500px', padding: '0%' }}>
                     <Card.Img
                         className="img-fluid w-100 rounded-0"
                         src={img1}
                         alt="Training Date"
                         style={{ opacity: '0.8', objectFit: 'cover', height: '100%', width: '100%' }}
                     />
-                    <Card.ImgOverlay className="d-flex align-items-center">
-                        <Container className="text-center text-md-left mx-md-3 my-3 col-12 col-md-6 col-lg-4" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black', padding: '5x', maxWidth: '400px' }}>
+                    <Card.ImgOverlay className="d-flex align-items-center justify-content-center rounded">
+                        <div className="text-center p-3 rounded" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black' }}>
                             <h2 className='mt-3' style={{ fontWeight: 'normal', fontSize: '32px', color: '#333333', textTransform: 'uppercase', letterSpacing: '1px', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)', lineHeight: '1' }}>¡Bienvenido a Training Date!</h2>
-                            <h5 className='my-2' style={{ fontWeight: 'normal' }}>Conecta con el Fitness</h5>
+                            <h5 className='my-2' style={{ fontWeight: 'normal' }}>Conéctate con el fitness y reserva tus clases con un solo clic.</h5>
+                            <h5>Conoce a entrenadores expertos y alcanza tus objetivos de bienestar!!</h5>
                             <Link to='/signup'>
                                 <Button variant='primary' className='my-3' style={{ height: '40px', width: '160px', fontWeight: 'normal', fontSize: '16px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
                                     onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
@@ -34,16 +36,21 @@ const UnloggedView = () => {
                                     Regístrate Ahora
                                 </Button>
                             </Link>
-                        </Container>
+                        </div>
                     </Card.ImgOverlay>
                 </Card>
             </Row>
-            <Row className='bg-light'>
-                <div className='d-flex justify-content-around align-items-center' style={{ width: '90%' }}>
-                    <h2 className='mt-3'>Descubre nuestras Clases</h2>
-                    <RegisterPopup />
-                </div>
-                <ClassesCarousel />
+            <Row className='bg-light pt-3'>
+                <Col className="d-flex flex-row justify-content-center align-items-center p-3 w-auto">
+                    <div className="border rounded p-4 d-flex flex-column flex-sm-row gap-3 justify-content-center w-auto align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h3>Descubre nuestras Clases</h3>
+                        <Button onClick={() => setRegisterModal(true)}>Ver todas las clases...</Button>
+                        <RegisterPopup show={registerModal} onHide={() => setRegisterModal(false)} />
+                    </div>
+                </Col>
+                <Col>
+                    <ClassesCarousel />
+                </Col>
             </Row>
             <Row>
                 <Carousel className='my-4'>
@@ -75,6 +82,9 @@ const UnloggedView = () => {
                     <Carousel.Item>
                         <Card className="h-100" style={{ width: '70vw', borderRadius: '10px', margin: '20px auto', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
                             <div className="row no-gutters">
+                                <div className="col-md-6">
+                                    <Card.Img variant="top" src={img2} style={{ height: '100%' }} />
+                                </div>
                                 <div className="col-md-6 d-flex align-items-center justify-content-center">
                                     <Card.Body className="text-center">
                                         <Card.Title style={{ fontSize: '28px', fontWeight: 'bold', color: '#333', textAlign: 'center' }}>Conecta con usuarios</Card.Title>
@@ -92,9 +102,6 @@ const UnloggedView = () => {
                                             </Link>
                                         </div>
                                     </Card.Body>
-                                </div>
-                                <div className="col-md-6">
-                                    <Card.Img variant="top" src={img2} />
                                 </div>
                             </div>
                         </Card>

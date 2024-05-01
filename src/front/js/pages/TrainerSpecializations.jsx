@@ -18,31 +18,30 @@ const TrainerSpecializations = () => {
     }
 
     return (
-        <Container className="min-vh-100 mt-4">
-            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
-                <Col>
-                    <Link to={"/"}>
-                        <RiArrowGoBackLine /> Volver atrás
-                    </Link>
+        <Container className="min-vh-100 my-4">
+            <Row className="d-flex justify-content-center align-items-center">
+                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h4 className="text-center mb-2">Mis Especializaciones</h4>
+                        <h5 className="text-center">Aquí puedes encontrar tus especializaciones confirmadas.</h5>
+                        <div className='d-flex flex-column flex-sm-row gap-2'>
+                            <Button variant="success" onClick={() => setModalShow(true)} className='w-auto'>
+                                Crea nueva especialización
+                            </Button>
+                            <Button as={Link} to={"/allSpecializations"}>Ver disciplinas disponibles</Button>
+                        </div>
+                    </div>
+                    <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
                 </Col>
-                {currentUser.specializations.length !== 0 && (
-                    <Col className='d-flex justify-content-end'>
-                        <Button onClick={() => setModalShow(true)} className='w-auto'>
-                            Crea nueva especialización
-                        </Button>
-                    </Col>
-                )}
-                <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />
             </Row>
-            <h1 className="text-center mb-4">Mis Especializaciones</h1>
             <Row xs={1} md={2} lg={3} className="d-flex justify-content-center g-4">
                 {currentUser.specializations.length !== 0 ? (
                     currentUser.specializations.map((trainerSpec) => (
                         <Col key={trainerSpec.specialization.id}>
                             <Card className="h-100">
-                                <Card.Img variant="top" src="https://ncan.us/wp-content/uploads/2020/04/personal-trainer-1024x653.jpg" />
+                                <Card.Img variant="top" src={trainerSpec.specialization.logo} />
                                 <Card.Body>
-                                    <Card.Title>{trainerSpec.specialization.name}</Card.Title>
+                                    <Card.Title>{trainerSpec.specialization.name.charAt(0).toUpperCase() + trainerSpec.specialization.name.slice(1)}</Card.Title>
                                     <Card.Text>{trainerSpec.specialization.description}</Card.Text>
                                 </Card.Body>
                             </Card>
