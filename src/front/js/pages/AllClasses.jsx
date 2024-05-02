@@ -58,7 +58,7 @@ export const AllClasses = () => {
                 matchesTrainingLevel = false;
             }
 
-            if ((maxPrice || minPrice) && (oneClass.class_details.price < minPrice || oneClass.class_details.price > maxPrice)) {
+            if ((maxPrice || minPrice) && ((oneClass.class_details.price / 100) < minPrice || (oneClass.class_details.price / 100) > maxPrice)) {
                 matchesPrice = false;
             }
             return matchesSearchCity && matchesStartDate && matchesTrainingType && matchesTrainingLevel && matchesPrice;

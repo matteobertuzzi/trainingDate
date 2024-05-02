@@ -16,7 +16,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
         startDate: '',
         searchCity: '',
         minPrice: 0,
-        maxPrice: 1000
+        maxPrice: 100
     });
 
     const handleFormSubmit = (event) => {
@@ -42,7 +42,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
             startDate: '',
             searchCity: '',
             minPrice: 0,
-            maxPrice: 1000
+            maxPrice: 100
         });
         const emptyFilters = {
             trainingType: '',
@@ -125,8 +125,8 @@ const HomeFilters = ({ onFilterSubmit }) => {
                         <Slider
                             range
                             min={0}
-                            max={1000}
-                            defaultValue={[0, 1000]}
+                            max={100}
+                            defaultValue={[0, 100]}
                             value={[inputs.minPrice, inputs.maxPrice]}
                             onChange={handleRangeChange}
                         />
