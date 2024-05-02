@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
-import { Container, Row, Col, Card, Image, Button, Alert, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Button, Alert, Pagination, Nav } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import { useParams, Link } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
@@ -15,12 +15,45 @@ export const UserClasses = () => {
     const { setActiveNavTab } = actions
     const { id } = useParams();
     const [activePage, setActivePage] = useState(1);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [pastClasses, setPastClasses] = useState([]);
+    const [futureClasses, setFutureClasses] = useState([]);
+    const [activeTab, setActiveTab] = useState("future");
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentDateTime(new Date());
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const past = [];
+        const future = [];
+        userClasses.forEach(classItem => {
+            const classStartTime = new Date(classItem.trainer_class.class_details.start_date);
+            if (classStartTime <= currentDateTime) {
+                past.push(classItem);
+            } else {
+                future.push(classItem);
+            };
+            setPastClasses(past);
+            setFutureClasses(future);
+        });
+    },[userClasses, currentDateTime])
+
 
     const paginate = (pageNumber) => setActivePage(pageNumber);
     const classesPerPage = 4;
     const indexOfLastClass = activePage * classesPerPage;
     const indexOfFirstClass = indexOfLastClass - classesPerPage;
-    const paginatedClasses = userClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").slice(indexOfFirstClass, indexOfLastClass);
+    const paginatedClasses = activeTab === "past" ? pastClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").slice(indexOfFirstClass, indexOfLastClass) : futureClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").slice(indexOfFirstClass, indexOfLastClass);
+    // const paginatedClasses = userClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").slice(indexOfFirstClass, indexOfLastClass);
+
+    const handleTabChange = (selectedKey) => {
+        setActiveTab(selectedKey);
+        setActivePage(1);
+    };
 
     if (!currentUser || !currentUser.user || !userClasses) {
         return <Loading />;
@@ -36,6 +69,42 @@ export const UserClasses = () => {
                     </div>
                 </Col>
             </Row>
+            <Nav className="d-flex flex-row justify-content-center align-items-center" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
+                <Nav.Item>
+                    <Nav.Link eventKey="past">Pasadas</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link eventKey="future">Futuras</Nav.Link>
+                </Nav.Item>
+            </Nav>
+            {activeTab === "past" && pastClasses.length === 0 && (
+                <Row className="d-flex justify-content-center align-items-center">
+                    <Col className="d-flex justify-content-center align-items-center m-4">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
+                                <IoIosWarning />No hay clases pasadas disponibles
+                            </Alert.Heading>
+                            <p>
+                                Parece que aún no tienes ninguna clase pasada.
+                            </p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+            {activeTab === "future" && futureClasses.length === 0 && (
+                <Row className="d-flex justify-content-center align-items-center">
+                    <Col className="d-flex justify-content-center align-items-center m-4">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
+                                <IoIosWarning />No hay clases futuras disponibles
+                            </Alert.Heading>
+                            <p>
+                                Parece que aún no tienes ninguna clase futura.
+                            </p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
             {userClasses.length > 0 ? (
                 <Row className="d-flex justify-content-center mt-3 g-4">
                     {paginatedClasses.map((classItem) => (
@@ -90,13 +159,25 @@ export const UserClasses = () => {
                     </div>
                 </Alert>
             )}
-            <Row>
+            <Row className="d-flex justify-content-center align-items-center">
                 <Pagination className="d-flex justify-content-center align-items-center mt-4">
-                    {Array.from({ length: Math.ceil(userClasses.filter(userClass => userClass.user_class.stripe_status === "Paid").length / classesPerPage) }).map((_, index) => (
-                        <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
-                            {index + 1}
-                        </Pagination.Item>
-                    ))}
+                    {activeTab === "past" ? (
+                        pastClasses.length > classesPerPage ? (
+                            Array.from({ length: Math.ceil(pastClasses.length / classesPerPage) }).map((_, index) => (
+                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))
+                        ) : null
+                    ) : (
+                        futureClasses.length > classesPerPage ? (
+                            Array.from({ length: Math.ceil(futureClasses.length / classesPerPage) }).map((_, index) => (
+                                <Pagination.Item key={index} active={index + 1 === activePage} onClick={() => paginate(index + 1)}>
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))
+                        ) : null
+                    )}
                 </Pagination>
             </Row>
         </Container>
