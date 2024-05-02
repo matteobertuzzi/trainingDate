@@ -13,6 +13,7 @@ import 'swiper/css/navigation';
 const TrainerInfo = () => {
     const { store, actions } = useContext(Context)
     const { logged } = store
+    const { setActiveNavTab } = actions
 
     return (
         <Container className="my-4">
@@ -99,7 +100,7 @@ const TrainerInfo = () => {
                     <Row className="mb-4 mt-2">
                         <Col className='d-flex justify-content-center'>
                             <Link to='/signupTrainer'>
-                                <Button variant="primary" size="lg">
+                                <Button onClick={() => setActiveNavTab("")} variant="primary" size="lg">
                                     Listo para empezar? Regístrate como entrenador ahora!
                                 </Button>
                             </Link>

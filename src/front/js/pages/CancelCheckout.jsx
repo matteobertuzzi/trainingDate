@@ -9,6 +9,7 @@ const CancelCheckout = () => {
     const { store, actions } = useContext(Context)
     const { getUserClasses } = actions
     const navigate = useNavigate()
+    const { setActiveNavTab } = actions
 
     return (
         <Container className="my-4 min-vh-100 d-flex flex-column justify-content-center align-items-center">
@@ -26,7 +27,7 @@ const CancelCheckout = () => {
             </Row>
             <Row className="mt-3">
                 <Col className="text-center">
-                    <Button as={Link} to="/" variant="primary">Volver a la tienda</Button>
+                    <Button onClick={() => setActiveNavTab("home")} as={Link} to="/" variant="primary">Volver a la tienda</Button>
                 </Col>
             </Row>
         </Container>

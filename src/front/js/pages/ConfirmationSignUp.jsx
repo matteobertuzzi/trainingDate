@@ -107,7 +107,7 @@ export const ConfirmationSignUp = () => {
         </Row>
         {loginError && <div className="text-danger mt-2">{loginError}</div>}
         <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <Button onClick={handleSubmit} variant="success" style={{ borderRadius: '20px', padding: '10px 20px' }}>Log In</Button>
+          <Button onClick={handleSubmit} variant="success" style={{ borderRadius: '20px', padding: '10px 20px' }}>LogIn</Button>
         </div>
       </Form>
     </Container>

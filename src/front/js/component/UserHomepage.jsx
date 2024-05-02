@@ -11,6 +11,7 @@ const UserHomepage = () => {
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
     const { store, actions } = useContext(Context)
     const { specializations } = store
+    const { setActiveNavTab } = actions
     const limitedSpecializations = specializations.slice(0, 3);
 
     return (
@@ -26,14 +27,14 @@ const UserHomepage = () => {
                     <div className="text-center p-3 rounded" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black' }}>
                         <h2 className="mb-4">¡Bienvenido, {currentUser.user.name}!</h2>
                         <p>Explora nuestras clases y encuentra la perfecta para ti.</p>
-                        <Button as={Link} to={`/allClasses`} variant="primary" className="mt-3">Ver clases disponibles</Button>
+                        <Button onClick={() => setActiveNavTab("allClasses")} as={Link} to={`/allClasses`} variant="primary" className="mt-3">Ver clases disponibles</Button>
                     </div>
                 </Card.ImgOverlay>
             </Card>
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                     <div className="border rounded w-auto gap-3 p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
-                        <h5 className='d-flex justify-content-center align-items-center mb-0'>Descubre todas las disciplinas disponibles</h5><Link to={"/allSpecializations"}>Ver mas...</Link>
+                        <h5 className='d-flex justify-content-center align-items-center mb-0'>Descubre todas las disciplinas disponibles</h5><Link onClick={() => setActiveNavTab("")} to={"/allSpecializations"}>Ver mas...</Link>
                     </div>
                 </Col>
             </Row>

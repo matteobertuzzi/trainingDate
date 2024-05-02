@@ -10,15 +10,14 @@ import personalTrainer from "/workspaces/sp54-final-project-g3/src/front/img/per
 const TrainerHomepage = () => {
     const { store, actions } = useContext(Context)
     const { trainerClasses } = store
+    const { setActiveNavTab } = actions
     const currentUser = JSON.parse(localStorage.getItem('availableAccount'));
     const [modalShow, setModalShow] = useState(false);
-    const [activeTab, setActiveTab] = useState(null);
     const [todayClasses, setTodayClasses] = useState([]);
     const todayDate = new Date();
 
     const handleDetails = async (classId) => {
         await actions.getTrainerClassDetails(classId)
-        setActiveTab("classes")
     }
 
     useEffect(() => {
@@ -44,10 +43,10 @@ const TrainerHomepage = () => {
                     <div className="text-center p-3 rounded" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black' }}>
                         <h3><strong>¡Hola, {currentUser.trainer.name}!</strong></h3>
                         <p>¿Estás listo para empezar a crear tus clases y ayudar a tus clientes a alcanzar sus objetivos?</p>
-                        <Button as={Link} to="/trainers/info" className='w-auto me-2'>
+                        <Button onClick={() => setActiveNavTab("")} as={Link} to="/trainers/info" className='w-auto me-2'>
                             Obtener más información
                         </Button>
-                        <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='my-3'>
+                        <Button onClick={() => setActiveNavTab("")} as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='my-3'>
                             Empezar ya!
                         </Button>
                     </div>

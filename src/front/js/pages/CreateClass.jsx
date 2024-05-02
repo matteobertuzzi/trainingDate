@@ -12,7 +12,7 @@ export const CreateClass = () => {
     const navigate = useNavigate()
     const { store, actions } = useContext(Context)
     const { currentUser } = store
-    const { postTrainerClasses, getTrainerClasses, getAllClasses } = actions
+    const { postTrainerClasses, getTrainerClasses, getAllClasses, setActiveNavTab } = actions
     const params = useParams()
     const { trainerId } = params
     const [error, setError] = useState(null);
@@ -104,9 +104,29 @@ export const CreateClass = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        {/* Agrega más campos relacionados con la dirección aquí */}
+                        <Row className="mb-3">
+                            <Col md="6">
+                                <Form.Group controlId="streetName">
+                                    <Form.Label>Calle:</Form.Label>
+                                    <Form.Control required type="text" placeholder="Calle" value={inputs.street_name || ""} onChange={handleChange} name="street_name" />
+                                    <Form.Control.Feedback type="invalid">Por favor, elige un nombre de calle.</Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                            <Col md="2">
+                                <Form.Group controlId="streetNumber">
+                                    <Form.Label>Número:</Form.Label>
+                                    <Form.Control required type="number" placeholder="Número" value={inputs.street_number || ""} onChange={handleChange} name="street_number" />
+                                    <Form.Control.Feedback type="invalid">Por favor, proporciona un número.</Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                            <Col md="4">
+                                <Form.Group controlId="additionalInfo">
+                                    <Form.Label>Información adicional:</Form.Label>
+                                    <Form.Control type="textarea" placeholder="Bloque, puerta, piso" value={inputs.additional_info || ""} onChange={handleChange} name="additional_info" />
+                                </Form.Group>
+                            </Col>
+                        </Row>
                     </fieldset>
-
                     <fieldset>
                         <legend>Horario</legend>
                         <Row className="mb-3">
@@ -126,7 +146,6 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-
                     <fieldset>
                         <legend>Tipo de clase</legend>
                         <Row className="mb-3">
@@ -171,7 +190,6 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-
                     <fieldset>
                         <legend>Capacidad y coste</legend>
                         <Row className="mb-3">
@@ -194,7 +212,6 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-
                     <Row className="mb-3">
                         <Col>
                             {error && <div className="text-danger mt-2">{error}</div>}
@@ -203,7 +220,7 @@ export const CreateClass = () => {
                     <Row className="mb-3">
                         <Col className="d-flex justify-content-end">
                             <Button type="submit" variant="success" className="me-2">Crear Clase</Button>
-                            <Link to={`/trainers/${currentUser.trainer.id}/create/class`} className="btn btn-danger">Volver a mis clases</Link>
+                            <Link onClick={() => setActiveNavTab("classes")} to={`/trainer/${currentUser.trainer.id}/classes`} className="btn btn-danger">Volver a mis clases</Link>
                         </Col>
                     </Row>
                     <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed top-0 start-50 translate-middle-x m-4" style={{ minWidth: '300px', backgroundColor: '#28a745', color: 'white' }}>

@@ -27,6 +27,7 @@ const injectContext = (PassedComponent) => {
       state.actions.getAvailableAccount();
       state.actions.getSpecializations();
       state.actions.getAllClasses();
+      state.actions.getActiveNavTab();
     }, []);
 
     return (

@@ -6,12 +6,11 @@ const getState = ({ getStore, getActions, setStore }) => {
       { title: "SECOND", background: "white", initial: "white" }],
       currentUser: null,
       logged: false,
-      activeNavTab: ["home"],
+      activeNavTab: "home",
       specializations: [],
       trainerSpecializations: [],
       trainerClasses: [],
       userInTrainerClass: [],
-      favourites: [],
       allClasses: [],
       userClasses: [],
       clientSecret: [],
@@ -28,6 +27,12 @@ const getState = ({ getStore, getActions, setStore }) => {
     actions: {
       setActiveNavTab: (tabName) => {
         setStore({ activeNavTab: tabName })
+        localStorage.setItem("activeNavTab", tabName)
+      },
+
+      getActiveNavTab: () => {
+        const storageActiveNavTab = localStorage.getItem("activeNavTab")
+        setStore({ activeNavTab: storageActiveNavTab })
       },
 
       setUser: (value) => {
@@ -44,8 +49,8 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("availableAccount");
           localStorage.removeItem("userClasses");
-          localStorage.removeItem("favourites")
           setStore({ currentUser: null })
+          getActions().setActiveNavTab("home")
         } else {
           setStore({ logged: value })
         }
@@ -133,9 +138,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
         setStore({ userClasses: data.results })
         localStorage.setItem('userClasses', JSON.stringify(data.results))
-        const favourites = data.results.map(userClass => userClass.user_class.class);
-        setStore({ favourites: favourites });
-        localStorage.setItem('favourites', JSON.stringify(favourites))
       },
 
       getTrainerClasses: async () => {
@@ -232,19 +234,9 @@ const getState = ({ getStore, getActions, setStore }) => {
             getActions().getTrainerSpecializations()
           } else if (data.results.role == "users") {
             getActions().getUserClasses()
-            getActions().getFavourites()
           }
           getActions().setLogged(true);
         }
-      },
-
-      getFavourites: () => {
-        const userClassesFromLocalStorage = localStorage.getItem('userClasses');
-        const parseUserClasses = JSON.parse(userClassesFromLocalStorage);
-        const favouritesFromLocalStorage = localStorage.getItem('favourites');
-        const parsedFavourites = JSON.parse(favouritesFromLocalStorage);
-        setStore({ favourites: parsedFavourites || [] });
-        setStore({ userClasses: parseUserClasses || [] })
       },
 
       loginUser: async (inputs, user_type) => {
@@ -268,14 +260,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 
         if (user_type == "trainers") {
           getActions().getTrainerClasses()
+          getActions().getTrainerSpecializations()
           localStorage.removeItem("userClasses")
           setStore({ userClasses: [] });
           window.location.href = `${process.env.FRONT_URL}`
+          getActions().setActiveNavTab("home")
         } else if (user_type == "users") {
           getActions().getUserClasses()
           localStorage.removeItem("trainerClasses")
+          localStorage.removeItem("trainerSpecializations")
           setStore({ trainerClasses: [] });
+          setStore({ trainerSpecializations: [] })
           window.location.href = `${process.env.FRONT_URL}`
+          getActions().setActiveNavTab("home")
         }
         return true
       },
@@ -519,10 +516,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         } else {
           setStore({ userClasses: data.user_classes });
         }
-        const favourites = data.user_classes.map(userClass => userClass);
-        setStore({ favourites: favourites });
         localStorage.setItem("userClasses", JSON.stringify(data.user_classes));
-        localStorage.setItem("favourites", JSON.stringify(favourites));
       },
 
       deleteUserClass: async (userId, classId) => {
@@ -551,10 +545,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json()
         console.log(data)
         setStore({ userClasses: data.classes_available });
-        const favourites = getStore().favourites.filter(id => id !== classId);
-        setStore({ favourites: favourites });
         localStorage.setItem("userClasses", JSON.stringify(data.classes_available));
-        localStorage.setItem("favourites", JSON.stringify(favourites));
       },
 
       deleteTrainerClass: async (trainerId, classId) => {

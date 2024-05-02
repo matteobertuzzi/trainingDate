@@ -327,7 +327,7 @@ export const MyNavbar = () => {
                       <BsFillPlusSquareFill />
                     </Dropdown.Toggle>
                     <Dropdown.Menu align="end" style={{ boxShadow: 'none', border: 'none' }}>
-                      <Dropdown.Item as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`}>
+                      <Dropdown.Item as={Link} onClick={() => handleTabClick('')} to={`/trainers/${currentUser.trainer.id}/create/class`}>
                         Crear nueva clase
                       </Dropdown.Item>
                       <Dropdown.Item onClick={() => setModalShow(true)} >
