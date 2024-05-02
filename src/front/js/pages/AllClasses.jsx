@@ -37,12 +37,13 @@ export const AllClasses = () => {
 
     const handleFilterSubmit = (event, filters) => {
         event.preventDefault();
-        const { searchCity, startDate, trainingType, trainingLevel } = filters;
+        const { searchCity, startDate, trainingType, trainingLevel, maxPrice, minPrice } = filters;
         let result = filteredClasses.filter((oneClass) => {
             let matchesSearchCity = true;
             let matchesStartDate = true;
             let matchesTrainingType = true;
             let matchesTrainingLevel = true;
+            let matchesPrice = true;
 
             if (searchCity && !oneClass.class_details.city.toLowerCase().includes(searchCity.toLowerCase())) {
                 matchesSearchCity = false;
@@ -57,10 +58,13 @@ export const AllClasses = () => {
                 matchesTrainingLevel = false;
             }
 
-            return matchesSearchCity && matchesStartDate && matchesTrainingType && matchesTrainingLevel;
+            if ((maxPrice || minPrice) && (oneClass.class_details.price < minPrice || oneClass.class_details.price > maxPrice)) {
+                matchesPrice = false;
+            }
+            return matchesSearchCity && matchesStartDate && matchesTrainingType && matchesTrainingLevel && matchesPrice;
         });
         console.log('Resultados filtrados:', result);
-        if (result.length == 0) {
+        if (!result || result.length == 0) {
             setShowAlert(true)
             setFilterClasses([]);
         } else {
