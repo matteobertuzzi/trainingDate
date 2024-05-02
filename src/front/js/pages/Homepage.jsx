@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import { Button, Accordion, Container, Card, Row, Col } from 'react-bootstrap';
 import { FaDumbbell } from 'react-icons/fa';
-import HomeClassList from '../component/HomeClassList.jsx';
-import HomeUserClasses from '../component/HomeUserClasses.jsx';
 import HomeFilters from '../component/HomeFilters.jsx';
 import TrainerHomepage from '../component/TrainerHomepage.jsx';
 import UnloggedView from '../component/UnloggedView.jsx';

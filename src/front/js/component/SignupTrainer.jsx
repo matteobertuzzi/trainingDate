@@ -11,7 +11,7 @@ function SignupTrainer() {
     const { store, actions } = useContext(Context)
     const [validated, setValidated] = useState(false);
     const navigate = useNavigate()
-    const { addTrainer } = actions
+    const { addTrainer, setActiveNavTab } = actions
     const [show, setShow] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const [inputs, setInputs] = useState({
@@ -79,13 +79,6 @@ function SignupTrainer() {
 
     return (
         <Container className="my-4">
-            <Row className='m-3 d-flex flex-row gap-2 justify-content-between align-items-center'>
-                <Col>
-                    <Link to={"/"}>
-                        <RiArrowGoBackLine /> Volver atrás
-                    </Link>
-                </Col>
-            </Row>
             <Card className="border-0 shadow-lg">
                 <Card.Body>
                     <Card.Title>Registro de Entrenador</Card.Title>
@@ -261,8 +254,9 @@ function SignupTrainer() {
                             </Form.Group>
                             {loginError && <div className="text-danger mt-2">{loginError}</div>}
                         </Row>
-                        <div className='text-center'>
-                            <Button type="submit">Registrarse</Button>
+                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-2'>
+                            <Button variant='success' type="submit">Registrarse</Button>
+                            <Button onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                         </div>
                     </Form>
                 </Card.Body>

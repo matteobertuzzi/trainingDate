@@ -12,6 +12,7 @@ import 'swiper/css/navigation';
 const UserInfo = () => {
     const { store, actions } = useContext(Context);
     const { logged } = store;
+    const { setActiveNavTab } = actions
 
     return (
         <Container className="my-4">
@@ -99,7 +100,7 @@ const UserInfo = () => {
                 {!logged && (
                     <Col md={10} className='d-flex justify-content-center align-items-center'>
                         <Link to='/signupUser'>
-                            <Button variant="primary" size="lg">
+                            <Button onClick={() => setActiveNavTab("")} variant="primary" size="lg">
                                 Listo para empezar? Regístrate como usuario ahora!
                             </Button>
                         </Link>

@@ -11,6 +11,7 @@ import { IoIosWarning } from "react-icons/io";
 const TrainerSpecializations = () => {
     const { store, actions } = useContext(Context)
     const { currentUser } = store
+    const { setActiveNavTab } = actions
     const [modalShow, setModalShow] = useState(false);
 
     if (!currentUser || !currentUser.specializations) {
@@ -28,7 +29,7 @@ const TrainerSpecializations = () => {
                             <Button variant="success" onClick={() => setModalShow(true)} className='w-auto'>
                                 Crea nueva especialización
                             </Button>
-                            <Button as={Link} to={"/allSpecializations"}>Ver disciplinas disponibles</Button>
+                            <Button onClick={() => setActiveNavTab("")} as={Link} to={"/allSpecializations"}>Ver disciplinas disponibles</Button>
                         </div>
                     </div>
                     <AddTrainerSpecialization show={modalShow} onHide={() => setModalShow(false)} />

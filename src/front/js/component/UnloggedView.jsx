@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from "react";
+import { Context } from "../store/appContext";
 import { Link } from 'react-router-dom';
 import { Button, Accordion, Container, Card, Row, Col, Carousel } from 'react-bootstrap';
 import { FaDumbbell } from 'react-icons/fa';
@@ -10,6 +11,8 @@ import img2 from "/workspaces/sp54-final-project-g3/src/front/img/trainer-image-
 import img3 from "/workspaces/sp54-final-project-g3/src/front/img/ulogged-view-img-user.jpg"
 
 const UnloggedView = () => {
+    const { store, actions } = useContext(Context)
+    const { setActiveNavTab } = actions
     const [loginModalShow, setLoginModalShow] = useState(false);
     const [registerModal, setRegisterModal] = useState(false)
 
@@ -29,7 +32,7 @@ const UnloggedView = () => {
                             <h5 className='my-2' style={{ fontWeight: 'normal' }}>Conéctate con el fitness y reserva tus clases con un solo clic.</h5>
                             <h5>Conoce a entrenadores expertos y alcanza tus objetivos de bienestar!!</h5>
                             <Link to='/signup'>
-                                <Button variant='primary' className='my-3' style={{ height: '40px', width: '160px', fontWeight: 'normal', fontSize: '16px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
+                                <Button onClick={() => setActiveNavTab("")} variant='primary' className='my-3' style={{ height: '40px', width: '160px', fontWeight: 'normal', fontSize: '16px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
                                     onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
                                     onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                                 >
@@ -67,7 +70,7 @@ const UnloggedView = () => {
                                             ¿Buscas clases personalizadas? Regístrate como usuario y encuentra entrenadores y clases que se adapten a tus necesidades.
                                         </Card.Text>
                                         <Link to='/signupUser' style={{ textAlign: 'center', display: 'block' }}>
-                                            <Button variant='primary' className='my-3' style={{ height: '50px', width: '200px', fontWeight: 'bold', fontSize: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
+                                            <Button onClick={() => setActiveNavTab("")} variant='primary' className='my-3' style={{ height: '50px', width: '200px', fontWeight: 'bold', fontSize: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
                                                 onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
                                                 onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                                             >
@@ -93,7 +96,7 @@ const UnloggedView = () => {
                                         </Card.Text>
                                         <div className='d-flex justify-content-center'>
                                             <Link to='/signupTrainer'>
-                                                <Button variant='primary' className='my-3' style={{ height: '50px', width: '200px', fontWeight: 'bold', fontSize: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
+                                                <Button onClick={() => setActiveNavTab("")} variant='primary' className='my-3' style={{ height: '50px', width: '200px', fontWeight: 'bold', fontSize: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
                                                     onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
                                                     onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                                                 >
