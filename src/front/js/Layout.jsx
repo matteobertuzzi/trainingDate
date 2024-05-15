@@ -6,6 +6,10 @@ import ScrollToTop from "./component/scrollToTop.js";
 import { BackendURL } from "./component/BackendURL.jsx";
 import { MyNavbar } from "./component/Navbar.jsx";
 import Footer from "./component/Footer.jsx";
+import TrainerHomepage from "./component/TrainerHomepage.jsx";
+import SignupUser from "./component/SignupUser.jsx";
+import SignupTrainer from "./component/SignupTrainer.jsx";
+
 // Import custom pages
 import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
 import { InvalidToken } from "./pages/InvalidToken.jsx";
@@ -13,14 +17,10 @@ import { CreateClass } from "./pages/CreateClass.jsx";
 import { SessionEnd } from "./pages/SessionEnd.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
-import { AddTrainerSpecialization } from "./pages/AddTrainerSpecialization.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Signup from "./pages/Signup.jsx";
 import { TrainerClasses } from "./pages/TrainerClasses.jsx";
 import { UserClasses } from "./pages/UserClasses.jsx";
-import TrainerHomepage from "./component/TrainerHomepage.jsx";
-import SignupUser from "./component/SignupUser.jsx";
-import SignupTrainer from "./component/SignupTrainer.jsx";
 import SuccessCheckout from "./pages/SuccessCheckout.jsx";
 import CancelCheckout from "./pages/CancelCheckout.jsx";
 import AccountAlreadyConfirmedPage from "./pages/AccountAlreadyConfirmed.jsx";
@@ -60,7 +60,6 @@ const Layout = () => {
                         <Route element={<SessionEnd />} path="/end/session" />
                         <Route element={<InvalidToken />} path="/invalid" />
                         <Route element={<Homepage />} path='/' />
-                        <Route element={<AddTrainerSpecialization />} path='/trainer/:trainerId/add/specialization' />
                         <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
                         <Route element={<UserProfile />} path='/user/:id/profile' />
                         <Route element={<Signup />} path='/signup' />

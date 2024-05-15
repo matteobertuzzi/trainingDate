@@ -31,7 +31,7 @@ const UserHomepage = () => {
                     </div>
                 </Card.ImgOverlay>
             </Card>
-            <Row className="d-flex justify-content-center align-items-center">
+            <Row className="d-flex justify-content-center align-items-center mx-0">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                     <div className="border rounded w-auto gap-3 p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h5 className='d-flex justify-content-center align-items-center mb-0'>Descubre todas las disciplinas disponibles</h5><Link onClick={() => setActiveNavTab("")} to={"/allSpecializations"}>Ver mas...</Link>

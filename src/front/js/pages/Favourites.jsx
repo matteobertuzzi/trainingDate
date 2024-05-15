@@ -28,10 +28,10 @@ export const Favourites = () => {
     }
 
     return (
-        <Container className="min-vh-100 my-2">
+        <Container className="min-vh-100 my-4">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
-                    <div className="border rounded w-auto p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: 'inset 0 0 15px rgba(255, 165, 0, 0.5)' }}>
+                <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h4>Lista de favoritos</h4>
                     </div>
                 </Col>
@@ -63,9 +63,9 @@ export const Favourites = () => {
                                         </Card.Text>
                                         <Card.Text className="m-0 p-0">
                                             <strong>Difficultad: </strong>
-                                            {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                    oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                            {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="text-danger p-1">Avanzado</span> :
+                                                oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="text-warning p-1">Intermedio</span> :
+                                                    oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="text-success p-1">Principiante</span> :
                                                         ""}
                                         </Card.Text>
                                     </Card.Body>

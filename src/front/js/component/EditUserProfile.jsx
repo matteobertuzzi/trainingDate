@@ -42,7 +42,7 @@ function EditUserProfile({ user, onChangeSubmit }) {
             </Button>
 
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header className="bg-primary text-white" closeButton>
                     <Modal.Title>Actualizar Usuario</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='p-4'>
@@ -82,11 +82,11 @@ function EditUserProfile({ user, onChangeSubmit }) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" type="submit" onClick={handleSubmit}>
-                        Actualizar datos de usuario
-                    </Button>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cerrar
+                    </Button>
+                    <Button variant="success" type="submit" onClick={handleSubmit}>
+                        Actualizar
                     </Button>
                 </Modal.Footer>
             </Modal>

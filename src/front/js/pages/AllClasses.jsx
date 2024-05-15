@@ -37,12 +37,13 @@ export const AllClasses = () => {
 
     const handleFilterSubmit = (event, filters) => {
         event.preventDefault();
-        const { searchCity, startDate, trainingType, trainingLevel } = filters;
+        const { searchCity, startDate, trainingType, trainingLevel, maxPrice, minPrice } = filters;
         let result = filteredClasses.filter((oneClass) => {
             let matchesSearchCity = true;
             let matchesStartDate = true;
             let matchesTrainingType = true;
             let matchesTrainingLevel = true;
+            let matchesPrice = true;
 
             if (searchCity && !oneClass.class_details.city.toLowerCase().includes(searchCity.toLowerCase())) {
                 matchesSearchCity = false;
@@ -57,10 +58,13 @@ export const AllClasses = () => {
                 matchesTrainingLevel = false;
             }
 
-            return matchesSearchCity && matchesStartDate && matchesTrainingType && matchesTrainingLevel;
+            if ((maxPrice || minPrice) && ((oneClass.class_details.price / 100) < minPrice || (oneClass.class_details.price / 100) > maxPrice)) {
+                matchesPrice = false;
+            }
+            return matchesSearchCity && matchesStartDate && matchesTrainingType && matchesTrainingLevel && matchesPrice;
         });
         console.log('Resultados filtrados:', result);
-        if (result.length == 0) {
+        if (!result || result.length == 0) {
             setShowAlert(true)
             setFilterClasses([]);
         } else {
@@ -103,7 +107,7 @@ export const AllClasses = () => {
                     <HomeFilters onFilterSubmit={handleFilterSubmit} />
                 </Offcanvas.Body>
             </Navbar.Offcanvas>
-            <Container className="min-vh-100 my-2">
+            <Container className="min-vh-100 my-4">
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                         <div className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
@@ -113,8 +117,8 @@ export const AllClasses = () => {
                 </Row>
                 <Row className="d-flex justify-content-center align-items-center mt-2">
                     {showAlert || filteredClasses.length == 0 || (filterClasses.length != 0 && filteredClasses.length == 0) ? (
-                        <Col className="d-flex justify-content-center align-items-center m-4 w-100">
-                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-50">
+                        <Col className="d-flex justify-content-center align-items-center m-4 w-auto">
+                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center">
                                 <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
                                     <IoIosWarning />No hay clases disponibles
                                 </Alert.Heading>
@@ -148,9 +152,9 @@ export const AllClasses = () => {
                                                 </Card.Text>
                                                 <Card.Text className="m-0 p-0">
                                                     <strong>Difficultad: </strong>
-                                                    {oneClass.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                        oneClass.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                            oneClass.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                                    {oneClass.class_details.training_level === "Advanced" ? <span className="text-danger p-1">Avanzado</span> :
+                                                        oneClass.class_details.training_level === "Intermediate" ? <span className="text-warning p-1">Intermedio</span> :
+                                                            oneClass.class_details.training_level === "Beginner" ? <span className="text-success p-1 ">Principiante</span> :
                                                                 ""}
                                                 </Card.Text>
                                             </Card.Body>

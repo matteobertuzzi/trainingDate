@@ -16,15 +16,15 @@ const TrainerInfo = () => {
     const { setActiveNavTab } = actions
 
     return (
-        <Container className="my-4">
+        <Container className="mt-4 mb-5">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h3 className="mb-4">Información del entrenador</h3>
-                        <p>
+                        <p className='m-0'>
                             En esta sección, te proporcionaremos información detallada sobre cómo funciona nuestra aplicación para entrenadores.
                         </p>
-                        <p>Aquí tienes una descripción detallada paso a paso:</p>
+                        <p className='m-0'>Aquí tienes una descripción detallada paso a paso:</p>
                     </div>
                 </Col>
             </Row>

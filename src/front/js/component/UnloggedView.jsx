@@ -43,7 +43,7 @@ const UnloggedView = () => {
                     </Card.ImgOverlay>
                 </Card>
             </Row>
-            <Row className='bg-light pt-3'>
+            <Row className='bg-light pt-3 d-flex flex-column'>
                 <Col className="d-flex flex-row justify-content-center align-items-center p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-column flex-sm-row gap-3 justify-content-center w-auto align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h3>Descubre nuestras Clases</h3>

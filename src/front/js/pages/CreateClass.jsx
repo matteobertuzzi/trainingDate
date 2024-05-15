@@ -53,7 +53,7 @@ export const CreateClass = () => {
         setValidated(true);
         const postClass = await postTrainerClasses(inputs);
         if (!postClass) {
-            setError('Los datos son incompletos o incorrectos. Por favor, inténtalo de nuevo.');
+            setError('Ya existe una clase programada para esa hora!');
         } else {
             handleShowToast()
             setError(null);
@@ -77,7 +77,7 @@ export const CreateClass = () => {
 
     return (
         <Container className="d-flex flex-column min-vh-100 my-4">
-            <Row className="d-flex justify-content-center align-items-center">
+            <Row className="d-flex justify-content-center align-items-center mb-2">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h3>Rellena el formulario para crear la clase!</h3>
@@ -85,18 +85,18 @@ export const CreateClass = () => {
                 </Col>
             </Row>
             {currentUser.trainer ? (
-                <Form noValidate validated={validated} onSubmit={handleSubmit} className="w-100 w-md-75 border rounded p-3">
-                    <fieldset>
+                <Form noValidate validated={validated} onSubmit={handleSubmit} className="w-100 w-md-75 border rounded p-4">
+                    <fieldset className="mb-3">
                         <legend>Dirección</legend>
-                        <Row className="mb-3">
-                            <Col md="6">
+                        <Row>
+                            <Col md="6" className="mb-2">
                                 <Form.Group controlId="city">
                                     <Form.Label>Ciudad:</Form.Label>
                                     <Form.Control required type="text" placeholder="Ciudad" value={inputs.city || ""} onChange={handleChange} name="city" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una ciudad.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
-                            <Col md="6">
+                            <Col md="6" className="mb-2">
                                 <Form.Group controlId="postal_code">
                                     <Form.Label>Código Postal:</Form.Label>
                                     <Form.Control pattern="[0-9]{5}" isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)} required type="number" placeholder="Código Postal" value={inputs.postal_code || ""} onChange={handleChange} name="postal_code" autoComplete="postal_code" />
@@ -104,7 +104,7 @@ export const CreateClass = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <Row className="mb-3">
+                        <Row>
                             <Col md="6">
                                 <Form.Group controlId="streetName">
                                     <Form.Label>Calle:</Form.Label>
@@ -112,7 +112,7 @@ export const CreateClass = () => {
                                     <Form.Control.Feedback type="invalid">Por favor, elige un nombre de calle.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
-                            <Col md="2">
+                            <Col md="2" className="mb-2">
                                 <Form.Group controlId="streetNumber">
                                     <Form.Label>Número:</Form.Label>
                                     <Form.Control required type="number" placeholder="Número" value={inputs.street_number || ""} onChange={handleChange} name="street_number" />
@@ -127,7 +127,7 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-                    <fieldset>
+                    <fieldset className="mb-3">
                         <legend>Horario</legend>
                         <Row className="mb-3">
                             <Col md="6">
@@ -146,13 +146,13 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-                    <fieldset>
+                    <fieldset className="mb-3">
                         <legend>Tipo de clase</legend>
                         <Row className="mb-3">
-                            <Col md="6">
+                            <Col md="6" className="mb-2">
                                 <Form.Group controlId="training_level">
                                     <Form.Label>Nivel de entrenamiento:</Form.Label>
-                                    <div className="d-flex flex-row gap-3">
+                                    <div className="d-flex flex-lg-row flex-column gap-3">
                                         <Form.Check type="radio" id="beginner" name="training_level" label="Principiante" value="Beginner" onChange={handleChange} required />
                                         <Form.Check type="radio" id="intermediate" name="training_level" label="Intermedio" value="Intermediate" onChange={handleChange} required />
                                         <Form.Check type="radio" id="advanced" name="training_level" label="Avanzado" value="Advanced" onChange={handleChange} required />
@@ -160,13 +160,13 @@ export const CreateClass = () => {
                                     <Form.Control.Feedback type="invalid">Por favor, elige un nivel de entrenamiento.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
-                            <Col md="6">
+                            <Col md="4">
                                 <Form.Group controlId="training_type">
                                     <Form.Label>Tipo de entrenamiento:</Form.Label>
                                     <Form.Select onChange={handleChange} name='training_type' value={inputs.training_type} required className="w-auto">
                                         <option value="" disabled hidden>Selecciona un tipo de entrenamiento</option>
                                         {currentUser.specializations.map((specialization) => (
-                                            <option key={specialization.trainers_specialization.specialization} value={specialization.trainers_specialization.specialization}>{specialization.specialization.name}</option>
+                                            <option key={specialization.trainers_specialization.specialization} value={specialization.trainers_specialization.specialization}>{specialization.specialization.name.charAt(0).toUpperCase() + specialization.specialization.name.slice(1)}</option>
                                         ))}
                                     </Form.Select>
                                     <Form.Control.Feedback type="invalid">Por favor, elige un tipo de especialización.</Form.Control.Feedback>
@@ -190,7 +190,7 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-                    <fieldset>
+                    <fieldset className="mb-3">
                         <legend>Capacidad y coste</legend>
                         <Row className="mb-3">
                             <Col md="6">
@@ -220,7 +220,7 @@ export const CreateClass = () => {
                     <Row className="mb-3">
                         <Col className="d-flex justify-content-end">
                             <Button type="submit" variant="success" className="me-2">Crear Clase</Button>
-                            <Link onClick={() => setActiveNavTab("classes")} to={`/trainer/${currentUser.trainer.id}/classes`} className="btn btn-danger">Volver a mis clases</Link>
+                            <Button as={Link} onClick={() => setActiveNavTab("classes")} to={`/trainer/${currentUser.trainer.id}/classes`} variant="outline-secondary">Volver a mis clases</Button>
                         </Col>
                     </Row>
                     <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed top-0 start-50 translate-middle-x m-4" style={{ minWidth: '300px', backgroundColor: '#28a745', color: 'white' }}>

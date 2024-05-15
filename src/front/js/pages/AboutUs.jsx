@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const AboutUs = () => {
     return (
-        <Container className="my-4 min-vh-100">
+        <Container className="mt-4 mb-5 min-vh-100">
             <Row>
                 <Col className="d-flex flex-row justify-content-center align-items-center">
                     <h1 className="display-4">Training <FontAwesomeIcon icon={faDumbbell} />  Date</h1>

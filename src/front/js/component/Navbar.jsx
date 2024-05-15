@@ -180,7 +180,7 @@ export const MyNavbar = () => {
                     </Badge>
                   </div>
                 </Nav.Item>
-                <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
+                <Navbar.Toggle className="d-md-none ms-2" aria-controls="offcanvasNavbar-expand-sm" />
               </Nav>
             </Col>
             <Navbar.Offcanvas
@@ -386,7 +386,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link as={Link} to={`/trainer/${currentUser.trainer.id}/add/specialization`}>
+                  <Nav.Link onClick={() => setModalShow(true)}>
                     Crear nueva especializacion
                   </Nav.Link>
                 </Nav>
@@ -520,7 +520,7 @@ export const MyNavbar = () => {
               </Nav>
             </Col>
             <Col className="d-flex flex-row gap-2 justify-content-end align-items-center">
-              <Button variant="success" onClick={() => setLoginModalShow(true)} className="d-flex flex-row gap-2 align-items-center justify-content-center">
+              <Button variant="success" onClick={() => setLoginModalShow(true)} className="d-flex flex-row gap-2 align-items-center justify-content-center border">
                 <span>Login</span><FontAwesomeIcon icon={faRightToBracket} />
               </Button>
               <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
@@ -548,7 +548,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link onClick={() => handleTabClick('profile')} as={Link} to={"/"}>
+                  <Nav.Link onClick={() => handleTabClick('profile')} as={Link} to={"/aboutUs"}>
                     Sobre nosotros
                   </Nav.Link>
                 </Nav>

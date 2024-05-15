@@ -3,6 +3,8 @@ import { Context } from '../store/appContext';
 import { Form, Button, Navbar, Nav, Col, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 const HomeFilters = ({ onFilterSubmit }) => {
     const { store, actions } = useContext(Context);
@@ -12,18 +14,14 @@ const HomeFilters = ({ onFilterSubmit }) => {
         trainingType: '',
         trainingLevel: '',
         startDate: '',
-        searchCity: ''
+        searchCity: '',
+        minPrice: 0,
+        maxPrice: 100
     });
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
         onFilterSubmit(event, inputs);
-        setInputs({
-            trainingType: '',
-            trainingLevel: '',
-            startDate: '',
-            searchCity: ''
-        });
         setActiveButton('reset')
     };
 
@@ -42,17 +40,27 @@ const HomeFilters = ({ onFilterSubmit }) => {
             trainingType: '',
             trainingLevel: '',
             startDate: '',
-            searchCity: ''
+            searchCity: '',
+            minPrice: 0,
+            maxPrice: 100
         });
         const emptyFilters = {
             trainingType: '',
             trainingLevel: '',
             startDate: '',
-            searchCity: ''
+            searchCity: '',
         };
         onFilterSubmit(event, emptyFilters);
         setActiveButton('filter')
     };
+
+    const handleRangeChange = (value) => {
+        setInputs(prevInputs => {
+            const updatedInputs = { ...prevInputs, minPrice: value[0], maxPrice: value[1] };
+            return updatedInputs;
+        });
+    };
+
 
     return (
         <Navbar expand="lg" className="py-2">
@@ -112,9 +120,24 @@ const HomeFilters = ({ onFilterSubmit }) => {
                             <option value='Advanced'>Avanzado</option>
                         </Form.Select>
                     </Form.Group>
+                    <Form.Group>
+                        <span>Rango de precio:</span>
+                        <Slider
+                            range
+                            min={0}
+                            max={100}
+                            defaultValue={[0, 100]}
+                            value={[inputs.minPrice, inputs.maxPrice]}
+                            onChange={handleRangeChange}
+                        />
+                        <div className="d-flex justify-content-between">
+                            <span>{inputs.minPrice}€</span>
+                            <span>{inputs.maxPrice}€</span>
+                        </div>
+                    </Form.Group>
                     <div className="d-flex flex-column flex-sm-row align-items-center justify-content-center">
                         {activeButton === 'filter' && (
-                            <Button onClick={handleFormSubmit} variant="primary" type="submit" className="btn-sm">
+                            <Button onClick={handleFormSubmit} variant="success" type="submit" className="btn-sm">
                                 Filtrar clases
                             </Button>
                         )}

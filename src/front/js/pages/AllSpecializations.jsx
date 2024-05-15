@@ -12,16 +12,16 @@ export const AllSpecializations = () => {
     const [spec, setSpec] = useState();
 
     return (
-        <Container className="my-4">
+        <Container className="mt-4 mb-5">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col className="d-flex justify-content-center align-items-center p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
-                        <h4>Descubre todas las disciplinas disponibles!</h4>
-                        <h6>Haz clic en el botón para ver más detalles</h6>
+                        <h3>Descubre todas las disciplinas disponibles!</h3>
+                        <p className='m-0'>Haz clic en el botón para ver más detalles</p>
                     </div>
                 </Col>
             </Row>
-            <Row className="d-flex flex-row justify-content-center gap-2">
+            <Row className="d-flex flex-row justify-content-center gap-2 mt-3">
                 {specializations.map((specialization) => (
                     <Col key={specialization.id} xs={10} sm={6} md={6} lg={3}>
                         <Card className="h-100">
