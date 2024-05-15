@@ -6,12 +6,12 @@ function RegisterPopup({ show, onHide }) {
 
     return (
         <Modal show={show} centered='true' onHide={onHide}>
-            <Modal.Header closeButton>
+            <Modal.Header className='bg-primary text-white' closeButton>
                 <Modal.Title>Descubre más Clases</Modal.Title>
             </Modal.Header>
             <Modal.Body>¡Apúntate ahora y descubre todas nuestras clases de entrenamiento disponibles!</Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
+                <Button variant="outline-secondary" onClick={onHide}>
                     Cerrar
                 </Button>
                 <Link to='/signup'>

@@ -74,7 +74,7 @@ export const LogInModal = ({ show, onHide }) => {
                     <Nav.Link eventKey="trainers" onClick={() => handleTabChange("trainers")}><span className={`${activeTab === "trainers" ? "text-white" : ""}`}>Entrenador</span><FaCheckCircle className={`ms-2 ${activeTab === "trainers" ? "text-white" : "d-none"}`} /></Nav.Link>
                 </Nav.Item>
             </Nav>
-            <Modal.Body className="w-100 d-flex flex-column p-20">
+            <Modal.Body className="w-100 d-flex flex-column p-3">
                 <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit}>
                     <Row className="g-3">
                         <Form.Group as={Col} md="12" controlId="validationEmail">

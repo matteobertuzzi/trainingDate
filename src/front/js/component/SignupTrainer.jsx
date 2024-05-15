@@ -41,12 +41,12 @@ function SignupTrainer() {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            setValidated(true)
             const validateLog = await addTrainer(inputs);
             if (!validateLog) {
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
 
             } else {
+                setValidated(true)
                 setShow(true)
                 setInputs({
                     name: '',
@@ -84,8 +84,8 @@ function SignupTrainer() {
                     <Card.Title>Registro de Entrenador</Card.Title>
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="name">
-                                <Form.Label>Nombre</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="name">
+                                <Form.Label><span>Nombre</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     required
                                     type="text"
@@ -98,8 +98,8 @@ function SignupTrainer() {
                                     Por favor, ingresa el nombre.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="last-name">
-                                <Form.Label>Apellido</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="last-name">
+                                <Form.Label><span>Apellido</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     required
                                     type="text"
@@ -129,8 +129,8 @@ function SignupTrainer() {
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="6" controlId="email">
-                                <Form.Label>Correo electrónico</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="6" controlId="email">
+                                <Form.Label><span>Correo electrónico</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="email"
                                     placeholder="Correo electrónico"
@@ -143,8 +143,8 @@ function SignupTrainer() {
                                     Por favor, proporciona un correo electrónico válido.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="password">
-                                <Form.Label>Contraseña</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="3" controlId="password">
+                                <Form.Label><span>Contraseña</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="password"
                                     placeholder="Contraseña"
@@ -160,7 +160,7 @@ function SignupTrainer() {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="phone-number">
-                                <Form.Label>Número de teléfono</Form.Label>
+                                <Form.Label><span>Número de teléfono</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="number"
                                     placeholder="Número de teléfono"
@@ -176,8 +176,8 @@ function SignupTrainer() {
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="city">
-                                <Form.Label>Ciudad</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="city">
+                                <Form.Label><span>Ciudad</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Ciudad"
@@ -189,8 +189,8 @@ function SignupTrainer() {
                                     Por favor, ingresa la ciudad.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="postal-code">
-                                <Form.Label>Código postal</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="postal-code">
+                                <Form.Label><span>Código postal</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="number"
                                     placeholder="Código postal"
@@ -205,7 +205,7 @@ function SignupTrainer() {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="bank_iban">
-                                <Form.Label>IBAN</Form.Label>
+                                <Form.Label><span>IBAN</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="IBAN bancario"
@@ -222,7 +222,7 @@ function SignupTrainer() {
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="website_url">
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="website_url">
                                 <Form.Label>URL del sitio web</Form.Label>
                                 <Form.Control
                                     type="url"
@@ -232,7 +232,7 @@ function SignupTrainer() {
                                     name='website_url'
                                 />
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="instagram_url">
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="instagram_url">
                                 <Form.Label>URL de Instagram</Form.Label>
                                 <Form.Control
                                     type="url"
@@ -254,8 +254,11 @@ function SignupTrainer() {
                             </Form.Group>
                             {loginError && <div className="text-danger mt-2">{loginError}</div>}
                         </Row>
-                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-3'>
-                            <Button variant='danger' onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
+                        <div>
+                            <p className="text-danger m-0">* Campo requerido</p>
+                        </div>
+                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-4'>
+                            <Button variant='outline-secondary' onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                             <Button variant='success' type="submit">Registrarse</Button>
                         </div>
                     </Form>
@@ -268,7 +271,7 @@ function SignupTrainer() {
                 variant="success"
                 className='d-flex flex-column justify-content-center align-items-center'
             >
-                <Modal.Header className='d-flex justify-content-center align-items-center'>
+                <Modal.Header className='d-flex justify-content-center align-items-center bg-primary text-white'>
                     <Modal.Title id="contained-modal-title-vcenter">
                         Registracion exitosa!
                     </Modal.Title>
@@ -279,7 +282,7 @@ function SignupTrainer() {
                     </p>
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center align-items-center'>
-                    <Button onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Volver a la Home
                     </Button>
                 </Modal.Footer>

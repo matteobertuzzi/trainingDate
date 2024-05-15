@@ -3,6 +3,8 @@ import { Container, Row, Col, Alert, Button, Form, FloatingLabel, Nav } from 're
 import { Context } from "../store/appContext";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 
 export const ConfirmationSignUp = () => {
@@ -12,10 +14,15 @@ export const ConfirmationSignUp = () => {
   const [validated, setValidated] = useState(false)
   const [activeTab, setActiveTab] = useState("");
   const [loginError, setLoginError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [inputs, setInputs] = useState({
     email: "",
     password: ""
   })
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleTabChange = (key) => {
     setActiveTab(key);
@@ -60,7 +67,7 @@ export const ConfirmationSignUp = () => {
           </Alert>
         </Col>
       </Row>
-      <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit} style={{ border: '1px solid #ccc', borderRadius: '10px', padding: '20px' }}>
+      <Form className="my-2 p-3 w-auto border rounded" noValidate validated={validated} onSubmit={handleSubmit} style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
         <div className="text-center mb-3">
           <h4>Elige cómo deseas iniciar sesión:</h4>
         </div>
@@ -99,6 +106,12 @@ export const ConfirmationSignUp = () => {
                 onChange={handleChange}
                 name="password"
               />
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                className="position-absolute end-0 top-50 translate-middle-y"
+                style={{ cursor: 'pointer', zIndex: 1, marginRight: '15px' }}
+                onClick={togglePasswordVisibility}
+              />
               <Form.Control.Feedback type="invalid">
                 Please insert a correct password.
               </Form.Control.Feedback>
@@ -106,8 +119,8 @@ export const ConfirmationSignUp = () => {
           </Form.Group>
         </Row>
         {loginError && <div className="text-danger mt-2">{loginError}</div>}
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <Button onClick={handleSubmit} variant="success" style={{ borderRadius: '20px', padding: '10px 20px' }}>LogIn</Button>
+        <div className="text-center mt-3">
+          <Button onClick={handleSubmit} variant="success">Iniciar sesión</Button>
         </div>
       </Form>
     </Container>

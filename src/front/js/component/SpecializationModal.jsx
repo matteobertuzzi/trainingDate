@@ -3,8 +3,6 @@ import { Context } from '../store/appContext';
 import { Modal, Button } from 'react-bootstrap/';
 
 export const SpecializationModal = ({ show, onHide, specialization }) => {
-    const { store, actions } = useContext(Context)
-    const { specializations } = store
 
     return (
         <Modal className="p-2" centered show={show}>

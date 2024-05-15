@@ -660,15 +660,13 @@ def handle_signup_trainer():
                                 padding: 0;
                             }}
                             .container {{
-                                display: flex,
-                                flex-direction: column,
-                                align-items: center,
                                 max-width: 600px;
                                 margin: auto;
                                 padding: 20px;
                                 background-color: #fff;
                                 border-radius: 8px;
                                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                text-align: center;
                             }}
                             .message {{
                                 margin-bottom: 20px;
@@ -690,10 +688,11 @@ def handle_signup_trainer():
                     <body>
                         <div class="container">
                             <div class="message">
-                                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>
+                                <p>¡Bienvenido! Gracias por registrarte.</p>
+                                <p>Por favor, sigue este enlace para activar tu cuenta:</p>
                             </div>
                             <div class="action">
-                                <a class="button" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                                <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para confirmar!</a>
                             </div>
                         </div>
                     </body>

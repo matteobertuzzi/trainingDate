@@ -94,7 +94,7 @@ class Administrators(db.Model):
 class Specializations(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String(100), unique=True, nullable=False)
-        description = db.Column(db.String(250))
+        description = db.Column(db.String())
         logo_url = db.Column(db.String())
 
         def __repr__(self):

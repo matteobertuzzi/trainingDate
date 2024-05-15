@@ -36,11 +36,11 @@ function SignupUser() {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            setValidated(true);
             const validateLog = await addUser(inputs);
             if (!validateLog) {
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
             } else {
+                setValidated(true)
                 setShow(true)
                 setInputs({
                     name: '',
@@ -72,8 +72,8 @@ function SignupUser() {
                     <Card.Title>Registro de Usuario</Card.Title>
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="user-name">
-                                <Form.Label>Nombre</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="user-name">
+                                <Form.Label><span>Nombre</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     required
                                     type="text"
@@ -86,8 +86,8 @@ function SignupUser() {
                                     Por favor, ingresa el nombre.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="user-last-name">
-                                <Form.Label>Apellido</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="4" controlId="user-last-name">
+                                <Form.Label><span>Apellido</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     required
                                     type="text"
@@ -114,8 +114,8 @@ function SignupUser() {
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="6" controlId="user-email">
-                                <Form.Label>Correo electrónico</Form.Label>
+                            <Form.Group className="mb-2" as={Col} md="6" controlId="user-email">
+                                <Form.Label><span>Correo electrónico</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="email"
                                     placeholder="Correo electrónico"
@@ -128,8 +128,8 @@ function SignupUser() {
                                     Por favor, proporciona un correo electrónico válido.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group className='d-flex flex-column' as={Col} md="3" controlId="user-password">
-                                <Form.Label>Contraseña</Form.Label>
+                            <Form.Group className='d-flex flex-column mb-2' as={Col} md="3" controlId="user-password">
+                                <Form.Label><span>Contraseña</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="password"
                                     placeholder="Contraseña"
@@ -145,7 +145,7 @@ function SignupUser() {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="user-phone-number">
-                                <Form.Label>Número de teléfono</Form.Label>
+                                <Form.Label><span>Número de teléfono</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="number"
                                     placeholder="Número de teléfono"
@@ -161,8 +161,8 @@ function SignupUser() {
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="6" controlId="user-city">
-                                <Form.Label>Ciudad</Form.Label>
+                            <Form.Group as={Col} md="6" controlId="user-city" className="mb-2">
+                                <Form.Label><span>Ciudad</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Ciudad"
@@ -175,7 +175,7 @@ function SignupUser() {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="6" controlId="user-postal-code">
-                                <Form.Label>Código postal</Form.Label>
+                                <Form.Label><span>Código postal</span><span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="number"
                                     placeholder="Código postal"
@@ -191,8 +191,11 @@ function SignupUser() {
                             </Form.Group>
                             {loginError && <div className="text-danger mt-2">{loginError}</div>}
                         </Row>
-                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-3'>
-                            <Button variant="danger" onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
+                        <div>
+                            <p className="text-danger m-0">* Campo requerido</p>
+                        </div>
+                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-4'>
+                            <Button variant="outline-secondary" onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                             <Button variant='success' type="submit">Registrarse</Button>
                         </div>
                     </Form>
@@ -205,7 +208,7 @@ function SignupUser() {
                 variant="success"
                 className='d-flex flex-column justify-content-center align-items-center'
             >
-                <Modal.Header className='d-flex justify-content-center align-items-center'>
+                <Modal.Header className='d-flex justify-content-center align-items-center bg-primary text-white'>
                     <Modal.Title id="contained-modal-title-vcenter">
                         Registracion exitosa!
                     </Modal.Title>
@@ -216,7 +219,7 @@ function SignupUser() {
                     </p>
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center align-items-center'>
-                    <Button onClick={handleClose}>
+                    <Button variant='outline-secondary' onClick={handleClose}>
                         Volver a la Home
                     </Button>
                 </Modal.Footer>

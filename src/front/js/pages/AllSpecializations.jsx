@@ -23,7 +23,7 @@ export const AllSpecializations = () => {
             </Row>
             <Row className="d-flex flex-row justify-content-center gap-2 mt-3">
                 {specializations.map((specialization) => (
-                    <Col key={specialization.id} xs={10} sm={6} md={6} lg={3}>
+                    <Col key={specialization.id} xs={10} sm={6} md={4} lg={3} className="mb-3">
                         <Card className="h-100">
                             <Card.Img className="img-fluid" src={specialization.logo} style={{ height: '200px', objectFit: 'cover', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }} />
                             <Card.Body className="d-flex justify-content-center align-items-center">

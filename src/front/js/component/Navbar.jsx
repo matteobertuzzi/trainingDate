@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Dropdown, DropdownButton, NavDropdown, Container, Row, Col, Tab, Tabs, Navbar, Button, Nav, Offcanvas, Badge } from 'react-bootstrap';
+import { Dropdown, DropdownButton, NavDropdown, Container, Col, Navbar, Button, Nav, Offcanvas, Badge } from 'react-bootstrap';
 import { LogInModal } from "./LogInModal.jsx";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";

@@ -1,10 +1,15 @@
-import React from 'react';
-import { Tab, Tabs, Container, Row, Col } from 'react-bootstrap/';
+import React, { useState } from 'react';
+import { Container, Row, Col, Nav } from 'react-bootstrap/';
 import SignupTrainer from '../component/SignupTrainer.jsx';
 import SignupUser from '../component/SignupUser.jsx';
 
 
 const Signup = () => {
+    const [activeTab, setActiveTab] = useState("users");
+
+    const handleTabChange = (selectedKey) => {
+        setActiveTab(selectedKey);
+    };
 
     return (
         <Container className="min-vh-100 my-4">
@@ -16,19 +21,24 @@ const Signup = () => {
                     </div>
                 </Col>
             </Row>
-            <Tabs
-                defaultActiveKey="users"
-                id="signup"
-                className="mb-3"
-                fill
-            >
-                <Tab eventKey="users" title="Users">
-                    <SignupUser />
-                </Tab>
-                <Tab eventKey="trainers" title="Trainers">
-                    <SignupTrainer />
-                </Tab>
-            </Tabs>
+            <Nav className="d-flex flex-row justify-content-center align-items-center mt-2" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
+                <Nav.Item>
+                    <Nav.Link className={`${activeTab === "users" ? "bg-primary text-white " : ""}`} eventKey="users">
+                        <span>Usuario</span>
+                    </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link className={`${activeTab === "trainers" ? "bg-primary text-white " : ""}`} eventKey="trainers">
+                        <span>Entrenador</span>
+                    </Nav.Link>
+                </Nav.Item>
+            </Nav>
+            {activeTab === "users" && (
+                <SignupUser />
+            )}
+            {activeTab === "trainers" && (
+                <SignupTrainer />
+            )}
         </Container>
     )
 }

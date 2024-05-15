@@ -65,9 +65,6 @@ const TrainerSpecializations = () => {
                         <p className="text-center">
                             Parece que aún no has creado ninguna especialización. ¡No te preocupes! Puedes empezar ahora mismo creando tu primera. Envía tu certificado para que sea aprobado por los administradores. Recibirás un correo para informarte del resultado de la revisión.
                         </p>
-                        <Button onClick={() => setModalShow(true)} className="mt-3">
-                            Crea una nueva especialización
-                        </Button>
                     </Alert>
                 )}
             </Row>
