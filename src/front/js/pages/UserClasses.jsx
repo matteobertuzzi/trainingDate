@@ -40,7 +40,7 @@ export const UserClasses = () => {
             setPastClasses(past);
             setFutureClasses(future);
         });
-    },[userClasses, currentDateTime])
+    }, [userClasses, currentDateTime])
 
 
     const paginate = (pageNumber) => setActivePage(pageNumber);
@@ -60,7 +60,7 @@ export const UserClasses = () => {
     }
 
     return (
-        <Container className="min-vh-100 my-2 d-flex flex-column gap-2">
+        <Container className="my-4">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
@@ -69,12 +69,16 @@ export const UserClasses = () => {
                     </div>
                 </Col>
             </Row>
-            <Nav className="d-flex flex-row justify-content-center align-items-center" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
+            <Nav className="d-flex flex-row justify-content-center align-items-center mt-2" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
                 <Nav.Item>
-                    <Nav.Link eventKey="past">Pasadas</Nav.Link>
+                    <Nav.Link className={`${activeTab == "past" ? "bg-primary text-white " : ""}`} eventKey="past">
+                        <span>Pasadas</span>
+                    </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="future">Futuras</Nav.Link>
+                    <Nav.Link className={`${activeTab == "future" ? "bg-primary text-white " : ""}`} eventKey="future">
+                        <span>Futuras</span>
+                    </Nav.Link>
                 </Nav.Item>
             </Nav>
             {activeTab === "past" && pastClasses.length === 0 && (
@@ -109,7 +113,7 @@ export const UserClasses = () => {
                 <Row className="d-flex justify-content-center mt-3 g-4">
                     {paginatedClasses.map((classItem) => (
                         <Col className="d-flex flex-column align-items-center justify-content-evenly" key={classItem.user_class.id} xl={3} lg={4} md={6} sm={8} xs={10}>
-                            <Card border="primary">
+                            <Card>
                                 <div className="position-relative">
                                     <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
                                     <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>

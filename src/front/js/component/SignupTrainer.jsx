@@ -78,7 +78,7 @@ function SignupTrainer() {
     }
 
     return (
-        <Container className="my-4">
+        <Container className="my-5">
             <Card className="border-0 shadow-lg">
                 <Card.Body>
                     <Card.Title>Registro de Entrenador</Card.Title>
@@ -254,9 +254,9 @@ function SignupTrainer() {
                             </Form.Group>
                             {loginError && <div className="text-danger mt-2">{loginError}</div>}
                         </Row>
-                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-2'>
+                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-3'>
+                            <Button variant='danger' onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                             <Button variant='success' type="submit">Registrarse</Button>
-                            <Button onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                         </div>
                     </Form>
                 </Card.Body>

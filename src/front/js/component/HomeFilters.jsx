@@ -137,7 +137,7 @@ const HomeFilters = ({ onFilterSubmit }) => {
                     </Form.Group>
                     <div className="d-flex flex-column flex-sm-row align-items-center justify-content-center">
                         {activeButton === 'filter' && (
-                            <Button onClick={handleFormSubmit} variant="primary" type="submit" className="btn-sm">
+                            <Button onClick={handleFormSubmit} variant="success" type="submit" className="btn-sm">
                                 Filtrar clases
                             </Button>
                         )}

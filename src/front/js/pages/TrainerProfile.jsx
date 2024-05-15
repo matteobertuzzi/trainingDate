@@ -50,8 +50,8 @@ const TrainerProfile = () => {
     }
 
     return (
-        <Container className="my-4">
-            <Row className='d-flex flex-row justify-content-center align-items-center'>
+        <Container className="mb-5 mt-4">
+            <Row className='d-flex flex-row justify-content-center align-items-center mb-2'>
                 <Col className='d-flex flex-row justify-content-center align-items-center'>
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h4 className="text-center mb-2">Perfil</h4>

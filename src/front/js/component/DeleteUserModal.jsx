@@ -22,16 +22,16 @@ const DeletelUser = ({ show, onHide }) => {
     }
     return (
         <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
+            <Modal.Header className="bg-primary text-white" closeButton>
                 <Modal.Title>Confirmación de cancelación</Modal.Title>
             </Modal.Header>
             <Modal.Body className='d-flex flex-column gap-2'>
-                <p>¿Estás seguro de que deseas cancelar?</p>
+                <p className='m-0'>¿Estás seguro de que deseas cancelar tu perfil?</p>
                 {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>Cancelar</Button>
-                <Button variant="primary" onClick={handleClick}>Confirmar cancelación</Button>
+            <Modal.Footer> 
+                <Button variant="outline-secondary" onClick={onHide}>Cerrar</Button>
+                <Button variant="danger" onClick={handleClick}>Confirmar</Button>
             </Modal.Footer>
         </Modal>
     );

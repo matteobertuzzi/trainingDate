@@ -191,9 +191,9 @@ function SignupUser() {
                             </Form.Group>
                             {loginError && <div className="text-danger mt-2">{loginError}</div>}
                         </Row>
-                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-2'>
+                        <div className='d-flex flex-row gap-2 justify-content-center align-items-center mt-3'>
+                            <Button variant="danger" onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                             <Button variant='success' type="submit">Registrarse</Button>
-                            <Button onClick={() => setActiveNavTab("home")} as={Link} to={"/"}>Volver a la Home</Button>
                         </div>
                     </Form>
                 </Card.Body>

@@ -54,7 +54,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
 
     return (
         <Modal show={show} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header className="d-flex flex-row justify-content-between align-items-center bg-primary">
+            <Modal.Header className="d-flex flex-row justify-content-between align-items-center bg-primary text-white">
                 <h4 className="d-felx align-items-center justify-content-center">Especialización</h4>
                 <CloseButton onClick={onHide} />
             </Modal.Header>
@@ -100,7 +100,7 @@ export const AddTrainerSpecialization = ({ show, onHide }) => {
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSubmit} variant="success">Crear</Button>
-                <Button variant="danger" onClick={onHide}>Cerrar</Button>
+                <Button variant="outline-secondary" onClick={onHide}>Cerrar</Button>
             </Modal.Footer>
         </Modal>
 

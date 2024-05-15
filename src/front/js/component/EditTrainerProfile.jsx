@@ -46,7 +46,7 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                 Editar perfil del entrenador
             </Button>
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header className="bg-primary text-white" closeButton>
                     <Modal.Title>Actualizar Entrenador</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -114,11 +114,11 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cerrar
                     </Button>
-                    <Button variant="primary" type="submit" className='my-3' onClick={handleSubmit}>
-                        Actualizar datos del entrenador
+                    <Button variant="success" type="submit" className='my-3' onClick={handleSubmit}>
+                        Actualizar
                     </Button>
                 </Modal.Footer>
             </Modal>

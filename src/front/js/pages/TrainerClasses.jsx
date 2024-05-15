@@ -15,7 +15,7 @@ export const TrainerClasses = () => {
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const [pastClasses, setPastClasses] = useState([]);
     const [futureClasses, setFutureClasses] = useState([]);
-    const [activeTab, setActiveTab] = useState("past");
+    const [activeTab, setActiveTab] = useState("future");
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
     const [showModal, setShowModal] = useState(false);
@@ -78,23 +78,27 @@ export const TrainerClasses = () => {
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h4 className="text-center mb-2">Mis Clases</h4>
                         <h5 className="text-center">Aquí puedes encontrar un registro de tus clases pasadas y futuras.</h5>
-                        <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='w-auto'>
+                        <Button variant="success" as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='w-auto'>
                             Crea nueva clase
                         </Button>
                     </div>
                 </Col>
             </Row>
-            <Nav className="d-flex flex-row justify-content-center align-items-center" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
+            <Nav className="d-flex flex-row justify-content-center align-items-center mt-2" variant="tabs" activeKey={activeTab} onSelect={handleTabChange}>
                 <Nav.Item>
-                    <Nav.Link eventKey="past">Pasadas</Nav.Link>
+                    <Nav.Link className={`${activeTab == "past" ? "bg-primary text-white " : ""}`} eventKey="past">
+                        <span>Pasadas</span>
+                    </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="future">Futuras</Nav.Link>
+                    <Nav.Link className={`${activeTab == "future" ? "bg-primary text-white " : ""}`} eventKey="future">
+                        <span>Futuras</span>
+                    </Nav.Link>
                 </Nav.Item>
             </Nav>
 
             {activeTab === "past" && pastClasses.length === 0 && (
-                <Row className="d-flex justify-content-center align-items-center">
+                <Row className="d-flex justify-content-center align-items-center mt-3">
                     <Col className="d-flex justify-content-center align-items-center m-4">
                         <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
                             <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
@@ -108,7 +112,7 @@ export const TrainerClasses = () => {
                 </Row>
             )}
             {activeTab === "future" && futureClasses.length === 0 && (
-                <Row className="d-flex justify-content-center align-items-center">
+                <Row className="d-flex justify-content-center align-items-center mt-3">
                     <Col className="d-flex justify-content-center align-items-center m-4">
                         <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
                             <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
@@ -124,7 +128,7 @@ export const TrainerClasses = () => {
             <Row className="d-flex justify-content-center mt-3 g-4">
                 {currentClasses.map(classItem => (
                     <Col className="d-flex flex-column align-items-center justify-content-evenly" key={classItem.id} xl={3} lg={4} md={6} sm={8} xs={10}>
-                        <Card border="primary" style={{ width: '18rem' }}>
+                        <Card style={{ width: '18rem' }}>
                             <div className="position-relative">
                                 <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.specialization.logo} />
                                 <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
@@ -147,7 +151,7 @@ export const TrainerClasses = () => {
                             </Card.Body>
                             <Card.Footer className="d-flex flex-row align-items-center justify-content-evenly gap-2 p-3">
                                 <Button className={classItem.capacity === 0 || activeTab === "past" ? "d-none" : ""} variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Cancelar</Button>
-                                <Button as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
+                                <Button variant="info" as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
                             </Card.Footer>
                         </Card>
                     </Col>

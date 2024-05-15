@@ -56,7 +56,7 @@ function MapModal({ addressData }) {
 
     return (
         <>
-            <Button onClick={handleShow} variant="btn btn-outline-primary">
+            <Button onClick={handleShow} variant="outline-primary">
                 <FontAwesomeIcon size="2x" icon={faLocationDot} />
             </Button>
 
@@ -67,7 +67,7 @@ function MapModal({ addressData }) {
                 keyboard={false}
                 centered
             >
-                <Modal.Header closeButton>
+                <Modal.Header className="bg-primary text-white" closeButton>
                     <Modal.Title>Dirección de la clase</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -82,7 +82,7 @@ function MapModal({ addressData }) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center'>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cerrar
                     </Button>
                 </Modal.Footer>

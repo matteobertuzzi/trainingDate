@@ -22,7 +22,7 @@ function ClassModal({ userClass }) {
                 backdrop="static"
                 keyboard={false}
             >
-                <Modal.Header closeButton>
+                <Modal.Header className="bg-primary text-white" closeButton>
                     <Modal.Title>Detalles clase: {userClass.class_details.class_name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -67,7 +67,7 @@ function ClassModal({ userClass }) {
                     </ListGroup >
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center'>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cerrar
                     </Button>
                 </Modal.Footer>

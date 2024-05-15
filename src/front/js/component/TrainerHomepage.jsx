@@ -31,7 +31,7 @@ const TrainerHomepage = () => {
     }, [trainerClasses]);
 
     return (
-        <Container className='p-0 w-100 min-vh-100 d-flex flex-column gap-3' fluid>
+        <Container className='p-0 w-100 min-vh-100 mb-4 d-flex flex-column gap-3' fluid>
             <Card className="text-white w-100" style={{ borderWidth: '0' }}>
                 <Card.Img
                     className="d-block w-100 rounded-0"
@@ -43,7 +43,7 @@ const TrainerHomepage = () => {
                     <div className="text-center p-3 rounded" style={{ opacity: '0.9', backgroundColor: 'white', color: 'black' }}>
                         <h3><strong>¡Hola, {currentUser.trainer.name}!</strong></h3>
                         <p>¿Estás listo para empezar a crear tus clases y ayudar a tus clientes a alcanzar sus objetivos?</p>
-                        <Button onClick={() => setActiveNavTab("")} as={Link} to="/trainers/info" className='w-auto me-2'>
+                        <Button variant="info" onClick={() => setActiveNavTab("")} as={Link} to="/trainers/info" className='w-auto me-2'>
                             Obtener más información
                         </Button>
                         <Button onClick={() => setActiveNavTab("")} as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} className='my-3'>
@@ -52,10 +52,10 @@ const TrainerHomepage = () => {
                     </div>
                 </Card.ImgOverlay>
             </Card>
-            <Row className='d-flex justify-content-center align-items-center m-0'>
-                <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
+            <Row className='d-flex justify-content-center align-items-center my-2 mx-0'>
+                <Col lg={8} md={10} sm={8} xs={8} className="w-auto">
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
-                        <h3>¡Tu agenda de entrenamiento diaria!</h3>
+                        <h3 className='m-0'>¡Tu agenda de entrenamiento diaria!</h3>
                     </div>
                 </Col>
             </Row>
@@ -102,7 +102,7 @@ const TrainerHomepage = () => {
                         <Alert className='d-flex flex-column justify-content-center align-items-center mx-2' variant="danger">
                             <Alert.Heading className='mb-3'>¡Atención!</Alert.Heading>
                             <p className="text-center">No hay clases programadas para este día. ¿Por qué no creas una nueva clase ahora mismo?</p>
-                            <Button as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} variant="outline-danger" className="mt-3">Crear nueva clase</Button>
+                            <Button onClick={() => setActiveNavTab("")} as={Link} to={`/trainers/${currentUser.trainer.id}/create/class`} variant="success" className="mt-3">Crear nueva clase</Button>
                         </Alert>
                     </Col>
                 </Row>

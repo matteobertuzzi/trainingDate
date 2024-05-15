@@ -15,15 +15,15 @@ const UserInfo = () => {
     const { setActiveNavTab } = actions
 
     return (
-        <Container className="my-4">
+        <Container className="mt-4 mb-5">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                     <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
                         <h3 className="mb-4">Información del usuario</h3>
-                        <p>
+                        <p className='m-0'>
                             En esta página, se explica cómo inscribirse como usuario y las funciones que puedes utilizar en nuestra aplicación.
                         </p>
-                        <p>
+                        <p  className='m-0'>
                             Encontrarás todo lo necesario para comenzar a disfrutar de nuestra plataforma al máximo.
                         </p>
                     </div>

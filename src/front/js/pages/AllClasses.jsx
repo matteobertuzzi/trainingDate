@@ -107,7 +107,7 @@ export const AllClasses = () => {
                     <HomeFilters onFilterSubmit={handleFilterSubmit} />
                 </Offcanvas.Body>
             </Navbar.Offcanvas>
-            <Container className="min-vh-100 my-2">
+            <Container className="min-vh-100 my-4">
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col lg={8} md={10} sm={10} xs={10} className="d-flex flex-column p-3 w-auto">
                         <div className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
