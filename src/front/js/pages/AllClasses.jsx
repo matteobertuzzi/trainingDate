@@ -117,8 +117,8 @@ export const AllClasses = () => {
                 </Row>
                 <Row className="d-flex justify-content-center align-items-center mt-2">
                     {showAlert || filteredClasses.length == 0 || (filterClasses.length != 0 && filteredClasses.length == 0) ? (
-                        <Col className="d-flex justify-content-center align-items-center m-4 w-100">
-                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-50">
+                        <Col className="d-flex justify-content-center align-items-center m-4 w-auto">
+                            <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center">
                                 <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
                                     <IoIosWarning />No hay clases disponibles
                                 </Alert.Heading>
@@ -152,9 +152,9 @@ export const AllClasses = () => {
                                                 </Card.Text>
                                                 <Card.Text className="m-0 p-0">
                                                     <strong>Difficultad: </strong>
-                                                    {oneClass.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                        oneClass.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                            oneClass.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                                    {oneClass.class_details.training_level === "Advanced" ? <span className="text-danger p-1">Avanzado</span> :
+                                                        oneClass.class_details.training_level === "Intermediate" ? <span className="text-warning p-1">Intermedio</span> :
+                                                            oneClass.class_details.training_level === "Beginner" ? <span className="text-success p-1 ">Principiante</span> :
                                                                 ""}
                                                 </Card.Text>
                                             </Card.Body>

@@ -63,9 +63,9 @@ export const Favourites = () => {
                                         </Card.Text>
                                         <Card.Text className="m-0 p-0">
                                             <strong>Difficultad: </strong>
-                                            {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                                oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                    oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                            {oneClass.trainer_class.class_details.training_level === "Advanced" ? <span className="text-danger p-1">Avanzado</span> :
+                                                oneClass.trainer_class.class_details.training_level === "Intermediate" ? <span className="text-warning p-1">Intermedio</span> :
+                                                    oneClass.trainer_class.class_details.training_level === "Beginner" ? <span className="text-success p-1">Principiante</span> :
                                                         ""}
                                         </Card.Text>
                                     </Card.Body>

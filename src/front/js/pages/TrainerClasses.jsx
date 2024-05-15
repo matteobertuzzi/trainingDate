@@ -138,9 +138,9 @@ export const TrainerClasses = () => {
                                 <Card.Text className="m-0 p-0"><strong>Capacidad: </strong>{classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
                                 <Card.Text>
                                     <strong>Difficultad: </strong>{
-                                        classItem.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                            classItem.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                                classItem.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                        classItem.training_level === "Advanced" ? <span className="text-danger p-1">Avanzado</span> :
+                                            classItem.training_level === "Intermediate" ? <span className="text-warning p-1">Intermedio</span> :
+                                                classItem.training_level === "Beginner" ? <span className="text-success p-1">Principiante</span> :
                                                     classItem.training_level
                                     }
                                 </Card.Text>

@@ -180,7 +180,7 @@ export const MyNavbar = () => {
                     </Badge>
                   </div>
                 </Nav.Item>
-                <Navbar.Toggle className="d-md-none" aria-controls="offcanvasNavbar-expand-sm" />
+                <Navbar.Toggle className="d-md-none ms-2" aria-controls="offcanvasNavbar-expand-sm" />
               </Nav>
             </Col>
             <Navbar.Offcanvas
@@ -548,7 +548,7 @@ export const MyNavbar = () => {
                   </Nav.Link>
                 </Nav>
                 <Nav>
-                  <Nav.Link onClick={() => handleTabClick('profile')} as={Link} to={"/"}>
+                  <Nav.Link onClick={() => handleTabClick('profile')} as={Link} to={"/aboutUs"}>
                     Sobre nosotros
                   </Nav.Link>
                 </Nav>
