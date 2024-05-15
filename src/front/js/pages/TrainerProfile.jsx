@@ -30,7 +30,7 @@ const TrainerProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `trainers/${trainerId}`;
+        const url = process.env.BACKEND_URL + `trainers/${trainerId}`; 
         const response = await fetch(url, options);
         if (!response.ok) {
             console.error(`Error al obtener los datos del entrenador. Estado HTTP ${response.status}`);
