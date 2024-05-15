@@ -37,8 +37,8 @@ export const MyNavbar = () => {
     <Navbar key="md" bg='primary' expand="md" className="bg-body-primary" data-bs-theme="dark">
       <Container fluid className="justify-content-evenly mx-2">
         <Col>
-          <Navbar.Brand className="text-dark">
-            <Link onClick={() => handleTabClick('home')} to={"/"} style={{ textDecoration: "none" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
+          <Navbar.Brand className="text-white">
+            <Link onClick={() => handleTabClick('home')} to={"/"} style={{ textDecoration: "none", color: "white" }}>Training <FontAwesomeIcon icon={faDumbbell} />  Date</Link>
           </Navbar.Brand>
         </Col>
         {logged && currentUser.role === "users" ? (
@@ -60,7 +60,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/`}
                     style={{
-                      color: activeNavTab === 'home' ? '#ffffff' : '',
+                      color: activeNavTab === 'home' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -83,7 +83,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/user/${currentUser.user.id}/profile`}
                     style={{
-                      color: activeNavTab === 'profile' ? '#ffffff' : '',
+                      color: activeNavTab === 'profile' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -106,7 +106,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/user/${currentUser.user.id}/classes`}
                     style={{
-                      color: activeNavTab === 'classes' ? '#ffffff' : '',
+                      color: activeNavTab === 'classes' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -129,7 +129,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/allClasses`}
                     style={{
-                      color: activeNavTab === 'allClasses' ? '#ffffff' : '',
+                      color: activeNavTab === 'allClasses' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'allClasses' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -152,7 +152,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`user/${currentUser.user.id}/favourites`}
                     style={{
-                      color: activeNavTab === 'favourites' ? '#ffffff' : '',
+                      color: activeNavTab === 'favourites' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'favourites' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -173,7 +173,7 @@ export const MyNavbar = () => {
                   </Button>
                 </Nav.Item>
                 <Nav.Item className="d-flex justify-content-center align-items-center" as={Link} to={`user/${currentUser.user.id}/favourites`}>
-                  <div className="position-relative">
+                  <div className="position-relative mx-3">
                     <FontAwesomeIcon size="2x" className="d-md-none text-warning" icon={faHeart} />
                     <Badge className={`position-absolute d-md-none top-30 start-90 translate-middle badge rounded-pill ${!userClasses || userClasses.find(cls => cls.user_class.stripe_status !== 'Paid') ? "bg-success" : "bg-warning"} text-dark`}>
                       {userClasses ? userClasses.filter(cls => cls.user_class.stripe_status !== 'Paid').length : 0}
@@ -248,7 +248,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/`}
                     style={{
-                      color: activeNavTab === 'home' ? '#ffffff' : '',
+                      color: activeNavTab === 'home' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -271,7 +271,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/trainer/${currentUser.trainer.id}/profile`}
                     style={{
-                      color: activeNavTab === 'profile' ? '#ffffff' : '',
+                      color: activeNavTab === 'profile' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
                     }}>
@@ -292,7 +292,7 @@ export const MyNavbar = () => {
                     className="d-none d-md-block"
                     as={Link} to={`/trainer/${currentUser.trainer.id}/classes`}
                     style={{
-                      color: activeNavTab === 'classes' ? '#ffffff' : '',
+                      color: activeNavTab === 'classes' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'classes' ? '1px 1px 2px #427388' : 'none',
                     }}>
@@ -314,7 +314,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/trainer/${currentUser.trainer.id}/specializations`}
                     style={{
-                      color: activeNavTab === 'specializations' ? '#ffffff' : '',
+                      color: activeNavTab === 'specializations' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'specializations' ? '1px 1px 2px #427388' : 'none',
                     }}>
@@ -323,7 +323,7 @@ export const MyNavbar = () => {
                 </Nav.Item>
                 <Nav.Item className="d-flex justify-content-center align-items-center" style={{ marginLeft: '10px' }}>
                   <Dropdown align="start" drop="down">
-                    <Dropdown.Toggle className="d-none d-md-block text-dark" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
+                    <Dropdown.Toggle className="d-none d-md-block text-white" variant="link" id="dropdown-basic" style={{ border: 'none', boxShadow: 'none' }}>
                       <BsFillPlusSquareFill />
                     </Dropdown.Toggle>
                     <Dropdown.Menu align="end" style={{ boxShadow: 'none', border: 'none' }}>
@@ -417,7 +417,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/`}
                     style={{
-                      color: activeNavTab === 'home' ? '#ffffff' : '',
+                      color: activeNavTab === 'home' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -440,7 +440,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={"/aboutUs"}
                     style={{
-                      color: activeNavTab === 'aboutUs' ? '#ffffff' : '',
+                      color: activeNavTab === 'aboutUs' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'aboutUs' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -463,7 +463,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={'/users/info'}
                     style={{
-                      color: activeNavTab === 'user' ? '#ffffff' : '',
+                      color: activeNavTab === 'user' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'user' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -486,7 +486,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={'/trainers/info'}
                     style={{
-                      color: activeNavTab === 'trainer' ? '#ffffff' : '',
+                      color: activeNavTab === 'trainer' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'trainer' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -509,7 +509,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={"/allSpecializations"}
                     style={{
-                      color: activeNavTab === 'specialization' ? '#ffffff' : '',
+                      color: activeNavTab === 'specialization' ? '#ffffff' : '#ffffff',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'specialization' ? '1px 1px 2px #427388' : 'none',
                     }}
