@@ -45,9 +45,9 @@ const TrainerSpecializations = () => {
                         <Col key={trainerSpec.specialization.id}>
                             <Card className="h-100">
                                 <div className="position-relative">
-                                    <Card.Img className="img-fluid" rounded src={trainerSpec.specialization.logo} />
+                                    <Card.Img className="img-fluid" rounded src={trainerSpec.specialization.logo} style={{ height: '200px', objectFit: 'cover' }} />
                                     <Card.ImgOverlay rounded style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                        <Button className='btn-lg d-flex flex-row justify-content-center align-items-center gap-2' variant="info" onClick={() => { setShowModal(true); setSpec(trainerSpec.specialization); }}><span className="text-white"> {trainerSpec.specialization.name.charAt(0).toUpperCase() + trainerSpec.specialization.name.slice(1)}</span><FontAwesomeIcon icon={faCircleInfo}/></Button>
+                                        <Button className='btn-lg d-flex flex-row justify-content-center align-items-center gap-2' variant="info" onClick={() => { setShowModal(true); setSpec(trainerSpec.specialization); }}><span className="text-white"> {trainerSpec.specialization.name.charAt(0).toUpperCase() + trainerSpec.specialization.name.slice(1)}</span><FontAwesomeIcon icon={faCircleInfo} /></Button>
                                     </Card.ImgOverlay>
                                 </div>
                             </Card>

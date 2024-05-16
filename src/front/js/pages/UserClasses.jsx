@@ -118,9 +118,9 @@ export const UserClasses = () => {
                 <Row className="d-flex justify-content-center mt-3 g-4">
                     {paginatedClasses.map((classItem) => (
                         <Col className="d-flex flex-column align-items-center justify-content-evenly" key={classItem.user_class.id} xl={3} lg={4} md={6} sm={8} xs={10}>
-                            <Card>
+                            <Card style={{width: "270px"}}>
                                 <div className="position-relative">
-                                <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : classItem.trainer_class.specialization} />
+                                <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : classItem.trainer_class.specialization} style={{height: "200px"}}/>
                                     <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
                                     <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
                                         <Button onClick={() => { setshowSpecializationModal(true);  setSpec(classItem.specialization);}} variant="info"><span className="text-white">{classItem.trainer_class.specialization.name.charAt(0).toUpperCase() + classItem.trainer_class.specialization.name.slice(1)}</span></Button>

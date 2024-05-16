@@ -563,21 +563,15 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const response = await fetch(`${process.env.BACKEND_URL}trainers/${trainerId}/classes/${classId}`, options)
 
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          console.error(`Failed to delete class: ${errorMessage}`);
-          return false;
-        }
-
+        if (!response.ok) return false
+        const data = await response.json()
         const storedClassesString = localStorage.getItem("trainerClasses");
         if (storedClassesString) {
           const storedClasses = JSON.parse(storedClassesString);
-          const updatedClasses = storedClasses.filter(cls => cls.id !== classId);
+          const updatedClasses = storedClasses.filter(cls => cls.id !== data.class.id);
           localStorage.setItem("trainerClasses", JSON.stringify(updatedClasses));
+          setStore({trainerClasses: updatedClasses})
           return true;
-        } else {
-          console.error('No classes found in local storage');
-          return false;
         }
       },
 

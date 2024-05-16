@@ -133,10 +133,10 @@ export const AllClasses = () => {
                             currentClasses.length > 0 && !userClasses.some(userclass => userclass.trainer_class.class_details.id === oneClass.class_details.id)
                                 ? (
                                     <Col key={oneClass.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-3" xl={3} lg={4} md={6} sm={8} xs={10}>
-                                        <Card className="d-flex flex-column">
+                                        <Card className="d-flex flex-column" style={{width: "270px"}}>
                                         <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : oneClass.specialization} />
                                             <div className="position-relative">
-                                                <Card.Img className="img-fluid w-100" variant="top" src={oneClass.specialization.logo} />
+                                                <Card.Img className="img-fluid w-100" variant="top" src={oneClass.specialization.logo} style={{height: "200px"}}/>
                                                 <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
                                                     <Button variant="info" onClick={() => { setshowSpecializationModal(true);  setSpec(oneClass.specialization);}}><span className="text-white"> {oneClass.specialization.name.charAt(0).toUpperCase() + oneClass.specialization.name.slice(1)}</span></Button>
                                                 </Card.ImgOverlay>

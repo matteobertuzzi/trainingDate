@@ -138,10 +138,10 @@ function SignupUser() {
                                     name='password'
                                     required
                                     pattern="^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,}$"
-                                    isInvalid={inputs.password && !/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,}$/.test(inputs.password)}
+                                    isInvalid={inputs.password && !/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/.test(inputs.password)}
                                 />
                                 <Form.Control.Feedback type='invalid'>
-                                    La contraseña debe tener al menos 6 caracteres, incluyendo al menos un número, un carácter especial, y una letra.
+                                    La contraseña debe tener al menos 8 caracteres, incluyendo al menos un número, un carácter especial, y una letra.
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="user-phone-number">

@@ -39,10 +39,10 @@ export const ConfirmationSignUp = () => {
     if (form.checkValidity() === false) {
       event.stopPropagation();
     } else {
-      setValidated(true);
       const userType = activeTab === "users" ? "users" : "trainers";
       const validateLog = await loginUser(inputs, userType);
       if (!validateLog) {
+        setValidated(false);
         setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
       } else {
         setLogged(true);
@@ -52,7 +52,7 @@ export const ConfirmationSignUp = () => {
         });
         setLoginError(null)
         setActiveTab("")
-        navigate("/")
+        onHide();
       }
     }
   };
@@ -95,16 +95,17 @@ export const ConfirmationSignUp = () => {
               </Form.Control.Feedback>
             </FloatingLabel>
           </Form.Group>
-          <Form.Group as={Col} md="12" controlId="validationPassword">
+          <Form.Group className="position-relative w-100" as={Col} md="12" controlId="validationSignupPassword">
             <FloatingLabel controlId="validationSignupPassword" label="Password">
               <Form.Control
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 aria-describedby="inputGroupPrepend"
                 required
                 value={inputs.password || ""}
                 onChange={handleChange}
                 name="password"
+                style={{ paddingRight: '40px' }}
               />
               <FontAwesomeIcon
                 icon={showPassword ? faEyeSlash : faEye}

@@ -6,6 +6,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
 import { SpecializationModal } from "../component/SpecializationModal.jsx";
+import { DeleteTrainerClassModal } from '../component/DeleteTrainerClassModal.jsx'
 
 export const TrainerClasses = () => {
     const { store, actions } = useContext(Context);
@@ -20,7 +21,6 @@ export const TrainerClasses = () => {
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
     const [showModal, setShowModal] = useState(false);
-    const [deleteError, setDeleteError] = useState(null);
     const [showSpecializationModal, setshowSpecializationModal] = useState(false)
     const [spec, setSpec] = useState();
 
@@ -45,16 +45,6 @@ export const TrainerClasses = () => {
         setPastClasses(past);
         setFutureClasses(future);
     }, [trainerClasses, currentDateTime]);
-
-    const handleClick = async (trainerId, classId) => {
-        const deleteClass = await deleteTrainerClass(trainerId, classId);
-        if (!deleteClass) {
-            setDeleteError('El clase no se puede cancelar, debido a que tiene usuarios apuntados');
-        } else {
-            setShowModal(false)
-            await getTrainerClasses()
-        }
-    }
 
     const handleDetails = async (classId) => {
         await actions.getTrainerClassDetails(classId)
@@ -133,11 +123,11 @@ export const TrainerClasses = () => {
             <Row className="d-flex justify-content-center mt-3 g-4">
                 {currentClasses.map(classItem => (
                     <Col className="d-flex flex-column align-items-center justify-content-evenly" key={classItem.id} xl={3} lg={4} md={6} sm={8} xs={10}>
-                        <Card style={{ width: '18rem' }}>
+                        <Card style={{ width: "270px" }}>
                             <div className="position-relative">
-                                <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.specialization.logo} />
+                                <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.specialization.logo} style={{ height: "200px" }} />
                                 <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                    <Button onClick={() => { setshowSpecializationModal(true);  setSpec(classItem.specialization);}} variant="info"><span className="text-white">{classItem.specialization.name.charAt(0).toUpperCase() + classItem.specialization.name.slice(1)}</span></Button>
+                                    <Button onClick={() => { setshowSpecializationModal(true); setSpec(classItem.specialization); }} variant="info"><span className="text-white">{classItem.specialization.name.charAt(0).toUpperCase() + classItem.specialization.name.slice(1)}</span></Button>
                                 </Card.ImgOverlay>
                             </div>
                             <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : classItem.specialization} />
@@ -159,21 +149,12 @@ export const TrainerClasses = () => {
                                 <Button className={classItem.capacity === 0 || activeTab === "past" ? "d-none" : ""} variant="danger" onClick={() => setShowModal(true)}>Cancelar</Button>
                                 <Button variant="info" as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
                             </Card.Footer>
+                            <DeleteTrainerClassModal
+                                show={showModal}
+                                onHide={() => setShowModal(false)}
+                                classId={classItem.id}
+                            />
                         </Card>
-                        <Modal show={showModal} centered onHide={() => setShowModal(false)}>
-                            <Modal.Header className="bg-primary text-white" closeButton>
-                                <Modal.Title>Confirmación cancelación</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <p className="m-0">Recuerda que solo puedes cancelar la clase si no tienes usuarios apuntados.</p>
-                                <p className="m-0">¿Estás seguro de que deseas cancelar esta clase?</p>
-                                {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cerrar</Button>
-                                <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Confirmar</Button>
-                            </Modal.Footer>
-                        </Modal>
                     </Col>
                 ))}
             </Row>
