@@ -5,11 +5,12 @@ import Loading from '../component/Loading.jsx';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
+import { SpecializationModal } from "../component/SpecializationModal.jsx";
 
 export const TrainerClasses = () => {
     const { store, actions } = useContext(Context);
     const { currentUser, trainerClasses } = store;
-    const { deleteTrainerClass } = actions;
+    const { deleteTrainerClass, getTrainerClasses } = actions;
     const { id } = useParams();
     const navigate = useNavigate()
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -19,6 +20,9 @@ export const TrainerClasses = () => {
     const [activePage, setActivePage] = useState(1);
     const classesPerPage = 4;
     const [showModal, setShowModal] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
+    const [showSpecializationModal, setshowSpecializationModal] = useState(false)
+    const [spec, setSpec] = useState();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -45,9 +49,10 @@ export const TrainerClasses = () => {
     const handleClick = async (trainerId, classId) => {
         const deleteClass = await deleteTrainerClass(trainerId, classId);
         if (!deleteClass) {
-            setShowModal(true);
+            setDeleteError('El clase no se puede cancelar, debido a que tiene usuarios apuntados');
         } else {
-            setShowModal(false);
+            await getTrainerClasses()
+            setShowModal(false)
         }
     }
 
@@ -132,12 +137,13 @@ export const TrainerClasses = () => {
                             <div className="position-relative">
                                 <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.specialization.logo} />
                                 <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                    <span className="text-white">{classItem.specialization.name.charAt(0).toUpperCase() + classItem.specialization.name.slice(1)}</span>
+                                    <Button onClick={() => { setshowSpecializationModal(true);  setSpec(classItem.specialization);}} variant="info"><span className="text-white">{classItem.specialization.name.charAt(0).toUpperCase() + classItem.specialization.name.slice(1)}</span></Button>
                                 </Card.ImgOverlay>
                             </div>
+                            <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : classItem.specialization} />
                             <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">
                                 <Card.Text className="m-0 p-0"><strong>Fecha inicio: </strong>{new Date(classItem.start_date).toLocaleDateString()}</Card.Text>
-                                <Card.Text className="m-0 p-0"><strong>Fecha fin: </strong>{new Date(classItem.end_date).toLocaleDateString()}</Card.Text>
+                                <Card.Text className="m-0 p-0"><strong>Ciudad: </strong>{classItem.city}</Card.Text>
                                 <Card.Text className="m-0 p-0"><strong>Precio: </strong>{classItem.price / 100}<span>€</span></Card.Text>
                                 <Card.Text className="m-0 p-0"><strong>Capacidad: </strong>{classItem.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${classItem.capacity} personas`}</Card.Text>
                                 <Card.Text>
@@ -150,10 +156,24 @@ export const TrainerClasses = () => {
                                 </Card.Text>
                             </Card.Body>
                             <Card.Footer className="d-flex flex-row align-items-center justify-content-evenly gap-2 p-3">
-                                <Button className={classItem.capacity === 0 || activeTab === "past" ? "d-none" : ""} variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Cancelar</Button>
+                                <Button className={classItem.capacity === 0 || activeTab === "past" ? "d-none" : ""} variant="danger" onClick={() => setShowModal(true)}>Cancelar</Button>
                                 <Button variant="info" as={Link} to={`/trainer/${currentUser.trainer.id}/class/${classItem.id}`} onClick={() => handleDetails(classItem.id)}>Detalles</Button>
                             </Card.Footer>
                         </Card>
+                        <Modal show={showModal} centered onHide={() => setShowModal(false)}>
+                            <Modal.Header className="bg-primary text-white" closeButton>
+                                <Modal.Title>Confirmación cancelación</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <p className="m-0">Recuerda que solo puedes cancelar la clase si no tienes usuarios apuntados.</p>
+                                <p className="m-0">¿Estás seguro de que deseas cancelar esta clase?</p>
+                                {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cerrar</Button>
+                                <Button variant="danger" onClick={() => handleClick(classItem.trainer, classItem.id)}>Confirmar</Button>
+                            </Modal.Footer>
+                        </Modal>
                     </Col>
                 ))}
             </Row>
@@ -178,12 +198,6 @@ export const TrainerClasses = () => {
                     )}
                 </Pagination>
             </Row>
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Error!</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>La clase no se puede cancelar debido a que tienes usuarios apuntados</Modal.Body>
-            </Modal>
         </Container >
     )
 }

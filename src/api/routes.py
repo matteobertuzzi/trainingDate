@@ -1478,14 +1478,14 @@ def handle_trainer_specializations(id):
                     <body>
                         <div class="container">
                             <div class="message">
-                                <p>Please approve or reject the specialization</p>
+                                <p>Por favor, aprueba o rechaza la especialización</p>
                                 <div class="cert-container">
                                     <a class="cert-link" href="{certification_url}" target="_blank">Ver certificado</a>
                                 </div>
                             </div>
                             <div class="action">
-                                <a class="button-confirm" href="{confirm_url}" target="_blank">Click here to confirm!</a>
-                                <a class="button-reject" href="{reject_url}" target="_blank">Click here to reject!</a>
+                                <a class="button-confirm" href="{confirm_url}" target="_blank">¡Haz clic aquí para confirmar!</a>
+                                <a class="button-reject" href="{reject_url}" target="_blank">¡Haz clic aquí para rechazar!</a>
                             </div>
                         </div>
                     </body>

@@ -14,7 +14,7 @@ export const MyNavbar = () => {
   const navigate = useNavigate()
   const [modalShow, setModalShow] = useState(false);
   const { store, actions } = useContext(Context)
-  const { logged, currentUser, userClasses, trainerClasses, activeNavTab } = store
+  const { logged, currentUser, userClasses, activeNavTab } = store
   const { setLogged, setUser, setActiveNavTab } = actions
 
   const handleTabClick = (tabName) => {

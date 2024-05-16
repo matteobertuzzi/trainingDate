@@ -84,7 +84,7 @@ export const UserClasses = () => {
             {activeTab === "past" && pastClasses.length === 0 && (
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col className="d-flex justify-content-center align-items-center m-4">
-                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center  w-auto">
                             <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
                                 <IoIosWarning />No hay clases pasadas disponibles
                             </Alert.Heading>
@@ -98,13 +98,15 @@ export const UserClasses = () => {
             {activeTab === "future" && futureClasses.length === 0 && (
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col className="d-flex justify-content-center align-items-center m-4">
-                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-75">
-                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2">
-                                <IoIosWarning />No hay clases futuras disponibles
-                            </Alert.Heading>
-                            <p>
-                                Parece que aún no tienes ninguna clase futura.
-                            </p>
+                        <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">
+                            <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases reservadas!</Alert.Heading>
+                            <div className="d-flex flex-column justify-content-center align-items-center">
+                                <p>
+                                    Parece que aún no has reservado ninguna clase.
+                                </p>
+                                <p>¡No te preocupes! Puedes empezar ahora mismo reservando tu primera clase.</p>
+                                <Button as={Link} onClick={() => setActiveNavTab("allClasses")} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
+                            </div>
                         </Alert>
                     </Col>
                 </Row>
@@ -152,16 +154,7 @@ export const UserClasses = () => {
                     ))}
                 </Row>
             ) : (
-                <Alert variant="warning" className="d-flex flex-column justify-content-center align-items-center w-auto">
-                    <Alert.Heading className="d-flex flex-row align-items-center justify-content-center gap-2"><IoIosWarning />No hay clases reservadas!</Alert.Heading>
-                    <div className="d-flex flex-column justify-content-center align-items-center">
-                        <p>
-                            Parece que aún no has reservado ninguna clase.
-                        </p>
-                        <p>¡No te preocupes! Puedes empezar ahora mismo reservando tu primera clase.</p>
-                        <Button as={Link} onClick={() => setActiveNavTab("allClasses")} variant="primary" to={"/allClasses"}>Ver clases disponibles</Button>
-                    </div>
-                </Alert>
+                ""
             )}
             <Row className="d-flex justify-content-center align-items-center">
                 <Pagination className="d-flex justify-content-center align-items-center mt-4">

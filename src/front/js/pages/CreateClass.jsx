@@ -91,14 +91,14 @@ export const CreateClass = () => {
                         <Row>
                             <Col md="6" className="mb-2">
                                 <Form.Group controlId="city">
-                                    <Form.Label>Ciudad:</Form.Label>
+                                    <Form.Label>Ciudad:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control required type="text" placeholder="Ciudad" value={inputs.city || ""} onChange={handleChange} name="city" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una ciudad.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6" className="mb-2">
                                 <Form.Group controlId="postal_code">
-                                    <Form.Label>Código Postal:</Form.Label>
+                                    <Form.Label>Código Postal:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control pattern="[0-9]{5}" isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)} required type="number" placeholder="Código Postal" value={inputs.postal_code || ""} onChange={handleChange} name="postal_code" autoComplete="postal_code" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige un código postal válido.</Form.Control.Feedback>
                                 </Form.Group>
@@ -107,14 +107,14 @@ export const CreateClass = () => {
                         <Row>
                             <Col md="6">
                                 <Form.Group controlId="streetName">
-                                    <Form.Label>Calle:</Form.Label>
+                                    <Form.Label>Calle:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control required type="text" placeholder="Calle" value={inputs.street_name || ""} onChange={handleChange} name="street_name" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige un nombre de calle.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="2" className="mb-2">
                                 <Form.Group controlId="streetNumber">
-                                    <Form.Label>Número:</Form.Label>
+                                    <Form.Label>Número:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control required type="number" placeholder="Número" value={inputs.street_number || ""} onChange={handleChange} name="street_number" />
                                     <Form.Control.Feedback type="invalid">Por favor, proporciona un número.</Form.Control.Feedback>
                                 </Form.Group>
@@ -132,14 +132,14 @@ export const CreateClass = () => {
                         <Row className="mb-3">
                             <Col md="6">
                                 <Form.Group controlId="startClass">
-                                    <Form.Label>Inicio clase:</Form.Label>
+                                    <Form.Label>Inicio clase:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control isInvalid={!isDateValid()} required type="datetime-local" value={inputs.start_date || ""} onChange={handleChange} name="start_date" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6">
                                 <Form.Group controlId="endClass">
-                                    <Form.Label>Fin de clase:</Form.Label>
+                                    <Form.Label>Fin de clase:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control isInvalid={!isDateValid()} required type="datetime-local" value={inputs.end_date || ""} onChange={handleChange} name="end_date" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige una fecha válida.</Form.Control.Feedback>
                                 </Form.Group>
@@ -151,7 +151,7 @@ export const CreateClass = () => {
                         <Row className="mb-3">
                             <Col md="6" className="mb-2">
                                 <Form.Group controlId="training_level">
-                                    <Form.Label>Nivel de entrenamiento:</Form.Label>
+                                    <Form.Label>Nivel de entrenamiento:<span className='text-danger'>*</span></Form.Label>
                                     <div className="d-flex flex-lg-row flex-column gap-3">
                                         <Form.Check type="radio" id="beginner" name="training_level" label="Principiante" value="Beginner" onChange={handleChange} required />
                                         <Form.Check type="radio" id="intermediate" name="training_level" label="Intermedio" value="Intermediate" onChange={handleChange} required />
@@ -162,7 +162,7 @@ export const CreateClass = () => {
                             </Col>
                             <Col md="4">
                                 <Form.Group controlId="training_type">
-                                    <Form.Label>Tipo de entrenamiento:</Form.Label>
+                                    <Form.Label>Tipo de entrenamiento:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Select onChange={handleChange} name='training_type' value={inputs.training_type} required className="w-auto">
                                         <option value="" disabled hidden>Selecciona un tipo de entrenamiento</option>
                                         {currentUser.specializations.map((specialization) => (
@@ -177,7 +177,7 @@ export const CreateClass = () => {
                             <Col md="6">
                                 <Form.Group controlId="class_name">
                                     <Form.Label>Nombre de la clase:</Form.Label>
-                                    <Form.Control type="text" placeholder="Nombre clase" value={inputs.class_name} onChange={handleChange} name="class_name" />
+                                    <Form.Control type="text" placeholder="Nombre clase" value={inputs.class_name || ""} onChange={handleChange} name="class_name" />
                                     <Form.Control.Feedback type="invalid">Por favor, elige un nombre de clase válido.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
@@ -190,19 +190,19 @@ export const CreateClass = () => {
                             </Col>
                         </Row>
                     </fieldset>
-                    <fieldset className="mb-3">
+                    <fieldset>
                         <legend>Capacidad y coste</legend>
                         <Row className="mb-3">
                             <Col md="6">
                                 <Form.Group controlId="capacity">
-                                    <Form.Label>Capacidad alumnos:</Form.Label>
+                                    <Form.Label>Capacidad alumnos:<span className='text-danger'>*</span></Form.Label>
                                     <Form.Control min="1" required type="number" value={inputs.capacity || ""} onChange={handleChange} name="capacity" />
                                     <Form.Control.Feedback type="invalid">Por favor, ingresa una capacidad válida.</Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col md="6">
                                 <Form.Group controlId="price">
-                                    <Form.Label>Precio:</Form.Label>
+                                    <Form.Label>Precio:<span className='text-danger'>*</span></Form.Label>
                                     <InputGroup>
                                         <Form.Control min="1" required type="number" aria-label="Precio" value={inputs.price || ""} onChange={handleChange} name="price" />
                                         <InputGroup.Text>€</InputGroup.Text>
@@ -217,6 +217,9 @@ export const CreateClass = () => {
                             {error && <div className="text-danger mt-2">{error}</div>}
                         </Col>
                     </Row>
+                    <div className="mb-2">
+                        <p className="text-danger m-0">* Campo requerido</p>
+                    </div>
                     <Row className="mb-3">
                         <Col className="d-flex justify-content-end">
                             <Button type="submit" variant="success" className="me-2">Crear Clase</Button>

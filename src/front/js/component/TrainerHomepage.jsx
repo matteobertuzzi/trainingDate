@@ -83,11 +83,12 @@ const TrainerHomepage = () => {
                             <div className="footer-details p-3">
                                 <span className="d-flex flex-row gap-1"><strong>Ciudad: </strong><p className="mb-0">{todayClass.city}</p></span>
                                 <span className="d-flex flex-row align-items-center justify-content-center gap-1"><strong>Difficultad: </strong>
-                                    {todayClass.training_level === "Advanced" ? <span className="bg-danger p-1 rounded text-white">Avanzado</span> :
-                                        todayClass.training_level === "Intermediate" ? <span className="bg-warning p-1 rounded text-white">Intermedio</span> :
-                                            todayClass.training_level === "Beginner" ? <span className="bg-success p-1 rounded text-white">Principiante</span> :
+                                    {todayClass.training_level === "Advanced" ? <span className="text-danger">Avanzado</span> :
+                                        todayClass.training_level === "Intermediate" ? <span className="text-warning">Intermedio</span> :
+                                            todayClass.training_level === "Beginner" ? <span className="text-success">Principiante</span> :
                                                 ""}
                                 </span>
+                                <span className="d-flex flex-row gap-1"><strong>Disciplina:</strong><span>{todayClass.specialization.name.charAt(0).toUpperCase() + todayClass.specialization.name.slice(1)}</span></span>
                                 <span className="d-flex flex-row gap-1"><strong>Capacidad: </strong>{todayClass.capacity === 0 ? <span className="bg-danger p-1 rounded text-white">Clase completa</span> : `${todayClass.capacity} personas`}</span>
                             </div>
                             <div className='d-flex justify-content-center align-items-center w-100 border-top p-3'>

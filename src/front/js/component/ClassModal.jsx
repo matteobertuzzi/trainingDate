@@ -58,7 +58,9 @@ function ClassModal({ userClass }) {
                         <ListGroup.Item className='d-flex flex-column'>
                             <span className='d-flex flex-row gap-2'>
                                 <strong>Nivel de entrenamiento:</strong> {userClass.class_details.training_level === 'Beginner' ? 'Principiante' :
-                                    userClass.class_details.training_level === 'Intermediate' ? 'Intermedio' : userClass.class_details.training_level === 'Advanced' == "Avanzado"}
+                                    userClass.class_details.training_level === 'Intermediate' ? 'Intermedio' :
+                                        userClass.class_details.training_level === 'Advanced' ? 'Avanzado' :
+                                            userClass.class_details.training_level}
                             </span>
                             <span className='d-flex flex-row gap-2'>
                                 <strong>Tipo de entrenamiento:</strong> {userClass.specialization.name}

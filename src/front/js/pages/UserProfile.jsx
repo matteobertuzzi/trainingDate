@@ -4,7 +4,7 @@ import { Context } from '../store/appContext';
 import { Container, Row, Col, ListGroup, Image, Button } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditUserProfile from '../component/EditUserProfile.jsx';
-import DeleteUserModal from '../component/DeleteUserModal.jsx'
+import { DeleteUserModal } from '../component/DeleteUserModal.jsx'
 import { RiArrowGoBackLine } from "react-icons/ri";
 
 
@@ -59,8 +59,8 @@ const UserProfile = () => {
                         <div className='d-flex flex-row justify-content-center align-items-center gap-2 mt-1'>
                             <EditUserProfile user={user} onChangeSubmit={fetchUser} />
                             <Button variant="danger" onClick={() => setModalShow(true)} >Cancelar perfil</Button>
+                            <DeleteUserModal show={modalShow} onHide={() => setModalShow(false)} />
                         </div>
-                        <DeleteUserModal show={modalShow} onHide={() => setModalShow(false)} />
                     </div>
                 </Col>
             </Row>

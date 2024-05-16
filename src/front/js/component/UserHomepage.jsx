@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import img from "/workspaces/sp54-final-project-g3/src/front/img/hutterstock_77087711229557_lm.jpg"
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination } from 'swiper/modules';
+import { SpecializationModal } from "../component/SpecializationModal.jsx";
 
 
 const UserHomepage = () => {
@@ -12,7 +13,10 @@ const UserHomepage = () => {
     const { store, actions } = useContext(Context)
     const { specializations } = store
     const { setActiveNavTab } = actions
-    const limitedSpecializations = specializations.slice(0, 3);
+    const limitedSpecializations = specializations.slice(0, 5);
+    const [showModal, setShowModal] = useState(false)
+    const [spec, setSpec] = useState();
+
 
     return (
         <Container className='p-0 mb-3 w-100 d-flex flex-column gap-3' fluid>
@@ -60,10 +64,11 @@ const UserHomepage = () => {
                         <SwiperSlide key={specialization.id} className="swiper-slide rounded" style={{ backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '300px' }}>
                             <Card.Img className="img-fluid w-100 h-100 rounded" variant="top" src={specialization.logo} />
                             <Card.ImgOverlay className='h-100 d-flex justify-content-center align-items-center'>
-                                <div className='bg-white rounded p-1'>
-                                    <span className="text-success"> {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}</span>
+                                <div className='bg-white rounded'>
+                                    <Button onClick={() => {setShowModal(true); setSpec(specialization);}} variant="info"><span> {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}</span></Button>
                                 </div>
                             </Card.ImgOverlay>
+                            <SpecializationModal show={showModal} onHide={() => setShowModal(false)} specialization={spec ? spec : specialization} />
                         </SwiperSlide>
                     ))}
                 </Swiper>

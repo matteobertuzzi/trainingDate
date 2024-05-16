@@ -23,7 +23,7 @@ export const AllClasses = () => {
     });
 
     const paginate = (pageNumber) => setActivePage(pageNumber);
-    const classesPerPage = 2;
+    const classesPerPage = 8;
     const indexOfLastClass = activePage * classesPerPage;
     const indexOfFirstClass = indexOfLastClass - classesPerPage;
     const currentClasses =

@@ -1,8 +1,17 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { Context } from "../store/appContext";
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const { store, actions } = useContext(Context)
+  const { activeNavTab } = store
+  const { setActiveNavTab } = actions
+
+  const handleTabClick = (tabName) => {
+    setActiveNavTab(tabName);
+  };
+
   return (
     <footer className="bg-light text-black py-5">
       <Container>
@@ -15,9 +24,9 @@ const Footer = () => {
           <Col xs={12} md={4} className="mb-3 mb-md-0">
             <h5 style={{ fontWeight: "bold" }}>Enlaces útiles</h5>
             <ul className="list-unstyled footer-links">
-              <li><Link to="/" style={{ color: "#e95420", textDecoration: 'none' }}>Home</Link></li>
-              <li><Link to="users/info" style={{ color: "#e95420", textDecoration: 'none' }}>Recursos para el usuario</Link></li>
-              <li><Link to="trainers/info" style={{ color: "#e95420", textDecoration: 'none' }}>Recursos para el entrenador</Link></li>
+              <li><Link onClick={() => handleTabClick('home')} to="/" style={{ color: "#e95420", textDecoration: 'none' }}>Home</Link></li>
+              <li><Link onClick={() => handleTabClick('user')} to="users/info" style={{ color: "#e95420", textDecoration: 'none' }}>Recursos para el usuario</Link></li>
+              <li><Link onClick={() => handleTabClick('trainer')} to="trainers/info" style={{ color: "#e95420", textDecoration: 'none' }}>Recursos para el entrenador</Link></li>
             </ul>
           </Col>
           <Col xs={12} md={4} className='d-flex flex-column align-items-center justify-content-center'>

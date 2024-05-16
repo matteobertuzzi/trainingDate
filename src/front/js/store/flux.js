@@ -603,7 +603,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ currentUser: [] })
         localStorage.removeItem("accessToken")
         localStorage.removeItem("availableUser")
-        window.location.href = `${process.env.FRONT_URL}`
         return true
       },
 
