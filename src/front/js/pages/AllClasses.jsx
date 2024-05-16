@@ -7,6 +7,7 @@ import { IoIosWarning } from "react-icons/io";
 import HomeFilters from '../component/HomeFilters.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faHeartCirclePlus, faHeartCircleMinus } from '@fortawesome/free-solid-svg-icons';
+import { SpecializationModal } from "../component/SpecializationModal.jsx";
 
 export const AllClasses = () => {
     const { store, actions } = useContext(Context);
@@ -17,6 +18,8 @@ export const AllClasses = () => {
     const [activePage, setActivePage] = useState(1);
     const [filterClasses, setFilterClasses] = useState([])
     const currentTime = new Date().getTime();
+    const [showSpecializationModal, setshowSpecializationModal] = useState(false)
+    const [spec, setSpec] = useState();
 
     const filteredClasses = allClasses.filter(oneClass => {
         return !userClasses.some(userclass => userclass.trainer_class.class_details.id === oneClass.class_details.id);
@@ -129,12 +132,13 @@ export const AllClasses = () => {
                         currentClasses.map((oneClass) => (
                             currentClasses.length > 0 && !userClasses.some(userclass => userclass.trainer_class.class_details.id === oneClass.class_details.id)
                                 ? (
-                                    <Col key={oneClass.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-1" xl={3} lg={4} md={6} sm={8} xs={10}>
+                                    <Col key={oneClass.class_details.id} className="d-flex flex-row align-items-center justify-content-center mb-3" xl={3} lg={4} md={6} sm={8} xs={10}>
                                         <Card className="d-flex flex-column">
+                                        <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : oneClass.specialization} />
                                             <div className="position-relative">
                                                 <Card.Img className="img-fluid w-100" variant="top" src={oneClass.specialization.logo} />
                                                 <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                                    <span className="text-white"> {oneClass.specialization.name.charAt(0).toUpperCase() + oneClass.specialization.name.slice(1)}</span>
+                                                    <Button variant="info" onClick={() => { setshowSpecializationModal(true);  setSpec(oneClass.specialization);}}><span className="text-white"> {oneClass.specialization.name.charAt(0).toUpperCase() + oneClass.specialization.name.slice(1)}</span></Button>
                                                 </Card.ImgOverlay>
                                             </div>
                                             <Card.Body className="d-flex flex-column gap-1 justify-content-between align-items-start">

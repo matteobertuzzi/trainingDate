@@ -60,7 +60,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/`}
                     style={{
-                      color: activeNavTab === 'home' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'home' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -83,7 +83,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/user/${currentUser.user.id}/profile`}
                     style={{
-                      color: activeNavTab === 'profile' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'profile' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -106,7 +106,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/user/${currentUser.user.id}/classes`}
                     style={{
-                      color: activeNavTab === 'classes' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'classes' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -129,7 +129,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/allClasses`}
                     style={{
-                      color: activeNavTab === 'allClasses' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'allClasses' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'allClasses' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -152,7 +152,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`user/${currentUser.user.id}/favourites`}
                     style={{
-                      color: activeNavTab === 'favourites' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'favourites' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'favourites' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -248,7 +248,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/`}
                     style={{
-                      color: activeNavTab === 'home' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'home' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -271,7 +271,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/trainer/${currentUser.trainer.id}/profile`}
                     style={{
-                      color: activeNavTab === 'profile' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'profile' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'profile' ? '1px 1px 2px #427388' : 'none',
                     }}>
@@ -292,7 +292,7 @@ export const MyNavbar = () => {
                     className="d-none d-md-block"
                     as={Link} to={`/trainer/${currentUser.trainer.id}/classes`}
                     style={{
-                      color: activeNavTab === 'classes' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'classes' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'classes' ? '1px 1px 2px #427388' : 'none',
                     }}>
@@ -314,7 +314,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/trainer/${currentUser.trainer.id}/specializations`}
                     style={{
-                      color: activeNavTab === 'specializations' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'specializations' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'specializations' ? '1px 1px 2px #427388' : 'none',
                     }}>
@@ -417,7 +417,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={`/`}
                     style={{
-                      color: activeNavTab === 'home' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'home' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'home' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -440,7 +440,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={"/aboutUs"}
                     style={{
-                      color: activeNavTab === 'aboutUs' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'aboutUs' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'aboutUs' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -463,7 +463,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={'/users/info'}
                     style={{
-                      color: activeNavTab === 'user' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'user' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'user' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -486,7 +486,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={'/trainers/info'}
                     style={{
-                      color: activeNavTab === 'trainer' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'trainer' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'trainer' ? '1px 1px 2px #427388' : 'none',
                     }}
@@ -509,7 +509,7 @@ export const MyNavbar = () => {
                     as={Link}
                     to={"/allSpecializations"}
                     style={{
-                      color: activeNavTab === 'specialization' ? '#ffffff' : '#ffffff',
+                      color: activeNavTab === 'specialization' ? '#ffffff' : '',
                       transition: 'color 0.2s',
                       textShadow: activeNavTab === 'specialization' ? '1px 1px 2px #427388' : 'none',
                     }}

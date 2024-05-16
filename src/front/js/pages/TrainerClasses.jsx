@@ -51,8 +51,8 @@ export const TrainerClasses = () => {
         if (!deleteClass) {
             setDeleteError('El clase no se puede cancelar, debido a que tiene usuarios apuntados');
         } else {
-            await getTrainerClasses()
             setShowModal(false)
+            await getTrainerClasses()
         }
     }
 

@@ -8,6 +8,7 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
 import MapModal from "../component/MapModal.jsx";
 import ClassModal from "../component/ClassModal.jsx";
+import { SpecializationModal } from "../component/SpecializationModal.jsx";
 
 export const UserClasses = () => {
     const { store, actions } = useContext(Context);
@@ -19,6 +20,8 @@ export const UserClasses = () => {
     const [pastClasses, setPastClasses] = useState([]);
     const [futureClasses, setFutureClasses] = useState([]);
     const [activeTab, setActiveTab] = useState("future");
+    const [showSpecializationModal, setshowSpecializationModal] = useState(false)
+    const [spec, setSpec] = useState();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -117,9 +120,10 @@ export const UserClasses = () => {
                         <Col className="d-flex flex-column align-items-center justify-content-evenly" key={classItem.user_class.id} xl={3} lg={4} md={6} sm={8} xs={10}>
                             <Card>
                                 <div className="position-relative">
+                                <SpecializationModal show={showSpecializationModal} onHide={() => setshowSpecializationModal(false)} specialization={spec ? spec : classItem.trainer_class.specialization} />
                                     <Card.Img className="img-fluid w-100 position-relative" variant="top" src={classItem.trainer_class.specialization.logo} />
                                     <Card.ImgOverlay style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-                                        <span className="text-white">{classItem.trainer_class.specialization.name.charAt(0).toUpperCase() + classItem.trainer_class.specialization.name.slice(1)}</span>
+                                        <Button onClick={() => { setshowSpecializationModal(true);  setSpec(classItem.specialization);}} variant="info"><span className="text-white">{classItem.trainer_class.specialization.name.charAt(0).toUpperCase() + classItem.trainer_class.specialization.name.slice(1)}</span></Button>
                                     </Card.ImgOverlay>
                                 </div>
                                 <Card.Body className="d-flex flex-column align-items-start justify-content-center gap-1">

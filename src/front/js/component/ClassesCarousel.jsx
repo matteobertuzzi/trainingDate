@@ -58,10 +58,11 @@ const ClassesCarousel = () => {
                                         oneClass.class_details.training_level === "Beginner" ? <span className="text-success p-1">Principiante</span> :
                                             ""}
                             </span>
+                            <span className="d-flex flex-row gap-1"><strong>Disciplina: </strong><p className="mb-0">{oneClass.specialization.name.charAt(0).toUpperCase() + oneClass.specialization.name.slice(1)}</p></span>
                         </div>
                     </SwiperSlide>
                 ))}
-                <SwiperSlide onClick={() => setModalShow(true)} className="swiper-slide rounded d-flex flex-column justify-content-center align-items-center" style={{ backgroundColor: '#F06B27', backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', cursor: 'pointer' }}>
+                <SwiperSlide onClick={() => setModalShow(true)} className="swiper-slide rounded d-flex flex-column justify-content-center align-items-center text-white" style={{ backgroundColor: '#F06B27', backgroundPosition: 'center', backgroundSize: 'cover', width: '300px', height: '400px', cursor: 'pointer' }}>
                     <h2 className="mb-3">Ver Más</h2>
                     <FontAwesomeIcon icon={faPlus} size="3x" />
                 </SwiperSlide>

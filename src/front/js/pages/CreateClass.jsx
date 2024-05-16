@@ -173,7 +173,7 @@ export const CreateClass = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <Row className="mb-3">
+                        <Row className="mb-3 d-none">
                             <Col md="6">
                                 <Form.Group controlId="class_name">
                                     <Form.Label>Nombre de la clase:</Form.Label>

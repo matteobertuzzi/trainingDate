@@ -32,7 +32,7 @@ const UnloggedView = () => {
                             <h5 className='my-2' style={{ fontWeight: 'normal' }}>Conéctate con el fitness y reserva tus clases con un solo clic.</h5>
                             <h5>Conoce a entrenadores expertos y alcanza tus objetivos de bienestar!!</h5>
                             <Link to='/signup'>
-                                <Button onClick={() => setActiveNavTab("")} variant='primary' className='my-3' style={{ height: '40px', width: '160px', fontWeight: 'normal', fontSize: '16px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none', backgroundImage: 'linear-gradient(to right, #ff8a00, #da1b60)', color: '#ffffff', textShadow: '0px 2px 2px rgba(0, 0, 0, 0.2)', transition: 'transform 0.3s ease' }}
+                                <Button onClick={() => setActiveNavTab("")} variant='success' className='my-3' style={{ height: '40px', width: '160px', fontWeight: 'normal', fontSize: '16px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', border: 'none'}}
                                     onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
                                     onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                                 >

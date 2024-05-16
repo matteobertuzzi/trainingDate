@@ -23,16 +23,16 @@ export const AllSpecializations = () => {
             </Row>
             <Row className="d-flex flex-row justify-content-center gap-2 mt-3">
                 {specializations.map((specialization) => (
-                    <Col key={specialization.id} xs={10} sm={6} md={4} lg={3} className="mb-3">
+                    <Col rounded key={specialization.id} xs={10} sm={6} md={4} lg={3} className="mb-3">
                         <Card className="h-100">
-                            <Card.Img className="img-fluid" src={specialization.logo} style={{ height: '200px', objectFit: 'cover', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }} />
-                            <Card.Body className="d-flex justify-content-center align-items-center">
-                                <Button className="d-flex flex-row justify-content-center align-items-center gap-2" variant="info" onClick={() => {setShowModal(true); setSpec(specialization);}}>
-                                    {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}<FontAwesomeIcon icon={faCircleInfo} />
-                                </Button>
-                            </Card.Body>
+                            <div className="position-relative">
+                                <Card.Img rounded className="img-fluid" src={specialization.logo} style={{ height: '200px', objectFit: 'cover'}} />
+                                <Card.ImgOverlay rounded style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
+                                    <Button className='btn-lg d-flex flex-row justify-content-center align-items-center gap-2' variant="info" onClick={() => { setShowModal(true); setSpec(specialization); }}><span className="text-white"> {specialization.name.charAt(0).toUpperCase() + specialization.name.slice(1)}</span><FontAwesomeIcon icon={faCircleInfo} /></Button>
+                                    <SpecializationModal show={showModal} onHide={() => setShowModal(false)} specialization={spec ? spec : specialization} />
+                                </Card.ImgOverlay>
+                            </div>
                         </Card>
-                        <SpecializationModal show={showModal} onHide={() => setShowModal(false)} specialization={spec ? spec : specialization} />
                     </Col>
                 ))}
             </Row>
