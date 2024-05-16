@@ -1152,9 +1152,13 @@ def handle_trainer_classes(id):
             if not trainers_specializations:
                 response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
                 return response_body, 400
-            existing_class = db.session.query(TrainersClasses).filter(db.or_(db.and_(TrainersClasses.start_date >= data['start_date'], TrainersClasses.start_date < data['end_date']),
-                                                                             db.and_(TrainersClasses.end_date > data['start_date'], TrainersClasses.end_date <= data['end_date']),
-                                                                             db.and_(TrainersClasses.start_date <= data['start_date'], TrainersClasses.end_date >= data['end_date']))).first()
+            existing_class = db.session.query(TrainersClasses).filter(db.and_(TrainersClasses.trainer_id == id,
+                                                                              db.or_(db.and_(TrainersClasses.start_date >= data['start_date'],
+                                                                                             TrainersClasses.start_date < data['end_date']),
+                                                                                     db.and_(TrainersClasses.end_date > data['start_date'],
+                                                                                             TrainersClasses.end_date <= data['end_date']),
+                                                                                     db.and_(TrainersClasses.start_date <= data['start_date'],
+                                                                                             TrainersClasses.end_date >= data['end_date'])))).first()
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
