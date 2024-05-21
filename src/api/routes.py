@@ -27,8 +27,8 @@ cloudinary.config(
     api_secret=os.environ.get("API_SECRET")
 )
 
-# Obtiene la clave para el serializador, que sirve para crear token de tiempo limitado
 
+# Obtiene la clave para el serializador, que sirve para crear token de tiempo limitado
 s = URLSafeTimedSerializer(os.environ.get("URL_SAFE_TIMED_SERIALIZER"))
 stripe.api_key = os.environ.get("STRIPE_API_KEY")
 api = Blueprint('api', __name__)
@@ -152,20 +152,6 @@ def webhook():
                         db.session.commit()
                         print(f"Clase de usuario actualizada: {user_class.serialize()}")
                         return jsonify(success=True)
-                        # Aquí se crea la transferencia al IBAN del entrenador
-                    # trainer_id = payment_intent['metadata'].get("trainer_id")
-                    #if trainer_id:
-                     #   trainer = db.session.query(Trainer).get(trainer_id)
-                      #  if trainer:
-                       #     transfer = stripe.Transfer.create(
-                        #        amount=user_class.amount,  # Monto a transferir
-                         #       currency=user_class.currency,  # Moneda
-                          #      destination=trainer.iban,  # IBAN del entrenador
-                           #     description='Pago de clase',  # Descripción opcional
-                            #    metadata={'class_id': class_id, 'user_id': user_id}  # Metadatos adicionales
-                            #)
-                            #print(f"Transferencia creada: {transfer}")
-                            # Aquí puedes manejar la respuesta de Stripe según tus necesidades
                 else:
                     print('No se encontró la clave "class_id" en los metadatos')
             else:
@@ -529,7 +515,7 @@ def handle_signup_user():
     db.session.add(new_user)
     db.session.commit()
     token = s.dumps(new_user.email, salt='email-confirm')
-    confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/{token}"
+    confirm_url = f"{os.environ['BACKEND_URL']}confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -657,7 +643,7 @@ def handle_signup_trainer():
     db.session.add(new_trainer)
     db.session.commit()
     token = s.dumps(new_trainer.email, salt='email-confirm')
-    confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/{token}"
+    confirm_url = f"{os.environ['BACKEND_URL']}confirm/{token}"
     subject = 'Confirm Email'
     html_content = f'''
                     <!DOCTYPE html>
@@ -674,15 +660,13 @@ def handle_signup_trainer():
                                 padding: 0;
                             }}
                             .container {{
-                                display: flex,
-                                flex-direction: column,
-                                align-items: center,
                                 max-width: 600px;
                                 margin: auto;
                                 padding: 20px;
                                 background-color: #fff;
                                 border-radius: 8px;
                                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                text-align: center;
                             }}
                             .message {{
                                 margin-bottom: 20px;
@@ -704,10 +688,11 @@ def handle_signup_trainer():
                     <body>
                         <div class="container">
                             <div class="message">
-                                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>
+                                <p>¡Bienvenido! Gracias por registrarte.</p>
+                                <p>Por favor, sigue este enlace para activar tu cuenta:</p>
                             </div>
                             <div class="action">
-                                <a class="button" href="{confirm_url}" target="_blank">Click here to confirm!</a>
+                                <a class="button" href="{confirm_url}" target="_blank">¡Haz clic aquí para confirmar!</a>
                             </div>
                         </div>
                     </body>
@@ -1059,13 +1044,21 @@ def handle_user_classes(id):
     if (current_user['role'] == 'users' and current_user['id'] == user.id) or (current_user["role"] == "administrators"):
         if request.method == "GET":
             user_classes = UsersClasses.query.filter_by(user_id=id).all()
-            class_ids = [uc.class_id for uc in user_classes]
-            trainer_classes = db.session.query(TrainersClasses).join(UsersClasses, UsersClasses.class_id == TrainersClasses.id).filter(TrainersClasses.id.in_(class_ids)).all()
             if not user_classes:
                 response_body["message"] = "No classes available"
                 return response_body, 400
-            response_body["message"] = "User classes"
-            response_body["result"] = [class_user.serialize() for class_user in user_classes]
+            classes_with_trainers = []
+            for user_cls in user_classes:
+                trainer_cls = TrainersClasses.query.filter_by(id=user_cls.class_id).first()
+                trainer = Trainers.query.filter_by(id=trainer_cls.trainer_id).first()
+                trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} 
+                specialization = db.session.query(Specializations).filter_by(id=trainer_cls.training_type).first()
+                classes_with_trainers.append({'user_class': user_cls.serialize(),
+                                            'trainer_class': {'class_details': trainer_cls.serialize(),
+                                                              'specialization': specialization.serialize() if specialization else None,
+                                                              'trainer': trainer_details}})
+            response_body['message'] = 'List of classes available.'
+            response_body['results'] = classes_with_trainers
             return response_body, 200
         if request.method == "POST":
             data = request.json
@@ -1092,8 +1085,25 @@ def handle_user_classes(id):
                                      class_id=data["class_id"])
             db.session.add(new_class)
             db.session.commit()
+            user_classes = UsersClasses.query.filter_by(user_id=id).all()
+            classes_with_trainers = []
+            for user_class in user_classes:
+                trainer_class = TrainersClasses.query.filter_by(id=user_class.class_id).first()
+                trainer = Trainers.query.filter_by(id=trainer_class.trainer_id).first()
+                trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} if trainer else None
+                trainer_class_info = {'class_details': trainer_class.serialize(),
+                                      'specialization': db.session.query(Specializations).filter_by(id=trainer_class.training_type).first().serialize() if trainer_class else None,
+                                      'trainer' : trainer_details}
+                user_class_info = user_class.serialize()
+                classes_with_trainers.append({'user_class': user_class_info,
+                                              'trainer_class': trainer_class_info})
+            trainer_class = {'class_details': trainer_class.serialize(),
+                             'specialization': db.session.query(Specializations).filter_by(id=trainer_class.training_type).first().serialize()}
             response_body["message"] = "Class added"
-            response_body["results"] = new_class.serialize()
+            response_body["results"] = {"user_class": new_class.serialize(),
+                                        "trainer_class": trainer_class}
+            response_body["user_classes"] = classes_with_trainers
+            print(response_body)
             return response_body, 201
     response_body["message"] = 'Not allowed!'
     return response_body, 405
@@ -1114,8 +1124,15 @@ def handle_trainer_classes(id):
         if not trainer_classes:
             response_body["message"] = "Trainer has no classes available"
             return response_body, 400
+        classes_with_specializations = []
+        for class_trainer in trainer_classes:
+            class_specialization = Specializations.query.filter_by(id=class_trainer.training_type).first()
+            if class_specialization:
+                serialized_class = class_trainer.serialize()
+                serialized_class["specialization"] = class_specialization.serialize()
+                classes_with_specializations.append(serialized_class)
         response_body["message"] = "Trainer classes"
-        response_body["classes"] = [class_trainer.serialize() for class_trainer in trainer_classes]
+        response_body["classes"] = classes_with_specializations
         return response_body, 200
     if request.method == "POST":
         if (current_user['role'] == 'trainers' and current_user['id'] == trainer.id) or (current_user["role"] == "administrators"):
@@ -1135,9 +1152,13 @@ def handle_trainer_classes(id):
             if not trainers_specializations:
                 response_body["message"] = f"Training type no available for the trainer with id: {str(id)}"
                 return response_body, 400
-            existing_class = db.session.query(TrainersClasses).filter(db.or_(db.and_(TrainersClasses.start_date >= data['start_date'], TrainersClasses.start_date < data['end_date']),
-                                                                             db.and_(TrainersClasses.end_date > data['start_date'], TrainersClasses.end_date <= data['end_date']),
-                                                                             db.and_(TrainersClasses.start_date <= data['start_date'], TrainersClasses.end_date >= data['end_date']))).first()
+            existing_class = db.session.query(TrainersClasses).filter(db.and_(TrainersClasses.trainer_id == id,
+                                                                              db.or_(db.and_(TrainersClasses.start_date >= data['start_date'],
+                                                                                             TrainersClasses.start_date < data['end_date']),
+                                                                                     db.and_(TrainersClasses.end_date > data['start_date'],
+                                                                                             TrainersClasses.end_date <= data['end_date']),
+                                                                                     db.and_(TrainersClasses.start_date <= data['start_date'],
+                                                                                             TrainersClasses.end_date >= data['end_date'])))).first()
             if existing_class:
                 response_body["message"] = "Trainer class already exists for this datetime"
                 return response_body, 400
@@ -1196,7 +1217,6 @@ def handle_trainer_class(id, class_id):
     if request.method == "GET":
         user_in_class = UsersClasses.query.filter(UsersClasses.class_id == class_id).all()
         specialization = Specializations.query.filter(Specializations.id==trainer_class.training_type).first()
-        print(specialization)
         users_details = []
         for user_class in user_in_class:
             user = Users.query.get(user_class.user_id)
@@ -1279,10 +1299,25 @@ def handle_user_class(id, class_id):
             response_body["class"] = trainer_class.serialize()
             return response_body, 200
         if request.method == "DELETE":
+            if user_class.stripe_status == "Paid":
+                response_body["message"] = "Unable to cancel class, user have paid it"
+                return response_body, 400
             db.session.delete(user_class)
             db.session.commit()
+            user_classes = UsersClasses.query.filter_by(user_id=id).all()
+            classes_with_trainers = []
+            for user_cls in user_classes:
+                trainer_cls = TrainersClasses.query.filter_by(id=user_cls.class_id).first()
+                trainer = Trainers.query.filter_by(id=trainer_cls.trainer_id).first()
+                trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} if trainer else None
+                trainer_class_info = {'class_details': trainer_cls.serialize(),
+                                      'specialization': db.session.query(Specializations).filter_by(id=trainer_cls.training_type).first().serialize() if trainer_cls else None,
+                                      'trainer' : trainer_details}
+                user_class_info = user_cls.serialize()
+                classes_with_trainers.append({'user_class': user_class_info,
+                                              'trainer_class': trainer_class_info})
             response_body["message"] = "User unenrolled successfully"
-            response_body["class"] = trainer_class.serialize()
+            response_body["classes_available"] = classes_with_trainers
             return response_body, 200
     response_body["message"] = 'Not allowed!'
     return response_body, 405
@@ -1296,8 +1331,16 @@ def handle_show_classes():
     if not all_classes:
         response_body['message'] = 'No classes available.'
         return response_body, 404
+    classes_with_specializations = []
+    for cls in all_classes:
+        trainer = db.session.query(Trainers).filter_by(id=cls.trainer_id).first()
+        specialization = db.session.query(Specializations).filter_by(id=cls.training_type).first()
+        trainer_details = {'name': trainer.name, 'last_name': trainer.last_name} if trainer else None
+        classes_with_specializations.append({'class_details': cls.serialize(),
+                                             'specialization': specialization.serialize() if specialization else None,
+                                             'trainer': trainer_details})
     response_body['message'] = 'List of classes available.'
-    response_body['results'] = [single_class.serialize() for single_class in all_classes]
+    response_body['results'] = classes_with_specializations
     return response_body, 200
 
 
@@ -1364,8 +1407,8 @@ def handle_trainer_specializations(id):
                 db.session.add(new_trainer_specialization)
                 db.session.commit()
                 token = s.dumps(new_trainer_specialization.id, salt='email-confirm')
-                reject_url = f"{os.environ['BACKEND_URL']}api/reject/specialization/{token}"
-                confirm_url = f"{os.environ['BACKEND_URL']}api/confirm/specialization/{token}"
+                reject_url = f"{os.environ['BACKEND_URL']}reject/specialization/{token}"
+                confirm_url = f"{os.environ['BACKEND_URL']}confirm/specialization/{token}"
                 subject = 'Confirm Specialization'
                 html_content = f'''
                     <!DOCTYPE html>
@@ -1439,14 +1482,14 @@ def handle_trainer_specializations(id):
                     <body>
                         <div class="container">
                             <div class="message">
-                                <p>Please approve or reject the specialization</p>
+                                <p>Por favor, aprueba o rechaza la especialización</p>
                                 <div class="cert-container">
                                     <a class="cert-link" href="{certification_url}" target="_blank">Ver certificado</a>
                                 </div>
                             </div>
                             <div class="action">
-                                <a class="button-confirm" href="{confirm_url}" target="_blank">Click here to confirm!</a>
-                                <a class="button-reject" href="{reject_url}" target="_blank">Click here to reject!</a>
+                                <a class="button-confirm" href="{confirm_url}" target="_blank">¡Haz clic aquí para confirmar!</a>
+                                <a class="button-reject" href="{reject_url}" target="_blank">¡Haz clic aquí para rechazar!</a>
                             </div>
                         </div>
                     </body>

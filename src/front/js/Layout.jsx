@@ -6,6 +6,10 @@ import ScrollToTop from "./component/scrollToTop.js";
 import { BackendURL } from "./component/BackendURL.jsx";
 import { MyNavbar } from "./component/Navbar.jsx";
 import Footer from "./component/Footer.jsx";
+import TrainerHomepage from "./component/TrainerHomepage.jsx";
+import SignupUser from "./component/SignupUser.jsx";
+import SignupTrainer from "./component/SignupTrainer.jsx";
+
 // Import custom pages
 import { ConfirmationSignUp } from "./pages/ConfirmationSignUp.jsx";
 import { InvalidToken } from "./pages/InvalidToken.jsx";
@@ -13,22 +17,21 @@ import { CreateClass } from "./pages/CreateClass.jsx";
 import { SessionEnd } from "./pages/SessionEnd.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import TrainerProfile from "./pages/TrainerProfile.jsx";
-import { AddTrainerSpecialization } from "./pages/AddTrainerSpecialization.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Signup from "./pages/Signup.jsx";
 import { TrainerClasses } from "./pages/TrainerClasses.jsx";
 import { UserClasses } from "./pages/UserClasses.jsx";
-import TrainerHomepage from "./component/TrainerHomepage.jsx";
-import SignupUser from "./component/SignupUser.jsx";
-import SignupTrainer from "./component/SignupTrainer.jsx";
 import SuccessCheckout from "./pages/SuccessCheckout.jsx";
 import CancelCheckout from "./pages/CancelCheckout.jsx";
 import AccountAlreadyConfirmedPage from "./pages/AccountAlreadyConfirmed.jsx";
 import TrainerInfo from "./pages/TrainerInfo.jsx";
 import UserInfo from "./pages/UserInfo.jsx";
 import TrainerSpecializations from "./pages/TrainerSpecializations.jsx";
-import AllClasses from "./component/AllClasses.jsx";
 import { TrainerClassDetails } from "./pages/TrainerClassDetails.jsx";
+import { AllClasses } from "./pages/AllClasses.jsx"
+import { Favourites } from "./pages/Favourites.jsx";
+import { AllSpecializations } from "./pages/AllSpecializations.jsx"
+import { AboutUs } from "./pages/AboutUs.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -43,8 +46,11 @@ const Layout = () => {
                 <ScrollToTop>
                     <MyNavbar />
                     <Routes>
+                        <Route element={<AboutUs />} path="/aboutUs" />
+                        <Route element={<Favourites />} path="user/:id/favourites" />
+                        <Route element={<AllClasses />} path="/allClasses" />
                         <Route element={<TrainerSpecializations />} path="trainer/:id/specializations" />
-                        <Route element={<UserInfo />} path='users/info' />
+                        <Route element={<UserInfo />} path='/users/info' />
                         <Route element={<TrainerInfo />} path="trainers/info" />
                         <Route element={<AccountAlreadyConfirmedPage />} path="account/already/confirmed" />
                         <Route element={<CancelCheckout />} path="checkout/cancel" />
@@ -54,7 +60,6 @@ const Layout = () => {
                         <Route element={<SessionEnd />} path="/end/session" />
                         <Route element={<InvalidToken />} path="/invalid" />
                         <Route element={<Homepage />} path='/' />
-                        <Route element={<AddTrainerSpecialization />} path='/trainer/:trainerId/add/specialization' />
                         <Route element={<TrainerProfile />} path='/trainer/:id/profile' />
                         <Route element={<UserProfile />} path='/user/:id/profile' />
                         <Route element={<Signup />} path='/signup' />
@@ -63,8 +68,8 @@ const Layout = () => {
                         <Route element={<TrainerClasses />} path='/trainer/:id/classes' />
                         <Route element={<UserClasses />} path='/user/:id/classes' />
                         <Route element={<TrainerHomepage />} path='/trainer/homepage' />
-                        <Route element={<AllClasses />} path='/allClasses' />
                         <Route element={<TrainerClassDetails />} path='/trainer/:trainerId/class/:classId' />
+                        <Route element={<AllSpecializations />} path="/allSpecializations" />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />

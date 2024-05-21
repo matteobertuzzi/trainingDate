@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Modal, Button, Col, Form, Row, Nav, CloseButton, FloatingLabel} from 'react-bootstrap/';
+import { Modal, Button, Col, Form, Row, Nav, CloseButton, FloatingLabel } from 'react-bootstrap/';
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { FaCheckCircle } from "react-icons/fa";
@@ -38,12 +38,13 @@ export const LogInModal = ({ show, onHide }) => {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            setValidated(true);
             const userType = activeTab === "users" ? "users" : "trainers";
             const validateLog = await loginUser(inputs, userType);
             if (!validateLog) {
+                setValidated(false);
                 setLoginError('Los datos ingresados no son correctos. Por favor, inténtalo de nuevo.');
             } else {
+                setValidated(true);
                 setLogged(true);
                 setInputs({
                     email: '',
@@ -58,7 +59,7 @@ export const LogInModal = ({ show, onHide }) => {
 
     return (
         <Modal show={show} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header className="bg-primary">
+            <Modal.Header className="bg-primary text-white">
                 <Modal.Title id="contained-modal-title-vcenter">
                     Log In
                 </Modal.Title>
@@ -67,13 +68,13 @@ export const LogInModal = ({ show, onHide }) => {
             <p className="text-center p-2 m-0">Elige cómo deseas iniciar sesión:</p>
             <Nav defaultActiveKey={activeTab} variant="pills" justify className="d-flex flex-row justify-content-betweeen px-3">
                 <Nav.Item>
-                    <Nav.Link eventKey="users" onClick={() => handleTabChange("users")}>Usuario<FaCheckCircle className={`ms-2 ${activeTab === "users" ? "" : "d-none"}`} /></Nav.Link>
+                    <Nav.Link eventKey="users" onClick={() => handleTabChange("users")}><span className={`${activeTab === "users" ? "text-white" : ""}`}>Usuario</span><FaCheckCircle className={`ms-2 ${activeTab === "users" ? "text-white" : "d-none"}`} /></Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="trainers" onClick={() => handleTabChange("trainers")}>Entrenador<FaCheckCircle className={`ms-2 ${activeTab === "trainers" ? "" : "d-none"}`} /></Nav.Link>
+                    <Nav.Link eventKey="trainers" onClick={() => handleTabChange("trainers")}><span className={`${activeTab === "trainers" ? "text-white" : ""}`}>Entrenador</span><FaCheckCircle className={`ms-2 ${activeTab === "trainers" ? "text-white" : "d-none"}`} /></Nav.Link>
                 </Nav.Item>
             </Nav>
-            <Modal.Body className="w-100 d-flex flex-column p-20">
+            <Modal.Body className="w-100 d-flex flex-column p-3">
                 <Form className="mb-2" noValidate validated={validated} onSubmit={handleSubmit}>
                     <Row className="g-3">
                         <Form.Group as={Col} md="12" controlId="validationEmail">
@@ -106,7 +107,7 @@ export const LogInModal = ({ show, onHide }) => {
                                 <FontAwesomeIcon
                                     icon={showPassword ? faEyeSlash : faEye}
                                     className="position-absolute end-0 top-50 translate-middle-y"
-                                    style={{ cursor: 'pointer', zIndex: 1, marginRight: '30px' }}
+                                    style={{ cursor: 'pointer', zIndex: 1, marginRight: '15px' }}
                                     onClick={togglePasswordVisibility}
                                 />
                                 <Form.Control.Feedback type="invalid">
@@ -118,12 +119,12 @@ export const LogInModal = ({ show, onHide }) => {
                     {loginError && <div className="text-danger mt-2">{loginError}</div>}
                 </Form>
                 <div className="d-flex flex-row mt-2">
-                    <span className="me-2">Todavia no estas registrado?</span><Link to={"/signup"} onClick={onHide}>Regístrate</Link>
+                    <span className="me-2">¿Todavía no estás registrado?</span><Link to={"/signup"} onClick={onHide}>Regístrate</Link>
                 </div>
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSubmit} variant="success">Log In</Button>
-                <Button variant="danger" onClick={onHide}>Close</Button>
+                <Button variant="outline-secondary" onClick={onHide}>Close</Button>
             </Modal.Footer>
         </Modal>
     )

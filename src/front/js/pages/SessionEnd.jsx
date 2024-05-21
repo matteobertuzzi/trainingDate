@@ -10,7 +10,7 @@ export const SessionEnd = () => {
             <h3 className="text-center">¡La session ha caducado!</h3>
             <p className="text-center">Por favor, inicia una nueva session.</p>
             <Button onClick={() => setLoginModalShow(true)}>
-                Log In
+                LogIn
             </Button>
             <LogInModal show={loginModalShow} onHide={() => setLoginModalShow(false)} />
         </Container >

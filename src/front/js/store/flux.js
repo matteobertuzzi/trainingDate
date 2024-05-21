@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       { title: "SECOND", background: "white", initial: "white" }],
       currentUser: null,
       logged: false,
+      activeNavTab: "home",
       specializations: [],
       trainerSpecializations: [],
       trainerClasses: [],
@@ -24,6 +25,15 @@ const getState = ({ getStore, getActions, setStore }) => {
     },
 
     actions: {
+      setActiveNavTab: (tabName) => {
+        setStore({ activeNavTab: tabName })
+        localStorage.setItem("activeNavTab", tabName)
+      },
+
+      getActiveNavTab: () => {
+        const storageActiveNavTab = localStorage.getItem("activeNavTab")
+        setStore({ activeNavTab: storageActiveNavTab })
+      },
 
       setUser: (value) => {
         setStore({ currentUser: value })
@@ -40,6 +50,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           localStorage.removeItem("availableAccount");
           localStorage.removeItem("userClasses");
           setStore({ currentUser: null })
+          getActions().setActiveNavTab("home")
         } else {
           setStore({ logged: value })
         }
@@ -53,8 +64,13 @@ const getState = ({ getStore, getActions, setStore }) => {
           return null
         }
         const data = await response.json()
-        setStore({ allClasses: data.results })
-        localStorage.setItem('allClasses', JSON.stringify(data.results))
+        const currentTime = new Date().getTime();
+        const filteredClasses = data.results.filter(oneClass => {
+          const classStartTime = new Date(oneClass.class_details.start_date).getTime();
+          return classStartTime > currentTime;
+        });
+        setStore({ allClasses: filteredClasses });
+        localStorage.setItem('allClasses', JSON.stringify(filteredClasses));
       },
 
       getTrainerSpecializations: async () => {
@@ -120,8 +136,8 @@ const getState = ({ getStore, getActions, setStore }) => {
           return null
         }
         const data = await response.json();
-        setStore({ userClasses: data.result })
-        localStorage.setItem('userClasses', JSON.stringify(data.result))
+        setStore({ userClasses: data.results })
+        localStorage.setItem('userClasses', JSON.stringify(data.results))
       },
 
       getTrainerClasses: async () => {
@@ -175,7 +191,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const response = await fetch(`${process.env.BACKEND_URL}trainers/${trainerId}/classes/${classId}`, options)
         if (!response) return response.status
         const data = await response.json()
-        setStore({userInTrainerClass : data})
+        setStore({ userInTrainerClass: data })
       },
 
       getAvailableAccount: async () => {
@@ -244,14 +260,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 
         if (user_type == "trainers") {
           getActions().getTrainerClasses()
+          getActions().getTrainerSpecializations()
           localStorage.removeItem("userClasses")
           setStore({ userClasses: [] });
           window.location.href = `${process.env.FRONT_URL}`
+          getActions().setActiveNavTab("home")
         } else if (user_type == "users") {
           getActions().getUserClasses()
           localStorage.removeItem("trainerClasses")
+          localStorage.removeItem("trainerSpecializations")
           setStore({ trainerClasses: [] });
+          setStore({ trainerSpecializations: [] })
           window.location.href = `${process.env.FRONT_URL}`
+          getActions().setActiveNavTab("home")
         }
         return true
       },
@@ -468,13 +489,12 @@ const getState = ({ getStore, getActions, setStore }) => {
         const availableAccountString = localStorage.getItem("availableAccount");
         const availableAccount = JSON.parse(availableAccountString);
         const userId = availableAccount.user.id;
-        const storageUserClasses = localStorage.getItem("userClasses")
-        const userClasses = JSON.parse(storageUserClasses)
 
         if (!token) {
           console.error("No access token found!");
           return null;
         }
+
         const options = {
           method: 'POST',
           headers: {
@@ -488,19 +508,20 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         const response = await fetch(`${process.env.BACKEND_URL}users/${userId}/classes`, options)
-        if (!response.ok) return response.status
+        if (!response.ok) return false
         const data = await response.json()
-        console.log(data.results)
-        const updatedUserClasses = { ...userClasses, ...data.results };
-        setStore({ userClasses: updatedUserClasses });
-        localStorage.setItem('userClasses', JSON.stringify(updatedUserClasses));
+        console.log(data)
+        if (getStore().userClasses.length == 0) {
+          setStore({ userClasses: data.user_classes });
+        } else {
+          setStore({ userClasses: data.user_classes });
+        }
+        localStorage.setItem("userClasses", JSON.stringify(data.user_classes));
       },
 
       deleteUserClass: async (userId, classId) => {
         const token = localStorage.getItem("accessToken");
         const storageAllClasses = localStorage.getItem("allClasses")
-        const allClasses = JSON.parse(storageAllClasses)
-        const updatedClasses = allClasses.filter((element) => element.id !== classId);
 
         if (!token) {
           console.error("No access token found!");
@@ -523,8 +544,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         if (!response.ok) return response.status
         const data = await response.json()
         console.log(data)
-        localStorage.setItem('userClasses', JSON.stringify(updatedClasses));
-        setStore({ userClasses: updatedClasses });
+        setStore({ userClasses: data.classes_available });
+        localStorage.setItem("userClasses", JSON.stringify(data.classes_available));
       },
 
       deleteTrainerClass: async (trainerId, classId) => {
@@ -542,21 +563,15 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
         const response = await fetch(`${process.env.BACKEND_URL}trainers/${trainerId}/classes/${classId}`, options)
 
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          console.error(`Failed to delete class: ${errorMessage}`);
-          return false;
-        }
-
+        if (!response.ok) return false
+        const data = await response.json()
         const storedClassesString = localStorage.getItem("trainerClasses");
         if (storedClassesString) {
           const storedClasses = JSON.parse(storedClassesString);
-          const updatedClasses = storedClasses.filter(cls => cls.id !== classId);
+          const updatedClasses = storedClasses.filter(cls => cls.id !== data.class.id);
           localStorage.setItem("trainerClasses", JSON.stringify(updatedClasses));
+          setStore({trainerClasses: updatedClasses})
           return true;
-        } else {
-          console.error('No classes found in local storage');
-          return false;
         }
       },
 
@@ -582,7 +597,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ currentUser: [] })
         localStorage.removeItem("accessToken")
         localStorage.removeItem("availableUser")
-        window.location.href = `${process.env.FRONT_URL}`
         return true
       },
 
@@ -633,8 +647,10 @@ const getState = ({ getStore, getActions, setStore }) => {
           }
           const data = await response.json();
           window.location.href = data.sessionUrl;
+          return true;
         } catch (error) {
-          throw new Error(error.message || 'Failed to create checkout session');
+          console.error(error.message || 'Failed to create checkout session');
+          return false;
         }
       },
 

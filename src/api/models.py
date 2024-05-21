@@ -94,8 +94,8 @@ class Administrators(db.Model):
 class Specializations(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String(100), unique=True, nullable=False)
-        description = db.Column(db.String(250))
-        logo_url = db.Column(db.String(255))
+        description = db.Column(db.String())
+        logo_url = db.Column(db.String())
 
         def __repr__(self):
            return f'<Specialization: {self.id} - Name: {self.name}>'
@@ -195,5 +195,6 @@ class TrainersSpecializations(db.Model):
                     'trainer': self.trainer_id,
                     'certification': self.certification,
                     'status': self.status}
+
 
 

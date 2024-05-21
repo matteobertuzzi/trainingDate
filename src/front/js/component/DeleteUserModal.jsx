@@ -4,37 +4,38 @@ import { useNavigate } from "react-router-dom";
 import { Context } from '../store/appContext';
 
 
-const DeletelUser = ({ show, onHide }) => {
+export const DeleteUserModal = ({ show, onHide }) => {
     const { store, actions } = useContext(Context)
-    const { currentUser } = store
-    const { deleteUser, setLogged } = actions
+    const { currentUser, activeNavTab } = store
+    const { deleteUser, setLogged, setActiveNavTab } = actions
     const [loginError, setLoginError] = useState(null);
     const navigate = useNavigate()
 
     const handleClick = async () => {
-        navigate("/")
-        await deleteUser(currentUser.user.id)
-        if (deleteUser) {
-            setLogged(false)
+        const delUser = await deleteUser(currentUser.user.id)
+        if (!delUser) {
+            setLoginError('El usuario no se puede cancelar, debido a que tiene clases pendientes');
         } else {
-            setLoginError('El usuariom no se puede cancelar, debido a que tiene clases pendientes');
+            setLogged(false)
+            navigate("/")
+            setActiveNavTab("home");
         }
     }
+
     return (
         <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Confirmación de cancelación</Modal.Title>
+            <Modal.Header className="bg-primary text-white" closeButton>
+                <Modal.Title>Confirmación cancelación</Modal.Title>
             </Modal.Header>
             <Modal.Body className='d-flex flex-column gap-2'>
-                <p>¿Estás seguro de que deseas cancelar?</p>
+                <p className="m-0">Recuerda que solo puedes cancelar tu perfil si no tienes clases pendientes.</p>
+                <p className="m-0">¿Estás seguro de que deseas cancelar tu perfil?</p>
                 {loginError && <div className="text-danger mt-2">{loginError}</div>}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>Cancelar</Button>
-                <Button variant="primary" onClick={handleClick}>Confirmar cancelación</Button>
+                <Button variant="outline-secondary" onClick={onHide}>Cerrar</Button>
+                <Button variant="danger" onClick={handleClick}>Confirmar</Button>
             </Modal.Footer>
         </Modal>
     );
 };
-
-export default DeletelUser;

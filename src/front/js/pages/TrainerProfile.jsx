@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Context } from '../store/appContext';
-import { Container, Row, Col, Card, Image, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Image, Button, ListGroup } from 'react-bootstrap';
 import Loading from '../component/Loading.jsx';
 import EditTrainerProfile from '../component/EditTrainerProfile.jsx';
 import { AddTrainerSpecialization } from './AddTrainerSpecialization.jsx';
@@ -30,7 +30,7 @@ const TrainerProfile = () => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        const url = process.env.BACKEND_URL + `api/trainers/${trainerId}`;
+        const url = process.env.BACKEND_URL + `trainers/${trainerId}`; 
         const response = await fetch(url, options);
         if (!response.ok) {
             console.error(`Error al obtener los datos del entrenador. Estado HTTP ${response.status}`);
@@ -50,48 +50,62 @@ const TrainerProfile = () => {
     }
 
     return (
-        <Container className="my-4">
-            <Row className='m-3 d-flex flex-row gap-2'>
-                <Link to={"/"}>
-                    <RiArrowGoBackLine /> Volver atrás
-                </Link>
-            </Row>
-            <Row className="justify-content-center mt-4">
-                <Col xs={12} md={8}>
-                    <Card className="shadow">
-                        <Card.Body>
-                            <Row>
-                                <Col xs={12} sm={6} className="mb-3 mb-sm-2 d-flex flex-column gap-3 justify-content-center align-items-center">
-                                    <Image
-                                        src={trainer.gender === 'Male' ? profilePictureMan : profilePictureWoman}
-                                        roundedCircle
-                                        fluid
-                                        style={{ maxHeight: '250px' }}
-                                    />
-                                    <div className="d-flex flex-row gap-5 align-items-center mt-3">
-                                        <i className="fab fa-facebook-f fa-lg"></i>
-                                        <i className="fab fa-twitter fa-lg"></i>
-                                        <i className="fab fa-instagram fa-lg"></i>
-                                    </div>
-                                </Col>
-                                <Col xs={12} sm={6}>
-                                    <h2 className="mb-4">{trainer.name} {trainer.last_name}</h2>
-                                    <p><strong>Correo electrónico:</strong> {trainer.email}</p>
-                                    <p><strong>Teléfono:</strong> {trainer.phone_number}</p>
-                                    <p><strong>Género:</strong> {trainer.gender === "Male" ? "Masculino" : trainer.gender === "Female" ? "Femenino" : "No especificado"}</p>
-                                    <p><strong>IBAN:</strong> {trainer.bank_iban}</p>
-                                    <p><strong>Ciudad:</strong> {trainer.city}</p>
-                                    <p><strong>Código Postal:</strong> {trainer.postal_code}</p>
-                                    <p><strong>URL del sitio web:</strong> {trainer.website_url}</p>
-                                </Col>
-                            </Row>
-                        </Card.Body>
-                    </Card>
+        <Container className="mb-5 mt-4">
+            <Row className='d-flex flex-row justify-content-center align-items-center mb-2'>
+                <Col className='d-flex flex-row justify-content-center align-items-center'>
+                    <div className="border rounded p-4 d-flex flex-column justify-content-center align-items-center" style={{ boxShadow: '0 0 10px rgba(255, 165, 0, 0.5)' }}>
+                        <h4 className="text-center mb-2">Perfil</h4>
+                        <h5 className="text-center">Aquí puedes visualizar los datos de tu perfil y modificarlos.</h5>
+                        <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
+                    </div>
                 </Col>
             </Row>
-            <Row>
-                <Col className='d-flex align-items-center justify-content-center mt-3'>
-                    <EditTrainerProfile trainer={trainer} onChangeSubmit={fetchTrainer} />
+            <Row className="p-3">
+                <Col className='d-flex flex-column w-100 justify-content-center align-items-center gap-3'>
+                    <Image
+                        src={trainer.gender === 'Male' ? profilePictureMan : profilePictureWoman}
+                        roundedCircle
+                        fluid
+                        style={{ maxHeight: '250px' }}
+                    />
+                    <div className="d-flex flex-row gap-5 align-items-center mt-3">
+                        <Link to={trainer.facebook_url}>
+                            <i className="fab fa-facebook-f fa-lg"></i>
+                        </Link>
+                        <Link to={trainer.x_url}>
+                            <i className="fab fa-twitter fa-lg"></i>
+                        </Link>
+                        <Link to={trainer.instagram_url}>
+                            <i className="fab fa-instagram fa-lg"></i>
+                        </Link>
+                    </div>
+                    <ListGroup className="d-flex flex-column justify-content-center align-items-center mt-3 p-2">
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <h2 className='d-flex flex-row align-items-center justify-content-center mb-0'>{trainer.name} {trainer.last_name}</h2>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>Correo electrónico:</strong> {trainer.email}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>Teléfono:</strong> {trainer.phone_number}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>Género:</strong> {trainer.gender === "Male" ? "Masculino" : trainer.gender === "Female" ? "Femenino" : "No especificado"}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>IBAN:</strong> {trainer.iban}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>Ciudad:</strong> {trainer.city}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>Código Postal:</strong> {trainer.postal_code}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className='d-flex flex-row align-items-center justify-content-center' action variant="secondary">
+                            <p className='mb-0'><strong>URL del sitio web:</strong> {trainer.website_url}</p>
+                        </ListGroup.Item>
+                    </ListGroup>
+
                 </Col>
             </Row>
         </Container>

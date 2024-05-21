@@ -42,14 +42,24 @@ function EditUserProfile({ user, onChangeSubmit }) {
             </Button>
 
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header className="bg-primary text-white" closeButton>
                     <Modal.Title>Actualizar Usuario</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='p-4'>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="phone-number">
                             <Form.Label>Número de teléfono</Form.Label>
-                            <Form.Control type="number" placeholder={user.phone_number} name='phone_number' value={inputs.phone_number || ""} onChange={changeInputs} />
+                            <Form.Control
+                                type="number"
+                                placeholder={user.phone_number}
+                                name='phone_number'
+                                value={inputs.phone_number || ""}
+                                onChange={changeInputs}
+                                pattern="[0-9]{9,}"
+                                isInvalid={!/^([0-9]{9,})?$/.test(inputs.phone_number)} />
+                            <Form.Control.Feedback type="invalid">
+                                Por favor, proporciona un número de teléfono válido.
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="city">
                             <Form.Label>Ciudad</Form.Label>
@@ -57,16 +67,26 @@ function EditUserProfile({ user, onChangeSubmit }) {
                         </Form.Group>
                         <Form.Group controlId="postal-code">
                             <Form.Label>Código postal</Form.Label>
-                            <Form.Control type="number" placeholder={user.postal_code} name='postal_code' value={inputs.postal_code || ""} onChange={changeInputs} />
+                            <Form.Control
+                                type="number"
+                                placeholder={user.postal_code}
+                                name='postal_code'
+                                value={inputs.postal_code || ""}
+                                onChange={changeInputs}
+                                pattern="[0-9]{5}"
+                                isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)} />
+                            <Form.Control.Feedback type="invalid">
+                                Por favor, proporciona un código postal.
+                            </Form.Control.Feedback>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" type="submit">
-                        Actualizar datos de usuario
-                    </Button>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cerrar
+                    </Button>
+                    <Button variant="success" type="submit" onClick={handleSubmit}>
+                        Actualizar
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -42,18 +42,27 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button className='w-auto' variant="primary" onClick={handleShow}>
                 Editar perfil del entrenador
             </Button>
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header className="bg-primary text-white" closeButton>
                     <Modal.Title>Actualizar Entrenador</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="phone-number">
                             <Form.Label>Número de teléfono</Form.Label>
-                            <Form.Control type="number" placeholder={trainer.phone_number} name='phone_number' value={inputs.phone_number || ""} onChange={changeInputs} />
+                            <Form.Control
+                                type="number"
+                                placeholder={trainer.phone_number}
+                                name='phone_number'
+                                value={inputs.phone_number || ""}
+                                onChange={changeInputs}
+                                isInvalid={!/^([0-9]{9,})?$/.test(inputs.phone_number)} />
+                            <Form.Control.Feedback type="invalid">
+                                Por favor, proporciona un número de teléfono válido.
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="city">
                             <Form.Label>Ciudad</Form.Label>
@@ -61,11 +70,30 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                         </Form.Group>
                         <Form.Group controlId="postal-code">
                             <Form.Label>Código postal</Form.Label>
-                            <Form.Control type="number" placeholder={trainer.postal_code} name='postal_code' value={inputs.postal_code || ""} onChange={changeInputs} />
+                            <Form.Control
+                                type="number"
+                                placeholder={trainer.postal_code}
+                                name='postal_code'
+                                value={inputs.postal_code || ""}
+                                onChange={changeInputs}
+                                isInvalid={!/^([0-9]{5})?$/.test(inputs.postal_code)} />
+                            <Form.Control.Feedback type="invalid">
+                                Por favor, proporciona un código postal.
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="bank_iban">
                             <Form.Label>IBAN</Form.Label>
-                            <Form.Control type="number" placeholder={trainer.bank_iban} name='bank_iban' value={inputs.bank_iban || ""} onChange={changeInputs} />
+                            <Form.Control
+                                type="text"
+                                placeholder={trainer.iban}
+                                name='bank_iban'
+                                value={inputs.bank_iban || ""}
+                                onChange={changeInputs}
+                                isInvalid={inputs.bank_iban && !/^[A-Z]{2}[0-9]{22}$/.test(inputs.bank_iban)}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Por favor, proporciona un IBAN válido.
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="website_url">
                             <Form.Label>URL del sitio web</Form.Label>
@@ -86,11 +114,11 @@ function EditTrainerProfile({ trainer, onChangeSubmit }) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cerrar
                     </Button>
-                    <Button variant="primary" type="submit" className='my-3'>
-                        Actualizar datos del entrenador
+                    <Button variant="success" type="submit" className='my-3' onClick={handleSubmit}>
+                        Actualizar
                     </Button>
                 </Modal.Footer>
             </Modal>
