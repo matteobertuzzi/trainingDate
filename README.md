@@ -1,39 +1,83 @@
-# WebApp boilerplate with React JS and Flask API
+# Training Date
 
-Build web applications using React.js for the front end and python/flask for your backend API.
+<p>"Training Date" is an online platform that simplifies the connection between personal trainers and users, providing an integrated experience for scheduling, booking, and paying for private fitness training sessions. With an intuitive and user-friendly interface, "Training Date" makes organizing personalized training sessions easy.</p>
 
-- Documentation can be found here: https://start.4geeksacademy.com/starters/react-flask
-- Here is a video on [how to use this template](https://www.loom.com/share/f37c6838b3f1496c95111e515e83dd9b)
-- Integrated with Pipenv for package managing.
-- Fast deployment to heroku [in just a few steps here](https://start.4geeksacademy.com/backend/deploy-heroku-posgres).
-- Use of .env file.
-- SQLAlchemy integration for database abstraction.
+## Main Features
+<p>The "Training Date" platform is divided into two distinct but equally important parts: the trainer interface and the user interface.</p>
+
+<h4>Trainer Interface:</h4>
+<ul>
+  <li><strong>App Registration:</strong> Trainers can sign up for the app and confirm their registration via email.</li>
+  <li><strong>Specialization Registration:</strong> Before creating their first classes, trainers must confirm their qualifications or certifications by choosing from the available disciplines in the app.</li>
+  <li><strong>Specialization Confirmation:</strong> Once submitted, the specialization will be reviewed by the site administrators, and the result of the review will be confirmed by email, whether accepted or rejected.</li>
+  <li><strong>Class Creation:</strong> Once the specialization is confirmed, trainers can start creating classes by entering information such as location, number of students, price, etc.</li>
+  <li><strong>Profile Editing:</strong> Trainers can edit their profile information.</li>
+  <li><strong>Classes:</strong> Trainers can view their created classes, divided into past and future classes for better organization.</li>
+</ul>
+
+<h4>User Interface:</h4>
+<ul>
+  <li><strong>App Registration:</strong> Users can sign up for the app and confirm their registration via email.</li>
+  <li><strong>Profile Editing:</strong> Users can edit their profile information.</li>
+  <li><strong>Available Classes:</strong> Users can view available classes and filter them to find the class that best fits their physical conditions and training needs.</li>
+  <li><strong>Favorites:</strong> Users can mark their favorite classes and proceed to payment directly from this section.</li>
+  <li><strong>Payment:</strong> Once a class is chosen, users can pay for it through the app.</li>
+  <li><strong>Booked Classes:</strong> Users can view their booked classes and have a history of past classes.</li>
+  <li><strong>Available Specializations:</strong> Users can review detailed information on the available specializations if they have any questions regarding the training offered.</li>
+</ul>
+
+## Technologies and Libraries Used
+
+<h4>Frontend</h4>
+<ul>
+  <li><strong>React:</strong> React is a JavaScript library used in "Training Date" to create an interactive and dynamic user interface. It allows building reusable components that efficiently manage the application's state and update quickly when data changes.</li>
+  <li><strong>React Router:</strong> React Router is a routing library used in "Training Date" to manage navigation within the application. It allows defining routes and associating specific components with each route, facilitating the creation of a smooth and dynamic navigation experience for users.</li>
+  <li><strong>React-Bootstrap:</strong> React-Bootstrap is an extension of Bootstrap adapted to work with React. It is used in "Training Date" to design and style the UI elements consistently, following Bootstrap's design practices and creating an attractive and cohesive user experience.</li>
+  <li><strong>Swiper:</strong> Swiper is a JavaScript library that provides a smooth touch sliding experience. It is used in "Training Date" to create and manage sliding elements, such as image carousels, allowing users to navigate intuitively through relevant content.</li>
+  <li><strong>Bootswatch:</strong> Bootswatch is a collection of themes for Bootstrap that customize the visual appearance of an application. In "Training Date," Bootswatch is used to select a style theme that reflects the brand identity and provides an attractive and cohesive user experience.</li>
+  <li><strong>CSS:</strong> CSS is a language used to define the presentation and layout of HTML documents. In "Training Date," CSS complements the functionalities provided by React and Bootstrap, further customizing the UI's appearance and ensuring a unique and attractive user experience.</li>
+</ul>
+
+<h4>Backend</h4>
+<ul>
+ <li><strong>Python:</strong> Python is the programming language used in the backend of "Training Date" to implement business logic and data handling. Its clear and readable syntax allows for efficient and scalable backend development.</li>
+ <li><strong>Flask:</strong> Flask is a Python framework used in "Training Date" to build web applications. It is minimalist and flexible, providing the necessary tools to create API endpoints and manage client requests.</li>
+ <li><strong>Flask-Mail:</strong> Flask-Mail is a Flask extension that facilitates sending emails from Flask applications. It is used in "Training Date" to send email notifications, such as registration confirmations.</li>
+ <li><strong>Flask-SQLAlchemy:</strong> Flask-SQLAlchemy is a Flask extension that integrates with SQLAlchemy, a Python library for working with relational databases. It is used in "Training Date" to interact with the database and perform operations such as creating, reading, updating, and deleting data.</li>
+ <li><strong>flask_bcrypt:</strong> flask_bcrypt is a Flask extension that facilitates password hashing in Flask applications. It is used in "Training Date" to ensure the security of user passwords through hashing and secure comparison of stored passwords.</li>
+ <li><strong>flask_jwt_extended:</strong> flask_jwt_extended is a Flask extension that provides support for JSON Web Tokens (JWT) in Flask applications. It is used in "Training Date" to authenticate and authorize user requests using JWT tokens, ensuring application security.</li>
+ <li><strong>itsdangerous:</strong> itsdangerous is a Python library used in Flask to generate and verify security tokens and signatures. It is used in "Training Date" to generate secure tokens for user authentication and protection against CSRF (Cross-Site Request Forgery) attacks.</li>
+ <li><strong>Stripe:</strong> Stripe is an online payment platform used in "Training Date" to process payments securely and efficiently. It integrates with Flask to manage financial transactions, including charging for reserved classes.</li>
+ <li><strong>Cloudinary:</strong> Cloudinary is a cloud service used in "Training Date" to store and manage images efficiently. It is used to upload trainer documentation when submitting certifications.</li>
+ <li><strong>Google Maps:</strong> Google Maps is an API used in "Training Date" to integrate map functionalities into the application. It provides information on training locations and offers a rich, geolocated user experience.</li>
+ <li><strong>PostgreSQL:</strong> "Training Date" uses PostgreSQL as its relational database management system. PostgreSQL is a popular choice for web applications due to its robustness, scalability, and ability to handle large volumes of data. It integrates with Flask-SQLAlchemy to interact with the database and store user information, classes, reservations, and more.</li>
+</ul>
 
 ### 1) Installation:
 
-> If you use Github Codespaces (recommended) or Gitpod this template will already come with Python, Node and the Posgres Database installed. If you are working locally make sure to install Python 3.10, Node 
+> If you use GitHub Codespaces (recommended) or Gitpod, this template will already come with Python, Node, and the Postgres Database installed. If you are working locally, make sure to install Python 3.10, Node 
 
-It is recomended to install the backend first, make sure you have Python 3.8, Pipenv and a database engine (Posgress recomended)
+It is recommended to install the backend first; make sure you have Python 3.8, Pipenv, and a database engine (Postgres recommended)
 
-1. Install the python packages: `$ pipenv install`
+1. Install the Python packages: `$ pipenv install`
 2. Create a .env file based on the .env.example: `$ cp .env.example .env`
-3. Install your database engine and create your database, depending on your database you have to create a DATABASE_URL variable with one of the possible values, make sure you replace the valudes with your database information:
+3. Install your database engine and create your database. Depending on your database, you have to create a DATABASE_URL variable with one of the possible values, making sure to replace the values with your database information:
 
 | Engine    | DATABASE_URL                                        |
 | --------- | --------------------------------------------------- |
 | SQLite    | sqlite:////test.db                                  |
 | MySQL     | mysql://username:password@localhost:port/example    |
-| Postgress | postgres://username:password@localhost:5432/example |
+| Postgres | postgres://username:password@localhost:5432/example |
 
-4. Migrate the migrations: `$ pipenv run migrate` (skip if you have not made changes to the models on the `./src/api/models.py`)
+4. Apply the migrations: `$ pipenv run migrate` (skip if you have not made changes to the models in `./src/api/models.py`)
 5. Run the migrations: `$ pipenv run upgrade`
 6. Run the application: `$ pipenv run start`
 
 > Note: Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
 
-### Undo a migration
+### Undo a Migration
 
-You are also able to undo a migration by running
+You can also undo a migration by running:
 
 ```sh
 $ pipenv run downgrade
@@ -41,7 +85,7 @@ $ pipenv run downgrade
 
 ### Backend Populate Table Users
 
-To insert test users in the database execute the following command:
+To insert test users into the database, execute the following command:
 
 ```sh
 $ flask insert-test-users 5
@@ -59,23 +103,9 @@ And you will see the following message:
   Users created successfully!
 ```
 
-### **Important note for the database and the data inside it**
-
-Every Github codespace environment will have **its own database**, so if you're working with more people eveyone will have a different database and different records inside it. This data **will be lost**, so don't spend too much time manually creating records for testing, instead, you can automate adding records to your database by editing ```commands.py``` file inside ```/src/api``` folder. Edit line 32 function ```insert_test_data``` to insert the data according to your model (use the function ```insert_test_users``` above as an example). Then, all you need to do is run ```pipenv run insert-test-data```.
-
 ### Front-End Manual Installation:
 
--   Make sure you are using node version 14+ and that you have already successfully installed and runned the backend.
+-   Ensure you are using Node version 14+ and that you have already successfully installed and run the backend.
 
 1. Install the packages: `$ npm install`
-2. Start coding! start the webpack dev server `$ npm run start`
-
-## Publish your website!
-
-This boilerplate it's 100% read to deploy with Render.com and Heroku in a matter of minutes. Please read the [official documentation about it](https://start.4geeksacademy.com/deploy).
-
-### Contributors
-
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), and [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
-
-You can find other templates and resources like this at the [school github page](https://github.com/4geeksacademy/).
+2. Start coding! Start the webpack dev server: `$ npm run start`
